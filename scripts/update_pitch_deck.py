@@ -300,11 +300,11 @@ def main():
     sp89 = find_shape_by_id(s6, 89)
     sp90 = find_shape_by_id(s6, 90)
     if sp89:
-        set_shape_box(sp89, 0.42, 0.92, 5.25, 0.65)
+        set_shape_box(sp89, 0.42, 0.92, 8.5, 0.65)
         for p in sp89.text_frame.paragraphs:
             for r in p.runs:
                 if "used or planned" in r.text:
-                    r.text = r.text.replace(" (used or planned to be used).", " in production.")
+                    r.text = r.text.replace(" (used or planned to be used).", ".")
     if sp90:
         set_shape_box(sp90, 0.42, 1.55, 5.25, 3.65)
         bullets_s6 = [
