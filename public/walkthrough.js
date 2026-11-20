@@ -301,14 +301,7 @@
     const root = document.createElement('div');
     root.id = 'judge-tour-root';
     root.innerHTML = `
-      <!-- Floating Launcher Pill (Bottom Left on every page) -->
-      <button type="button" class="jt-launcher" id="jt-launcher-btn" aria-label="Open Interactive Architecture Tour">
-        <span class="jt-launcher-pulse"></span>
-        <span class="jt-launcher-tag">LIVE TOUR</span>
-        <span class="jt-launcher-text">Interactive Step-by-Step Guide</span>
-      </button>
-
-      <!-- Modal / Drawer Backdrop -->
+      <!-- Modal / Drawer Backdrop (Triggered cleanly via native [data-open-judge-tour] page buttons) -->
       <div class="jt-backdrop" id="jt-backdrop" hidden>
         <div class="jt-dialog" role="dialog" aria-modal="true" aria-labelledby="jt-step-title">
           <header class="jt-header">
@@ -406,7 +399,7 @@
       if (open) renderStep(currentStep);
     };
 
-    launcher.addEventListener('click', () => setOpen(true));
+    launcher?.addEventListener('click', () => setOpen(true));
     closeBtn.addEventListener('click', () => setOpen(false));
     backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop) setOpen(false);

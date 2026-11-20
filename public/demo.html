@@ -10,22 +10,12 @@
   <link rel="alternate icon" type="image/png" href="/images/coders-of-bharat-logo.png">
   <link rel="preload" href="/vendor/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/vendor/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <script>
-    (() => {
-      try {
-        const saved = localStorage.getItem('autopatch-theme');
-        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.dataset.theme = saved || (dark ? 'dark' : 'light');
-      } catch {
-        document.documentElement.dataset.theme = 'light';
-      }
-    })();
-  </script>
   <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/cliento.css">
   <link rel="stylesheet" href="/demo.css">
+  <link rel="stylesheet" href="/demo-cliento.css">
 </head>
-<body class="demo-editorial">
-  <div class="grid-axis-line" aria-hidden="true"></div>
+<body class="cliento-theme demo-editorial demo-cliento">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
@@ -35,72 +25,68 @@
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
   </svg>
 
-  <header class="app-header">
-    <div class="shell app-header-inner">
-      <a class="app-brand" href="/" aria-label="AutoPatch home">
-        <span class="amp-cob-badge" aria-hidden="true">
-          <img src="/images/coders-of-bharat-logo.png" alt="Coders of Bharat" class="amp-cob-logo-img">
+  <!-- Sky-Cloud Top Header Matching Landing Page (/) -->
+  <div class="cl-demo-hero-bg">
+    <header class="cl-navbar">
+      <a class="cl-brand" href="/" aria-label="AutoPatch home">
+        <span class="cl-brand-mark" aria-hidden="true">
+          <img src="/images/coders-of-bharat-favicon.svg" alt="Coders of Bharat" width="22" height="22">
         </span>
-        <span class="demo-wordmark">AutoPatch</span>
-        <span class="brand-divider" aria-hidden="true"></span>
-        <span class="app-name">Acme <span>Billing Client</span></span>
+        <span class="cl-brand-word">AutoPatch</span>
       </a>
 
-      <nav class="app-nav" aria-label="Acme Billing">
-        <span class="nav-current" aria-current="page">Demo client</span>
-        <a href="/console">Operator console</a>
+      <nav class="cl-nav-links" aria-label="Primary navigation">
         <a href="/">Home</a>
+        <a href="/demo" style="color:#141416;font-weight:600;">Billing Demo</a>
+        <a href="/console">Operator Console</a>
+        <a href="#raw-card">Wire JSON</a>
       </nav>
 
-      <div class="app-actions">
-        <span class="workspace-chip"><span class="dot dot--green"></span>SYNTHETIC CLIENT</span>
-        <button class="theme-toggle" id="demo-theme-toggle" type="button" aria-label="Switch to dark theme">
-          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </button>
-        <a class="demo-header-cta" href="/console">Console &rarr;</a>
+      <div class="cl-nav-right">
+        <button class="cl-text-link" type="button" data-open-judge-tour="0" style="background:none;border:none;cursor:pointer;">Product Tour</button>
+        <a class="cl-split-btn cl-split-btn--sm" href="/console">
+          <span>Open Console</span>
+          <span class="cl-split-arrow">&rarr;</span>
+        </a>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main class="shell page" id="main">
-    <div class="demo-top-meta" data-reveal="fade">
-      <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <span>01 // LIVE CLIENT SURFACE</span>
-        <span class="sep" aria-hidden="true">/</span>
-        <span class="current" aria-current="page">ACME BILLING OVERVIEW</span>
-      </nav>
-      <span class="demo-meta-hint mono">Toggle route to witness genuine client crash vs 0.14 ms heal</span>
-    </div>
-
-    <div class="page-head" data-reveal>
-      <div>
-        <h1>Billing overview.</h1>
-        <p class="page-sub" id="signed-in">Signed in to the demo workspace</p>
-      </div>
-      <div class="page-controls">
-        <div class="segmented" role="group" aria-label="Connection">
-          <button type="button" class="segmented-btn" id="btn-direct" data-mode="direct" aria-pressed="false">Direct upstream</button>
-          <button type="button" class="segmented-btn is-active" id="btn-proxy" data-mode="proxy" aria-pressed="true">Via AutoPatch</button>
+    <div class="cl-shell">
+      <div class="cl-demo-head" data-reveal>
+        <div>
+          <span class="cl-demo-kicker"><span class="cl-demo-kicker-dot"></span>Live Synthetic Client &middot; Acme Billing</span>
+          <h1>Billing overview.</h1>
+          <p class="page-sub" id="signed-in">Switch between Direct upstream and Via AutoPatch to witness a genuine client crash vs. 0.14 ms recovery.</p>
         </div>
-        <button type="button" class="refresh-btn" id="refresh">
-          <svg class="icon"><use href="#i-refresh"/></svg>
-          Refresh
-        </button>
+
+        <div class="page-controls">
+          <div class="segmented" role="group" aria-label="Connection">
+            <button type="button" class="segmented-btn" id="btn-direct" data-mode="direct" aria-pressed="false">Direct upstream</button>
+            <button type="button" class="segmented-btn is-active" id="btn-proxy" data-mode="proxy" aria-pressed="true">Via AutoPatch</button>
+          </div>
+          <button type="button" class="refresh-btn" id="refresh">
+            <svg class="icon" width="14" height="14"><use href="#i-refresh"/></svg>
+            Refresh
+          </button>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="mode-note" id="mode-note" data-reveal data-reveal-delay="60">
-      <span class="dot" id="mode-dot"></span>
-      <span class="mode-text" id="mode-note-text">Requests are routed through AutoPatch, which validates the response against the baseline contract.</span>
+  <main class="cl-demo-page" id="main">
+    <div class="mode-note" id="mode-note" data-reveal>
+      <div style="display:inline-flex;align-items:center;gap:9px;">
+        <span class="dot" id="mode-dot"></span>
+        <span class="mode-text" id="mode-note-text">Requests are routed through AutoPatch, which validates the response against the baseline contract.</span>
+      </div>
       <span class="mode-endpoint mono" id="mode-endpoint">/api/v1/checkout/user</span>
     </div>
 
-    <div class="content-grid" id="content-grid" data-reveal data-reveal-delay="100">
+    <div class="content-grid" id="content-grid" data-reveal>
       <section class="card account-card" id="account-card" aria-busy="true" aria-labelledby="account-title">
         <header class="card-head">
           <div>
-            <p class="card-kicker">01 // ACCOUNT PROFILE</p>
+            <p class="card-kicker">Account profile</p>
             <h2 id="account-title">Billing profile</h2>
           </div>
           <span class="status-pill" id="verified-pill"><span class="dot"></span><span>Verified</span></span>
@@ -133,7 +119,7 @@
               <span class="field-label">Current balance</span>
               <div class="balance num" id="balance">$0.00</div>
             </div>
-            <span class="balance-note">USD · billing currency</span>
+            <span class="balance-note">USD &middot; billing currency</span>
           </div>
 
           <dl class="detail-list">
@@ -148,7 +134,7 @@
       <aside class="card connection-card" aria-labelledby="connection-title">
         <header class="card-head">
           <div>
-            <p class="card-kicker">02 // ROUTE TELEMETRY</p>
+            <p class="card-kicker">Route telemetry</p>
             <h2 id="connection-title">Connection</h2>
           </div>
           <span class="tiny-pill" id="conn-mode-pill">proxy</span>
@@ -167,16 +153,16 @@
 
         <div class="conn-foot">
           <span id="last-updated">Not refreshed yet</span>
-          <a href="/console">Open console <svg class="icon"><use href="#i-arrow"/></svg></a>
+          <a href="/console">Open console &rarr;</a>
         </div>
       </aside>
     </div>
 
-    <details class="card raw-card" id="raw-card" open data-reveal data-reveal-delay="140">
+    <details class="card raw-card" id="raw-card" open data-reveal>
       <summary>
         <span class="raw-summary">
-          <strong>03 // Latest wire payload</strong>
-          <span class="raw-meta mono" id="raw-meta">No response yet</span>
+          <strong>Latest wire payload</strong>
+          <span class="raw-meta mono" id="raw-meta" style="margin-left:10px;color:#8c9099;font-size:12px;">No response yet</span>
         </span>
         <span class="raw-toggle">JSON</span>
       </summary>
@@ -201,7 +187,7 @@
         <div class="error-block">
           <span class="error-label">Exception message</span>
           <p class="error-message" id="crash-message">-</p>
-          <span class="error-label">Stack · first line</span>
+          <span class="error-label">Stack &middot; first line</span>
           <pre class="error-stack" id="crash-stack">-</pre>
         </div>
 
@@ -213,14 +199,11 @@
         </details>
 
         <div class="crash-actions">
-          <button type="button" class="btn btn-primary" id="crash-retry">
-            <svg class="icon"><use href="#i-shield"/></svg>
-            Retry via AutoPatch
+          <button type="button" class="cl-split-btn cl-split-btn--sm" id="crash-retry">
+            <span>Retry via AutoPatch</span>
+            <span class="cl-split-arrow">&rarr;</span>
           </button>
-          <a class="btn btn-secondary" href="/console">
-            Open console
-            <svg class="icon"><use href="#i-arrow"/></svg>
-          </a>
+          <a class="cl-ghost-btn" href="/console" style="height:38px;">Open console</a>
         </div>
 
         <p class="crash-foot">The crash above is genuine: the exception was thrown by this page, not staged by AutoPatch.</p>
@@ -253,88 +236,59 @@
         <p class="service-note" id="service-note">No fabricated data was returned. AutoPatch fails loudly instead of guessing a value.</p>
 
         <div class="crash-actions">
-          <button type="button" class="btn btn-primary" id="service-retry">
-            <svg class="icon"><use href="#i-refresh"/></svg>
-            Refresh
+          <button type="button" class="cl-split-btn cl-split-btn--sm" id="service-retry">
+            <span>Refresh</span>
+            <span class="cl-split-arrow">&rarr;</span>
           </button>
-          <a class="btn btn-secondary" href="/console">
-            Open console
-            <svg class="icon"><use href="#i-arrow"/></svg>
-          </a>
+          <a class="cl-ghost-btn" href="/console" style="height:38px;">Open console</a>
         </div>
       </div>
     </section>
-
   </main>
 
-  <!-- Shared Nexola Editorial Footer with Ambient Gradient Blur -->
-  <footer class="site-footer site-footer--compact">
-    <div class="footer-ambient-blur" aria-hidden="true"></div>
-    <div class="shell footer-inner">
-      <div class="footer-top-row">
-        <div class="footer-brand-block">
-          <div class="footer-wordmark">
-            <span class="brand-dot">&bull;</span>
-            <span class="brand-text">AutoPatch</span>
-          </div>
-          <p class="footer-bio">
-            Acme Billing is a synthetic client surface demonstrating live upstream drift crashes vs autonomous 0.14 ms contract healing.
+  <footer class="cl-footer">
+    <div class="cl-shell">
+      <div class="cl-footer-top">
+        <div>
+          <p class="cl-footer-pitch">
+            Acme Billing synthetic client demonstrating live upstream drift crashes vs. 0.14 ms autonomous healing.
           </p>
-          <div class="footer-pill-status">
-            <span class="status-pulse-dot"></span>
-            <span id="footer-llm">LLM: mock</span>
-          </div>
+          <span id="footer-llm" style="font-size:12px;color:#ff5e14;font-weight:600;">LLM: mock</span>
         </div>
 
-        <div class="footer-links-grid">
-          <div class="footer-col">
-            <span class="footer-col-title">SURFACES</span>
-            <a href="/">Landing Overview</a>
-            <a href="/console">Operator Console</a>
-            <a href="/demo">Acme Billing Demo</a>
-          </div>
-          <div class="footer-col">
-            <span class="footer-col-title">VERIFICATION</span>
-            <span class="footer-static-item">Real Client TypeError Test</span>
-            <span class="footer-static-item">Sub-ms Proxy Healing</span>
-            <span class="footer-static-item">502 Fail-Closed Guard</span>
-          </div>
-          <div class="footer-col">
-            <span class="footer-col-title">TEAM</span>
-            <span class="footer-static-item">Team Coders of Bharat</span>
-            <span class="footer-static-item">Google Startup Buildathon</span>
-            <span class="footer-static-item">Bangalore, India</span>
-          </div>
+        <div class="cl-footer-col">
+          <span class="cl-footer-col-h">Surfaces</span>
+          <a href="/">Landing Overview</a>
+          <a href="/console">Operator Console</a>
+          <a href="/demo">Acme Billing Demo</a>
+        </div>
+
+        <div class="cl-footer-col">
+          <span class="cl-footer-col-h">Verification</span>
+          <span class="cl-f-static">Real Client TypeError Test</span>
+          <span class="cl-f-static">0.14 ms Proxy Healing</span>
+          <span class="cl-f-static">502 Fail-Closed Guard</span>
+        </div>
+
+        <div class="cl-footer-col">
+          <span class="cl-footer-col-h">Team</span>
+          <span class="cl-f-static">Coders of Bharat</span>
+          <span class="cl-f-static">Anirudh Verma</span>
+          <span class="cl-f-static">Startup Buildathon 2026</span>
         </div>
       </div>
 
-      <div class="footer-bottom-row">
-        <span>&copy; 2026 Coders of Bharat &middot; Acme Billing Synthetic Client</span>
-        <span class="footer-tagline">Architected with Gemini &middot; Zero Slop &middot; 100% Deterministic Safety</span>
+      <div class="cl-monumental-wordmark" aria-hidden="true">AutoPatch</div>
+
+      <div class="cl-footer-legal">
+        <span>&copy; 2026 Coders of Bharat &middot; Acme Billing Demo Client</span>
+        <span>Powered by Google Gemini 2.0 Flash &middot; Zero-PII &middot; 5-Gate Safety</span>
       </div>
     </div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script>
-    (() => {
-      const button = document.getElementById('demo-theme-toggle');
-      const meta = document.querySelector('meta[name="theme-color"]');
-      const sync = () => {
-        const dark = document.documentElement.dataset.theme === 'dark';
-        if (button) button.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
-        if (meta) meta.setAttribute('content', dark ? '#0e100d' : '#f2f2ee');
-      };
-      sync();
-      button?.addEventListener('click', () => {
-        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-        document.documentElement.dataset.theme = next;
-        try { localStorage.setItem('autopatch-theme', next); } catch {}
-        sync();
-      });
-    })();
-  </script>
   <script src="/motion.js" defer></script>
   <script src="/walkthrough.js" defer></script>
   <script src="/demo.js" type="module"></script>
