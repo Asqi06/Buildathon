@@ -1,9 +1,9 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/__autopatch/(.*)", "destination": "/api/index" },
-    { "source": "/api/v1/(.*)", "destination": "/api/index" },
-    { "source": "/api/v2/(.*)", "destination": "/api/index" },
+    { "source": "/__autopatch/:path*", "destination": "/api/index?__ap_path=/__autopatch/:path*" },
+    { "source": "/api/v1/:path*", "destination": "/api/index?__ap_path=/api/v1/:path*" },
+    { "source": "/api/v2/:path*", "destination": "/api/index?__ap_path=/api/v2/:path*" },
     { "source": "/console", "destination": "/console.html" },
     { "source": "/console/", "destination": "/console.html" },
     { "source": "/demo", "destination": "/demo.html" },

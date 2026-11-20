@@ -1,3 +1,11 @@
+import 'fastify';
+
+declare module 'fastify' {
+  interface FastifyRequest {
+    rawBody?: Buffer;
+  }
+}
+
 export type FieldType = 'string' | 'number' | 'boolean' | 'iso_datetime';
 
 export type Coerce = 'none' | 'string' | 'number' | 'boolean' | 'iso_datetime';

@@ -196,7 +196,7 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
     { parseAs: 'buffer' },
     (request, body, done) => {
       const buffer = body as Buffer;
-      request.rawBody = buffer;
+      (request as { rawBody?: Buffer }).rawBody = buffer;
       const text = buffer.toString('utf8');
       if (text.trim() === '') {
         done(null, undefined);
@@ -210,7 +210,7 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
     },
   );
   app.addContentTypeParser('*', { parseAs: 'buffer' }, (request, body, done) => {
-    request.rawBody = body as Buffer;
+    (request as { rawBody?: Buffer }).rawBody = body as Buffer;
     done(null, body);
   });
 

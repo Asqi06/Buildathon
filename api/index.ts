@@ -19,6 +19,19 @@ async function getReadyApp(): Promise<FastifyInstance> {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (req.url && req.url.startsWith('/api/index')) {
+    try {
+      const parsed = new URL(req.url, 'http://localhost');
+      const originalPath = parsed.searchParams.get('__ap_path');
+      if (originalPath) {
+        parsed.searchParams.delete('__ap_path');
+        const restQuery = parsed.searchParams.toString();
+        req.url = restQuery ? `${originalPath}?${restQuery}` : originalPath;
+      }
+    } catch {
+      // Keep req.url as-is
+    }
+  }
   const app = await getReadyApp();
   app.server.emit('request', req, res);
 }

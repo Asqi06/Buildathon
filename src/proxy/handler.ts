@@ -40,7 +40,8 @@ function safeHeaders(headers: Record<string, string>): Record<string, string> {
 
 function requestBody(request: FastifyRequest): Buffer | string | undefined {
   if (request.method === 'GET' || request.method === 'HEAD') return undefined;
-  if (request.rawBody && request.rawBody.length > 0) return request.rawBody;
+  const rawBody = (request as FastifyRequest & { rawBody?: Buffer }).rawBody;
+  if (rawBody && rawBody.length > 0) return rawBody;
   if (typeof request.body === 'string') return request.body;
   if (Buffer.isBuffer(request.body)) return request.body;
   if (request.body === undefined || request.body === null) return undefined;
