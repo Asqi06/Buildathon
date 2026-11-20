@@ -1,7 +1,9 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
-import type { Contract } from '../types.js';
+import type { Contract, FieldType, LearnedContract } from '../types.js';
+import { isIsoDatetime } from './validator.js';
+import { isObject } from '../util.js';
 
 const fieldTypeSchema = z.enum(['string', 'number', 'boolean', 'iso_datetime']);
 
@@ -11,8 +13,20 @@ const contractSchema = z.object({
   expected_schema: z.record(z.string().min(1), fieldTypeSchema),
 });
 
+function inferFieldType(val: unknown): FieldType {
+  if (typeof val === 'number') return 'number';
+  if (typeof val === 'boolean') return 'boolean';
+  if (typeof val === 'string') {
+    if (isIsoDatetime(val)) return 'iso_datetime';
+    return 'string';
+  }
+  return 'string';
+}
+
 export class ContractRegistry {
   private readonly contracts: Contract[];
+  private readonly learned = new Map<string, LearnedContract>();
+  private learnModeEnabled = true;
 
   private constructor(contracts: Contract[]) {
     this.contracts = contracts;
@@ -70,5 +84,91 @@ export class ContractRegistry {
 
   get size(): number {
     return this.contracts.length;
+  }
+
+  isLearnMode(): boolean {
+    return this.learnModeEnabled;
+  }
+
+  setLearnMode(enabled: boolean): void {
+    this.learnModeEnabled = enabled;
+  }
+
+  getLearnedContracts(): LearnedContract[] {
+    return Array.from(this.learned.values());
+  }
+
+  recordLearnSample(
+    method: string,
+    endpoint: string,
+    payload: unknown,
+    threshold = 25,
+  ): LearnedContract | null {
+    if (!this.learnModeEnabled || !isObject(payload)) return null;
+
+    const normalizedMethod = method.toUpperCase();
+    const key = `${normalizedMethod} ${endpoint}`;
+
+    // Infer schema from payload
+    const inferred: Record<string, FieldType> = {};
+    for (const [k, v] of Object.entries(payload)) {
+      inferred[k] = inferFieldType(v);
+    }
+
+    let existing = this.learned.get(key);
+    if (!existing) {
+      existing = {
+        endpoint,
+        method: normalizedMethod,
+        samplesObserved: 1,
+        sampleThreshold: threshold,
+        isLocked: false,
+        inferredSchema: inferred,
+        lastUpdated: new Date().toISOString(),
+      };
+      this.learned.set(key, existing);
+    } else {
+      existing.samplesObserved += 1;
+      // Merge keys
+      for (const [k, v] of Object.entries(inferred)) {
+        if (!existing.inferredSchema[k]) {
+          existing.inferredSchema[k] = v;
+        }
+      }
+      existing.lastUpdated = new Date().toISOString();
+    }
+
+    // Auto-lock if threshold reached and not already registered in contracts
+    if (existing.samplesObserved >= existing.sampleThreshold && !existing.isLocked) {
+      this.lockLearned(normalizedMethod, endpoint);
+    }
+
+    return existing;
+  }
+
+  lockLearned(method: string, endpoint: string): Contract | null {
+    const normalizedMethod = method.toUpperCase();
+    const key = `${normalizedMethod} ${endpoint}`;
+    const item = this.learned.get(key);
+    if (!item) return null;
+
+    item.isLocked = true;
+    const existingIndex = this.contracts.findIndex(
+      (c) => c.method === normalizedMethod && c.endpoint === endpoint,
+    );
+
+    const newContract: Contract = {
+      endpoint,
+      method: normalizedMethod,
+      expected_schema: { ...item.inferredSchema },
+    };
+
+    if (existingIndex >= 0) {
+      this.contracts[existingIndex] = newContract;
+    } else {
+      this.contracts.push(newContract);
+    }
+
+    return newContract;
   }
 }

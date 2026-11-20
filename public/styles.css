@@ -1519,3 +1519,426 @@ body {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ==========================================================================
+   Startup SaaS Features: ROI Metrics, Pipeline X-Ray, Zero-PII, Onboarding Modal
+   ========================================================================== */
+
+/* Operation Mode Segmented Control */
+.op-mode-group {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 2px;
+  gap: 2px;
+}
+
+.op-btn {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--r-sm);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.op-btn:hover {
+  color: var(--ink);
+}
+
+.op-btn.is-active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Business ROI Metric Cards */
+.roi-metrics .metric--roi {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.roi-metrics .metric--roi:hover {
+  border-color: var(--line-strong);
+}
+
+.metric-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.badge-roi {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.badge-roi--shield {
+  background: var(--ok-soft);
+  color: var(--ok);
+  border-color: transparent;
+}
+
+.badge-roi--fast {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: transparent;
+}
+
+.metric-value--green {
+  color: var(--ok);
+}
+
+.metric-sparkline-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.sparkline-svg {
+  width: 70px;
+  height: 20px;
+  color: var(--accent);
+}
+
+/* Horizontal Pipeline X-Ray */
+.pipeline-xray {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.xray-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.xray-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.xray-step.is-complete .xray-num {
+  background: var(--ok-soft);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.xray-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.xray-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.xray-sub {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.xray-connector {
+  flex: 1;
+  min-width: 16px;
+  height: 2px;
+  background: var(--line);
+}
+
+/* Zero-PII Compliance Banner & Drawer */
+.pii-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--ok-soft);
+  border: 1px solid rgba(31, 107, 74, 0.2);
+  border-radius: var(--r-sm);
+  margin-bottom: 16px;
+}
+
+.pii-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pii-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ok);
+}
+
+.pii-text {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.pii-preview-drawer {
+  padding: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  margin-bottom: 16px;
+}
+
+.pii-drawer-head {
+  font-size: 11px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.pii-code {
+  max-height: 180px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--surface);
+  padding: 10px;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--line);
+}
+
+/* 3-Column Diff Viewer */
+.diff-3col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.diff-3col-head h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.json-grid--3col {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 960px) {
+  .json-grid--3col {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.json-panel--adapter {
+  border-color: rgba(47, 94, 134, 0.3);
+}
+
+.json-panel--adapter .json-panel-head {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+/* Human-in-the-Loop Incident Card */
+.incident-card {
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--warn-soft);
+  border: 1px solid rgba(138, 90, 0, 0.3);
+  border-radius: var(--r-md);
+}
+
+.incident-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.incident-pill {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--warn);
+}
+
+.incident-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.incident-diff {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+
+.incident-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Connect Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-dialog {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 6px 0 0;
+  color: var(--ink);
+}
+
+.modal-close {
+  background: transparent;
+  border: 0;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modal-close:hover {
+  color: var(--ink);
+}
+
+.modal-body {
+  padding: 20px 24px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.code-box-tabs {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+
+.code-box-tabs .active-tab {
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 4px;
+}
+
+.code-box {
+  position: relative;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.code-box pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.btn-copy-cmd {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.modal-features {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-feat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--surface-2);
+  border-top: 1px solid var(--line);
+}
+

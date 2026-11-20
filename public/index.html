@@ -35,6 +35,7 @@
         <a href="#loop">How it works</a>
         <a href="#gates">Verification</a>
         <a href="#simulator">Simulator</a>
+        <a href="#pricing">Pricing</a>
         <a href="/console">Console</a>
         <a href="/demo">Demo client</a>
       </nav>
@@ -44,7 +45,7 @@
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <a class="btn btn-primary btn-sm header-cta" href="/console">Open console</a>
+        <a class="btn btn-primary btn-sm header-cta" href="/console">Launch Live Chaos Lab</a>
         <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
           <span></span><span></span><span></span>
         </button>
@@ -56,11 +57,18 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="shell hero-grid">
         <div class="hero-copy">
-          <h1 id="hero-title">Your API changed.<br><span>Your app didn't.</span></h1>
-          <p class="hero-sub">AutoPatch maps drifted JSON back to your contract in-process, verifies the fix, and opens a pull request.</p>
+          <div class="hero-pill-badge">
+            <span class="badge-gemini-dot"></span>
+            <span>Google AI Studio · Powered by Gemini 2.0 Flash</span>
+          </div>
+          <h1 id="hero-title">Your API changed.<br><span class="hero-gradient-text">Your app didn't.</span></h1>
+          <p class="hero-sub">AutoPatch sits transparently between your client and upstream APIs. When JSON drift occurs, it repairs shapes in-process (0.14 ms cached), validates with 5 deterministic safety gates, and opens a GitHub PR with permanent adapters.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="/console">Open the operator console</a>
-            <a class="btn btn-secondary" href="/demo">See the demo client</a>
+            <a class="btn btn-primary hero-cta-btn" href="/console">
+              <span>Launch Live Chaos Lab</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a class="btn btn-secondary" href="#simulator">Try Drift Simulator</a>
           </div>
         </div>
 
@@ -325,6 +333,68 @@
           <div>
             <h3>Fails closed</h3>
             <p>When a required field is gone, the response is a 502 with diagnostics, not a guess.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section pricing-section" id="pricing" aria-labelledby="pricing-title">
+      <div class="shell">
+        <div class="pricing-head">
+          <span class="pill-tag">SaaS Business Model</span>
+          <h2 id="pricing-title">Predictable tiers for every engineering scale.</h2>
+          <p>Start free locally with the open source proxy. Upgrade to Pro or Enterprise for Google Gemini AI inference, autonomous GitHub PR workflows, and zero-PII compliance.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Tier 1: Open Source Core -->
+          <div class="pricing-card">
+            <div class="tier-head">
+              <h3>Open Source Core</h3>
+              <p>For independent developers and local experimentation.</p>
+              <div class="tier-price"><span class="price-val">$0</span><span class="price-period">/ forever</span></div>
+            </div>
+            <ul class="tier-features">
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 5-Gate Deterministic Safety Engine</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Sub-millisecond (0.14 ms) memory cache</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Drop-in Docker / CLI local reverse proxy</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Offline Mock mapper included</li>
+            </ul>
+            <a class="btn btn-secondary btn-block" href="/console">Try Core in Sandbox</a>
+          </div>
+
+          <!-- Tier 2: Pro Team (Popular) -->
+          <div class="pricing-card pricing-card--featured">
+            <div class="card-badge">Most Popular</div>
+            <div class="tier-head">
+              <h3>Pro Team</h3>
+              <p>For fast-moving SaaS teams integrating 10+ third-party APIs.</p>
+              <div class="tier-price"><span class="price-val">$99</span><span class="price-period">/ month</span></div>
+            </div>
+            <ul class="tier-features">
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> <strong>Google Gemini 2.0 Flash</strong> Live Inference</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Autonomous GitHub PR Adapter Generator</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Real-time Slack & Discord Webhook Alerts</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Enterprise Canary Healing (5% Rollout)</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Zero-PII Sanitization Enforcement</li>
+            </ul>
+            <a class="btn btn-primary btn-block" href="/console">Launch Pro Sandbox</a>
+          </div>
+
+          <!-- Tier 3: Enterprise -->
+          <div class="pricing-card">
+            <div class="tier-head">
+              <h3>Enterprise Cloud</h3>
+              <p>For high-volume production & strict compliance environments.</p>
+              <div class="tier-price"><span class="price-val">Custom</span><span class="price-period">/ annual</span></div>
+            </div>
+            <ul class="tier-features">
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Dedicated VPC & On-Prem Deployment</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> SOC2 Type II & HIPAA Compliance Pack</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Custom Enterprise Gate Rule Validators</li>
+              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 99.999% Availability SLA & 24/7 Support</li>
+            </ul>
+            <a class="btn btn-secondary btn-block" href="/console">Contact Founders</a>
           </div>
         </div>
       </div>

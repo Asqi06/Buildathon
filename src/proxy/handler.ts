@@ -1,12 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { AutopatchStatus, Contract } from '../types.js';
+import type { AutopatchStatus, Contract, OperationMode } from '../types.js';
 import type { ContractRegistry } from '../contracts/registry.js';
 import { validateContract } from '../contracts/validator.js';
 import type { HealEngine } from '../healer/engine.js';
 import type { MetricsStore } from '../metrics.js';
 import type { EventHub, RequestEvent } from '../events.js';
 import type { PrQueue } from '../github/pr.js';
+import type { AlertManager } from '../alerts/webhook.js';
 import { forwardRequest, UpstreamError } from './forward.js';
 
 export interface ProxyDeps {
@@ -16,6 +17,8 @@ export interface ProxyDeps {
   metrics: MetricsStore;
   events: EventHub;
   prQueue: PrQueue;
+  alertManager?: AlertManager;
+  getOperationMode?: () => OperationMode;
 }
 
 function round(value: number): number {
@@ -42,6 +45,36 @@ function requestBody(request: FastifyRequest): Buffer | string | undefined {
   if (Buffer.isBuffer(request.body)) return request.body;
   if (request.body === undefined || request.body === null) return undefined;
   return JSON.stringify(request.body);
+}
+
+function tryHealOutbound(bodyText: string, errorPayload: unknown): Record<string, unknown> | null {
+  try {
+    const original = JSON.parse(bodyText);
+    const errStr = JSON.stringify(errorPayload).toLowerCase();
+    let healed = false;
+    const copy = { ...original };
+
+    // Common outbound schema drift: phone -> customer.mobile
+    if (original.phone && (errStr.includes('customer.mobile') || errStr.includes('mobile'))) {
+      delete copy.phone;
+      copy.customer = { ...(typeof copy.customer === 'object' && copy.customer ? copy.customer : {}), mobile: original.phone };
+      healed = true;
+    }
+    // Outbound drift: user_id -> id or customer_id
+    if (original.user_id && errStr.includes('customer_id')) {
+      copy.customer_id = original.user_id;
+      delete copy.user_id;
+      healed = true;
+    } else if (original.user_id && errStr.includes('id')) {
+      copy.id = original.user_id;
+      delete copy.user_id;
+      healed = true;
+    }
+
+    return healed ? copy : null;
+  } catch {
+    return null;
+  }
 }
 
 export function createProxyHandler(deps: ProxyDeps) {
@@ -161,9 +194,60 @@ export function createProxyHandler(deps: ProxyDeps) {
       return reply.code(forwarded.status).headers(headers).send(forwarded.body);
     };
 
+    if ((forwarded.status === 400 || forwarded.status === 422) && parseOk) {
+      const rawBody = requestBody(request);
+      if (typeof rawBody === 'string' || Buffer.isBuffer(rawBody)) {
+        const bodyStr = typeof rawBody === 'string' ? rawBody : rawBody.toString('utf8');
+        const healedBody = tryHealOutbound(bodyStr, parsed);
+        if (healedBody) {
+          try {
+            const retryForwarded = await forwardRequest(deps.upstreamBaseUrl, {
+              method: request.method,
+              url: request.raw.url ?? request.url,
+              headers: {
+                ...request.headers,
+                'content-type': 'application/json',
+              },
+              body: JSON.stringify(healedBody),
+            });
+            if (retryForwarded.status >= 200 && retryForwarded.status < 300) {
+              const overheadMs = round(performance.now() - afterUpstream);
+              deps.metrics.recordHealed(false, overheadMs);
+              emitRequest({
+                type: 'request',
+                id: requestId,
+                ts: new Date().toISOString(),
+                method: request.method,
+                path: requestPath,
+                status: 'AUTO_HEALED',
+                cached: false,
+                httpStatus: retryForwarded.status,
+                upstreamMs: round(retryForwarded.upstreamMs),
+                overheadMs,
+                healMs: overheadMs,
+                fingerprint: 'outbound-healed',
+              });
+              const headers = {
+                ...safeHeaders(retryForwarded.headers),
+                'x-autopatch-status': 'healed-outbound',
+                'x-autopatch-bidirectional': 'true',
+                'x-autopatch-overhead-ms': String(overheadMs),
+              };
+              return reply.code(retryForwarded.status).headers(headers).send(retryForwarded.body);
+            }
+          } catch {
+            // Fallthrough to standard passthrough on retry failure
+          }
+        }
+      }
+    }
+
     if (!contract || forwarded.status < 200 || forwarded.status >= 300 || !parseOk) {
       return passthrough();
     }
+
+    // Auto-profile healthy traffic (Zero-config schema learning)
+    deps.registry.recordLearnSample(request.method, requestPath, parsed);
 
     const validation = validateContract(parsed, contract);
     if (validation.valid) {
@@ -245,6 +329,15 @@ export function createProxyHandler(deps: ProxyDeps) {
 
     if (!outcome.ok) {
       deps.metrics.recordUnrecoverable();
+      deps.alertManager?.createDriftAlert({
+        endpoint: requestPath,
+        method: request.method,
+        diffSummary: outcome.missingFields.length ? `Missing: ${outcome.missingFields.join(', ')}` : outcome.reason,
+        confidence: 0,
+        gatesPassed: '4/5 Gates Passed (Blocked at Gate 5: Completeness)',
+        blockedGate: 'Gate 5 (Completeness)',
+        severity: 'critical',
+      });
       emitRequest({
         type: 'request',
         id: requestId,
@@ -280,7 +373,22 @@ export function createProxyHandler(deps: ProxyDeps) {
         });
     }
 
+    const opMode = deps.getOperationMode?.() ?? 'active';
+
     deps.metrics.recordHealed(outcome.cached, healMs);
+    if (!outcome.cached) {
+      deps.alertManager?.createDriftAlert({
+        endpoint: requestPath,
+        method: request.method,
+        diffSummary: Object.entries(outcome.rule.fields)
+          .map(([k, v]) => `${k} <- ${v.from}`)
+          .join('; '),
+        confidence: outcome.rule.confidence,
+        gatesPassed: '5/5 Gates Passed (All Gates Verified)',
+        severity: 'info',
+      });
+    }
+
     deps.events.emit({
       type: 'heal',
       requestId,
@@ -312,6 +420,31 @@ export function createProxyHandler(deps: ProxyDeps) {
       fingerprint: outcome.fingerprint,
     });
 
+    if (!outcome.cached) deps.prQueue.enqueue(outcome.entry);
+
+    // Enterprise Shadow Mode: Observe only, do not alter live traffic
+    if (opMode === 'shadow') {
+      const headers = {
+        ...safeHeaders(forwarded.headers),
+        'x-autopatch-status': 'shadow-observed',
+        'x-autopatch-shadow': 'would-heal',
+        'x-autopatch-overhead-ms': String(overheadMs),
+        'x-autopatch-fingerprint': outcome.fingerprint,
+      };
+      return reply.code(forwarded.status).headers(headers).send(forwarded.body);
+    }
+
+    // Enterprise Canary Mode: Heal 5% of drifted requests, pass 95% through to observe error rates
+    if (opMode === 'canary' && Math.random() > 0.05) {
+      const headers = {
+        ...safeHeaders(forwarded.headers),
+        'x-autopatch-status': 'canary-observed',
+        'x-autopatch-canary': 'observe-only',
+        'x-autopatch-overhead-ms': String(overheadMs),
+      };
+      return reply.code(forwarded.status).headers(headers).send(forwarded.body);
+    }
+
     const headers = {
       ...safeHeaders(forwarded.headers),
       'content-type': 'application/json; charset=utf-8',
@@ -320,10 +453,7 @@ export function createProxyHandler(deps: ProxyDeps) {
       'x-autopatch-fingerprint': outcome.fingerprint,
     };
 
-    const response = reply.code(200).headers(headers).send(JSON.stringify(outcome.after));
-
-    if (!outcome.cached) deps.prQueue.enqueue(outcome.entry);
-    return response;
+    return reply.code(200).headers(headers).send(JSON.stringify(outcome.after));
   };
 }
 

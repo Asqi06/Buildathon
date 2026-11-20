@@ -36,6 +36,35 @@ export interface RuleCacheEntry {
 
 export type AutopatchStatus = 'VERIFIED' | 'AUTO_HEALED' | 'UNRECOVERABLE' | 'PASSTHROUGH';
 
+export type OperationMode = 'active' | 'canary' | 'shadow';
+
+export interface LearnedContract {
+  endpoint: string;
+  method: string;
+  samplesObserved: number;
+  sampleThreshold: number;
+  isLocked: boolean;
+  inferredSchema: Record<string, FieldType>;
+  lastUpdated: string;
+}
+
+export interface WebhookAlert {
+  id: string;
+  ts: string;
+  severity: 'warning' | 'critical' | 'info';
+  title: string;
+  endpoint: string;
+  method: string;
+  diffSummary: string;
+  confidence: number;
+  gatesPassed: string; // e.g. "4/5 Gates Passed (Blocked at Gate 5)"
+  blockedGate?: string;
+  prUrl?: string | null;
+  prBranch?: string | null;
+  ruleKey?: string;
+  status: 'pending' | 'approved' | 'dismissed';
+}
+
 export const CHAOS_MODES = [
   'none',
   'rename',

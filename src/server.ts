@@ -5,7 +5,7 @@ import fastifyStatic from '@fastify/static';
 import fastifyWebsocket from '@fastify/websocket';
 import type { WebSocket } from 'ws';
 import { z } from 'zod';
-import type { AppConfig, ChaosMode } from './types.js';
+import type { AppConfig, ChaosMode, OperationMode } from './types.js';
 import { CHAOS_MODES } from './types.js';
 import { loadConfig, redactedConfigSummary } from './config.js';
 import { ContractRegistry } from './contracts/registry.js';
@@ -17,6 +17,7 @@ import { GroqMapper } from './healer/groq-llm.js';
 import { MetricsStore } from './metrics.js';
 import { EventHub } from './events.js';
 import { PrQueue } from './github/pr.js';
+import { AlertManager } from './alerts/webhook.js';
 import { createProxyHandler } from './proxy/handler.js';
 import { isMain } from './util.js';
 
@@ -28,6 +29,7 @@ export interface BuildServerOptions {
 }
 
 const chaosRequestSchema = z.object({ mode: z.enum(CHAOS_MODES) });
+const modeRequestSchema = z.object({ mode: z.enum(['active', 'canary', 'shadow']) });
 
 function readJsonBody(body: unknown): unknown {
   if (Buffer.isBuffer(body)) {
@@ -62,19 +64,25 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
 
   const metrics = new MetricsStore();
   const events = new EventHub();
+  const alertManager = new AlertManager();
+  let operationMode: OperationMode = 'active';
+
+  // Google AI Gemini given first-class primary priority
   const mapper =
     config.llmMode === 'live'
-      ? config.groqApiKey || !config.geminiApiKey
-        ? new GroqMapper({
-            apiKey: config.groqApiKey,
-            model: config.groqModel,
-            timeoutMs: config.llmTimeoutMs,
-          })
-        : new GeminiMapper({
+      ? config.geminiApiKey
+        ? new GeminiMapper({
             apiKey: config.geminiApiKey,
-            model: config.geminiModel,
+            model: config.geminiModel ?? 'gemini-2.0-flash',
             timeoutMs: config.llmTimeoutMs,
           })
+        : config.groqApiKey
+          ? new GroqMapper({
+              apiKey: config.groqApiKey,
+              model: config.groqModel,
+              timeoutMs: config.llmTimeoutMs,
+            })
+          : new MockMapper()
       : new MockMapper();
   const engine = new HealEngine({
     cache,
@@ -97,6 +105,7 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
       status: 'ok' as const,
       version: '1.0.0',
       startedAt,
+      operationMode,
       llmMode: summary.llmMode,
       llmModel: summary.llmModel,
       geminiConfigured: summary.geminiConfigured,
@@ -111,6 +120,9 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
       rulesCount: cache.size,
       latestPr: prQueue.latestJob,
       metrics: metrics.snapshot(),
+      alertsCount: alertManager.getAlerts().length,
+      learnMode: registry.isLearnMode(),
+      learnedCount: registry.getLearnedContracts().length,
     };
   };
 
@@ -266,6 +278,59 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
     return { ok: true };
   });
 
+  // Enterprise Operation Mode: Active / Canary / Shadow
+  app.get('/__autopatch/api/mode', async () => ({ mode: operationMode }));
+  app.post('/__autopatch/api/mode', async (request, reply) => {
+    const parsed = modeRequestSchema.safeParse(readJsonBody(request.body));
+    if (!parsed.success) {
+      return reply.code(400).send({ error: 'INVALID_MODE', message: 'Mode must be active, canary, or shadow' });
+    }
+    operationMode = parsed.data.mode;
+    events.emit({ type: 'state', ts: new Date().toISOString(), state: snapshotState() } as never);
+    return { ok: true, mode: operationMode };
+  });
+
+  // Human-in-the-Loop Webhook & Incident Alerts
+  app.get('/__autopatch/api/alerts', async () => alertManager.getAlerts());
+  app.post('/__autopatch/api/alerts/:id/approve', async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const alert = alertManager.approveAlert(id);
+    if (!alert) return reply.code(404).send({ error: 'ALERT_NOT_FOUND' });
+    return { ok: true, alert };
+  });
+  app.post('/__autopatch/api/alerts/test', async () => {
+    const alert = alertManager.createDriftAlert({
+      endpoint: '/api/v1/checkout/user',
+      method: 'GET',
+      diffSummary: 'user_id -> id; contact.email_addr -> email',
+      confidence: 0.94,
+      gatesPassed: '5/5 Gates Passed',
+      prUrl: 'https://github.com/CodersOfBharat/autopatch/pull/42',
+      severity: 'info',
+    });
+    return { ok: true, alert };
+  });
+
+  // Traffic Auto-Profiling (Zero-Config Schema Learning)
+  app.get('/__autopatch/api/learn', async () => ({
+    enabled: registry.isLearnMode(),
+    contracts: registry.getLearnedContracts(),
+  }));
+  app.post('/__autopatch/api/learn/lock', async (request, reply) => {
+    const body = readJsonBody(request.body) as { method?: string; endpoint?: string };
+    if (!body?.method || !body?.endpoint) {
+      return reply.code(400).send({ error: 'MISSING_PARAMS', message: 'method and endpoint required' });
+    }
+    const contract = registry.lockLearned(body.method, body.endpoint);
+    if (!contract) return reply.code(404).send({ error: 'NO_LEARNED_CONTRACT' });
+    return { ok: true, contract };
+  });
+  app.post('/__autopatch/api/learn/toggle', async () => {
+    const nextState = !registry.isLearnMode();
+    registry.setLearnMode(nextState);
+    return { ok: true, enabled: nextState };
+  });
+
   const proxyHandler = createProxyHandler({
     upstreamBaseUrl: config.upstreamBaseUrl,
     registry,
@@ -273,6 +338,8 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
     metrics,
     events,
     prQueue,
+    alertManager,
+    getOperationMode: () => operationMode,
   });
 
   app.all('/api/*', proxyHandler);
