@@ -184,6 +184,7 @@ function renderSpecimen(root, key) {
 }
 
 function wireSpecimenTabs(root, onChange) {
+  if (!root) return;
   const tabs = $$('.arch-tab, .specimen-tab', root);
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {

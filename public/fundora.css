@@ -935,6 +935,77 @@ body.fundora-console #jt-launcher-btn {
   display: none !important;
 }
 
+/* Move toasts cleanly to top-right below topbar so they never cover bottom cards */
+body.fundora-console .toast-stack {
+  top: 76px !important;
+  bottom: auto !important;
+  right: 28px !important;
+}
+
+/* ==========================================================================
+   5. MATHEMATICAL CURVE CHARTS (Catmull-Rom Splines & Gaussian Bell Curve)
+   ========================================================================== */
+.mc-stage {
+  position: relative;
+  width: 100%;
+  min-height: 148px;
+  padding-top: 10px;
+}
+
+.mc-stage--tall {
+  min-height: 192px;
+}
+
+.mc-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+  cursor: crosshair;
+}
+
+.mc-axis-txt {
+  fill: var(--fd-muted);
+  font-size: 10.5px;
+  font-weight: 500;
+  font-family: 'Instrument Sans', sans-serif;
+}
+
+.mc-tooltip {
+  position: absolute;
+  top: -2px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: var(--fd-surface);
+  border: 1px solid var(--fd-line);
+  border-radius: 10px;
+  padding: 5px 10px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  z-index: 4;
+  transition: left 0.08s ease-out;
+}
+
+.mc-tooltip span {
+  font-size: 10.5px;
+  color: var(--fd-muted);
+}
+
+.mc-tooltip strong {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fd-ink);
+}
+
+.fd-micro-inline {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--fd-muted);
+}
+
 /* Right Column: Quick Drift Scenarios (Matches Fundora "Upcoming Bill & Payment") */
 .fd-plus-btn {
   width: 30px;

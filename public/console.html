@@ -192,16 +192,16 @@
              =================================================================== -->
         <section class="tab-panel is-active fd-overview-panel" id="panel-traffic" role="tabpanel" aria-labelledby="tab-traffic" tabindex="0">
 
-          <!-- ROW 1: 2 EQUAL HERO OVERVIEW CARDS (Matches Fundora Earning + Spending Row) -->
+          <!-- ROW 1: 2 EQUAL HERO OVERVIEW CARDS WITH REAL MATHEMATICAL CURVES -->
           <div class="fd-top-grid" id="metrics" aria-label="Key health metrics">
-            <!-- Left Hero Card: Revenue Protected + Smooth Royal Blue Area Sparkline -->
+            <!-- Left Hero Card: Revenue Protected + Real Catmull-Rom Cubic Bezier Spline -->
             <article class="fd-card fd-hero-card">
               <div class="fd-card-head">
                 <div class="fd-card-title-row">
                   <h2>Revenue Protected</h2>
-                  <span class="fd-info-dot" title="Estimated checkout revenue protected from silent schema drift outages">i</span>
+                  <span class="fd-info-dot" title="Catmull-Rom cubic Bezier curve of cumulative checkout revenue protected">i</span>
                 </div>
-                <span class="fd-select-pill">This Month</span>
+                <span class="fd-select-pill">Catmull-Rom Spline</span>
               </div>
 
               <div class="fd-big-stat-row">
@@ -209,120 +209,54 @@
                 <span class="fd-pill-dark">+99.99% &uarr;</span>
               </div>
 
-              <div class="fd-area-chart-wrap">
-                <div class="fd-floating-tip">
-                  <span>Live Cache:</span>
-                  <strong>0.14 ms heal</strong>
-                </div>
-                <svg class="fd-area-svg" viewBox="0 0 420 110" preserveAspectRatio="none" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="fdBlueArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#2563EB" stop-opacity="0.22"/>
-                      <stop offset="100%" stop-color="#2563EB" stop-opacity="0.0"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M 0 88 L 48 88 Q 72 88 88 58 Q 108 32 146 36 Q 178 40 198 62 Q 225 78 265 40 Q 295 24 328 52 Q 355 76 385 50 L 420 22 L 420 110 L 0 110 Z" fill="url(#fdBlueArea)"/>
-                  <path d="M 0 88 L 48 88 Q 72 88 88 58 Q 108 32 146 36 Q 178 40 198 62 Q 225 78 265 40 Q 295 24 328 52 Q 355 76 385 50 L 420 22" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round"/>
-                  <line x1="272" y1="38" x2="272" y2="108" stroke="#93C5FD" stroke-width="1.2" stroke-dasharray="3 3"/>
-                  <circle cx="272" cy="38" r="5" fill="#2563EB" stroke="#ffffff" stroke-width="2.5"/>
-                </svg>
-                <div class="fd-chart-axis">
-                  <span>T-5</span><span>T-4</span><span>T-3</span><span>T-2</span><span>T-1</span><span>Live</span>
-                </div>
-              </div>
+              <div class="mc-stage" id="math-revenue-chart" aria-label="Interactive protected revenue spline chart"></div>
             </article>
 
-            <!-- Right Hero Card: Median Heal Speed + 3-Segment Breakdown Bar -->
+            <!-- Right Hero Card: Median Heal Latency + Real Gaussian Density Bell Curve -->
             <article class="fd-card fd-hero-card">
               <div class="fd-card-head">
                 <div class="fd-card-title-row">
-                  <h2>Median Heal Latency</h2>
-                  <span class="fd-info-dot" title="Median in-memory cached rule execution time vs cold AI inference">i</span>
+                  <h2>Heal Latency Distribution</h2>
+                  <span class="fd-info-dot" title="Analytical Gaussian probability density curve centered on live cached p50 latency">i</span>
                 </div>
-                <span class="fd-select-pill">Sub-ms Cache</span>
+                <span class="fd-select-pill">Gaussian PDF (&mu; &plusmn; 1&sigma;)</span>
               </div>
 
               <div class="fd-big-stat-row">
                 <strong class="fd-big-num" data-metric="cached-overhead">0.14 ms</strong>
                 <span class="fd-pill-green">-99.8% vs cold AI</span>
+                <span class="fd-micro-inline"><span data-metric="outages-prevented">12 Drifts</span> &middot; <span data-metric="time-saved">~18 hrs</span> &middot; <span data-metric="prs">0</span> PRs</span>
               </div>
 
-              <div class="fd-breakdown-block">
-                <p class="fd-sub-label">Reliability Breakdown</p>
-                <div class="fd-breakdown-stats">
-                  <div class="fd-bd-item">
-                    <span class="fd-bd-k"><i class="fd-dot fd-dot--blue"></i>Drifts Healed</span>
-                    <strong data-metric="outages-prevented">12 Drifts</strong>
-                  </div>
-                  <div class="fd-bd-item">
-                    <span class="fd-bd-k"><i class="fd-dot fd-dot--soft"></i>Time Saved</span>
-                    <strong data-metric="time-saved">~18 hrs</strong>
-                  </div>
-                  <div class="fd-bd-item">
-                    <span class="fd-bd-k"><i class="fd-dot fd-dot--grey"></i>Auto-PRs</span>
-                    <strong data-metric="prs">0</strong>
-                  </div>
-                </div>
-                <div class="fd-segmented-bar" aria-hidden="true">
-                  <span class="fd-seg fd-seg--1" style="width: 54%"></span>
-                  <span class="fd-seg fd-seg--2" style="width: 30%"></span>
-                  <span class="fd-seg fd-seg--3" style="width: 16%"></span>
-                </div>
-                <p class="fd-micro-note">
-                  <span data-metric="crashes-foot">0 cold &middot; 0 cached</span> heals &middot; Cold p50: <span data-metric="cold-p50">420</span> ms
-                </p>
-              </div>
+              <div class="mc-stage" id="math-latency-curve" aria-label="Interactive Gaussian latency distribution curve"></div>
+              <p class="fd-micro-note" style="margin-top:6px;">
+                <span data-metric="crashes-foot">0 cold &middot; 0 cached</span> heals &middot; Cold AI p50: <span data-metric="cold-p50">420</span> ms
+              </p>
             </article>
           </div>
 
-          <!-- ROW 2: ASYMMETRIC 66% LEFT / 34% RIGHT BENTO SPLIT (Matches Fundora Cash Flow + Upcoming Payments) -->
+          <!-- ROW 2: ASYMMETRIC 66% LEFT / 34% RIGHT BENTO SPLIT -->
           <div class="fd-bento-split">
-            <!-- LEFT 66% COLUMN: Drift Activity Bar Chart + Live Requests Table -->
+            <!-- LEFT 66% COLUMN: Smooth Dual-Series Activity Spline + Live Requests Table -->
             <div class="fd-left-stack">
-              <!-- Drift & Repair Flow Card (Matches Fundora Cash Flow 12-Bar Chart) -->
               <article class="fd-card fd-flow-card">
                 <div class="fd-card-head">
                   <div class="fd-card-title-row">
-                    <h2>API Self-Healing Activity</h2>
-                    <span class="fd-info-dot" title="Total breaking upstream mutations neutralized in-flight">i</span>
+                    <h2>API Self-Healing Throughput</h2>
+                    <span class="fd-info-dot" title="Smooth cubic Bezier curves comparing healed traffic vs Gate 5 fail-closed blocks">i</span>
                   </div>
-                  <span class="fd-select-pill">Real-Time</span>
-                </div>
-
-                <div class="fd-flow-top">
-                  <div>
-                    <strong class="fd-big-num"><span data-metric="crashes">0</span> <span class="fd-num-suffix">Neutralized</span></strong>
-                  </div>
-                  <div class="fd-filter-tabs" aria-label="Status legend">
-                    <span class="fd-ftab is-active">All Traffic</span>
-                    <span class="fd-ftab"><i class="dot dot--green"></i>Healed</span>
-                    <span class="fd-ftab"><i class="dot dot--blue"></i>Verified</span>
-                    <span class="fd-ftab"><i class="dot dot--red"></i>Gate 5 (502)</span>
+                  <div class="fd-filter-tabs" aria-label="Series legend">
+                    <span class="fd-ftab"><i class="dot dot--blue"></i>Healed &amp; Verified</span>
+                    <span class="fd-ftab"><i class="dot dot--red"></i>Gate 5 Blocked (502)</span>
                   </div>
                 </div>
 
-                <!-- Fundora 12-Bar Vertical Chart with Glowing Blue Highlight Bar -->
-                <div class="fd-bar-chart" aria-hidden="true">
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:36%"></span><em>01</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:52%"></span><em>02</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:74%"></span><em>03</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:58%"></span><em>04</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:64%"></span><em>05</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:48%"></span><em>06</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:70%"></span><em>07</em></div>
-                  <div class="fd-bar-col is-featured">
-                    <div class="fd-bar-tooltip">
-                      <span>Cache Hit</span>
-                      <strong>0.14 ms</strong>
-                    </div>
-                    <span class="fd-bar fd-bar--blue" style="height:92%"></span>
-                    <em>Live</em>
-                  </div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:54%"></span><em>09</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:66%"></span><em>10</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:50%"></span><em>11</em></div>
-                  <div class="fd-bar-col"><span class="fd-bar" style="height:42%"></span><em>12</em></div>
+                <div class="fd-flow-top" style="margin-bottom:8px;">
+                  <strong class="fd-big-num"><span data-metric="crashes">0</span> <span class="fd-num-suffix">Drifts Neutralized</span></strong>
+                  <span class="fd-select-pill">Hover curve to inspect</span>
                 </div>
+
+                <div class="mc-stage mc-stage--tall" id="math-throughput-chart" aria-label="Interactive throughput spline curve"></div>
               </article>
 
               <!-- Recent API Requests Card (Matches Fundora Recent Transaction Table) -->
@@ -1403,6 +1337,7 @@
     })();
   </script>
   <script src="/motion.js" defer></script>
+  <script src="/charts.js" defer></script>
   <script src="/walkthrough.js" defer></script>
   <script src="/console.js" type="module"></script>
 </body>

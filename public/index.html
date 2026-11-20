@@ -3,503 +3,466 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AutoPatch &middot; Autonomous Self-Healing API Infrastructure</title>
-  <meta name="description" content="Turn breaking API schema drift into zero-downtime self-healing insights. AutoPatch intercepts payload mutations in 0.14 ms, validates through 5 fail-closed safety gates, and dispatches typed pull requests.">
+  <title>AutoPatch &middot; One Proxy for Every Breaking API</title>
+  <meta name="description" content="AutoPatch intercepts breaking third-party JSON schema drift in real time, repairs payloads in 0.14 ms through 5 fail-closed safety gates, and opens typed GitHub pull requests.">
   <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/svg+xml" href="/images/coders-of-bharat-favicon.svg">
   <link rel="alternate icon" type="image/png" href="/images/coders-of-bharat-logo.png">
   <link rel="preload" href="/vendor/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/vendor/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <script>
-    (() => {
-      try {
-        const saved = localStorage.getItem('autopatch-theme');
-        document.documentElement.dataset.theme = saved === 'dark' ? 'dark' : 'light';
-      } catch {
-        document.documentElement.dataset.theme = 'light';
-      }
-    })();
-  </script>
   <link rel="stylesheet" href="/base.css">
-  <link rel="stylesheet" href="/home.css">
+  <link rel="stylesheet" href="/cliento.css">
 </head>
-<body class="amplitux-theme">
+<body class="cliento-theme">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <main id="main">
     <!-- =====================================================================
-         1. AMPLITUX MINT-TEAL ROUNDED HERO CONTAINER WITH FLOATING PILL NAVBAR
+         1. SKY-CLOUD HERO & MINIMAL NAVBAR (Matches Dribbble Video 00:00-00:02)
          ===================================================================== -->
-    <section class="amp-hero-wrapper" aria-labelledby="hero-title">
-      <div class="amp-hero-stage">
-        <!-- Concentric Translucent Mint Arcs (Exact Amplitux Background Rings) -->
-        <div class="amp-arc amp-arc--left" aria-hidden="true"></div>
-        <div class="amp-arc amp-arc--right" aria-hidden="true"></div>
-        <div class="amp-arc amp-arc--center" aria-hidden="true"></div>
+    <section class="cl-hero-section" aria-labelledby="hero-title">
+      <header class="site-header cl-navbar">
+        <a class="cl-brand" href="/" aria-label="AutoPatch by Coders of Bharat home">
+          <span class="cl-brand-mark" aria-hidden="true">
+            <img src="/images/coders-of-bharat-favicon.svg" alt="Coders of Bharat" width="22" height="22">
+          </span>
+          <span class="cl-brand-word">AutoPatch</span>
+        </a>
 
-        <!-- Floating Obsidian Pill Navigation Bar -->
-        <header class="site-header amp-pill-header">
-          <div class="amp-pill-navbar">
-            <a class="amp-brand" href="/" aria-label="AutoPatch by Coders of Bharat home">
-              <span class="amp-cob-badge" aria-hidden="true">
-                <img src="/images/coders-of-bharat-logo.png" alt="Coders of Bharat" class="amp-cob-logo-img">
-              </span>
-              <span class="amp-brand-name">AutoPatch</span>
-            </a>
+        <nav class="cl-nav-links" id="site-nav" aria-label="Primary navigation">
+          <a href="#clarity">Product</a>
+          <a href="#features">Features</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#simulator">Simulator</a>
+          <a href="#faq">FAQ</a>
+        </nav>
 
-            <nav class="site-nav amp-nav-links" id="site-nav" aria-label="Primary navigation">
-              <a href="#features" class="amp-nav-link is-current">Home</a>
-              <a href="#features" class="amp-nav-link">Product</a>
-              <a href="#capabilities" class="amp-nav-link">Solution</a>
-              <a href="#simulator" class="amp-nav-link">Simulator</a>
-              <a href="#judge-rubric" class="amp-nav-link">Architecture</a>
-              <a href="/demo" class="amp-nav-link">Demo</a>
-            </nav>
+        <div class="cl-nav-right">
+          <a class="cl-text-link" href="/demo">Demo</a>
+          <a class="cl-split-btn cl-split-btn--sm" href="/console">
+            <span>Open Console</span>
+            <span class="cl-split-arrow">&rarr;</span>
+          </a>
+        </div>
+      </header>
 
-            <div class="amp-nav-actions">
-              <button class="theme-toggle amp-theme-btn" id="theme-toggle" type="button" aria-label="Toggle theme">
-                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-              </button>
-              <a class="amp-pill-login" href="/console">Console</a>
-              <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
-                <span></span><span></span>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <!-- Centered Hero Copy Block -->
-        <div class="amp-hero-copy" data-reveal>
-          <div class="amp-eyebrow-pill">
-            <span class="amp-live-dot"></span>
-            <span id="hero-live-status">AUTONOMOUS API SELF-HEALING &middot; 0.14 MS</span>
-          </div>
-
-          <h1 class="amp-hero-title" id="hero-title">
-            Turn API drift into<br>zero-downtime insights
-          </h1>
-
-          <p class="amp-hero-sub">
-            AutoPatch intercepts breaking third-party schema changes in real time, repairs payloads in 0.14 ms through 5 fail-closed safety gates, and opens typed GitHub pull requests.
-          </p>
-
-          <div class="amp-hero-cta-row">
-            <a class="amp-btn-dark" href="/console">Get Started</a>
-            <button class="amp-btn-glass" type="button" data-open-judge-tour="0">Interactive Product Tour</button>
-            <a class="amp-btn-glass" href="#simulator">Try Drift Lab</a>
-          </div>
+      <div class="cl-hero-center" data-reveal>
+        <div class="cl-toggle-pill" aria-hidden="true">
+          <span class="cl-toggle-knob"></span>
         </div>
 
-        <!-- Embedded Frosted-Glass SaaS Dashboard Preview (Exact Amplitux Hero Mockup) -->
-        <div class="amp-dashboard-window" data-specimen="hero" data-reveal data-reveal-delay="120">
-          <!-- Left Floating Icon Rail -->
-          <aside class="amp-dash-rail" aria-hidden="true">
-            <div class="amp-rail-logo">
-              <img src="/images/coders-of-bharat-favicon.svg" alt="" width="28" height="28">
-            </div>
-            <div class="amp-rail-icon is-active">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-            </div>
-            <div class="amp-rail-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            </div>
-            <div class="amp-rail-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <div class="amp-rail-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4"/></svg>
-            </div>
-          </aside>
+        <h1 class="cl-hero-title" id="hero-title">
+          One proxy for every<br>breaking API
+        </h1>
 
-          <!-- Main Dashboard Content Area -->
-          <div class="amp-dash-main">
-            <!-- Dashboard Top Bar -->
-            <div class="amp-dash-topbar">
-              <span class="amp-dash-title">Overview</span>
-              <div class="amp-dash-search">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <span>GET /api/v1/checkout/user</span>
-              </div>
-              <div class="amp-dash-user">
-                <div class="arch-pill arch-pill--ok" data-specimen-status>
-                  <span class="dot-green"></span>
-                  <span>HEALED &middot; 200 OK</span>
-                </div>
-                <span class="amp-user-chip">
-                  <span class="amp-user-avatar">CB</span>
-                  <span>Coders of Bharat</span>
-                </span>
-              </div>
-            </div>
-
-            <!-- 2-Column Dashboard Cards (KPIs Left + Growth Bar Chart & Live Diff Right) -->
-            <div class="amp-dash-grid">
-              <!-- Left KPI Card -->
-              <div class="amp-dash-card amp-kpi-card">
-                <div class="amp-card-head">
-                  <strong>KPIs</strong>
-                  <span class="amp-card-tag">Real-Time</span>
-                </div>
-
-                <div class="amp-kpi-list">
-                  <div class="amp-kpi-item">
-                    <div>
-                      <span class="amp-kpi-label">Protected Revenue</span>
-                      <div class="amp-kpi-val">$873.4k</div>
-                    </div>
-                    <span class="amp-trend-up">+18.4%</span>
-                  </div>
-
-                  <div class="amp-kpi-item">
-                    <div>
-                      <span class="amp-kpi-label">Drifted Calls Healed</span>
-                      <div class="amp-kpi-val">124,970</div>
-                    </div>
-                    <span class="amp-trend-up">+24.2%</span>
-                  </div>
-
-                  <div class="amp-kpi-item">
-                    <div>
-                      <span class="amp-kpi-label">Cache Hit Efficiency</span>
-                      <div class="amp-kpi-val">99.86%</div>
-                    </div>
-                    <span class="amp-trend-up">0.14 ms</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right Growth & Live Payload Card -->
-              <div class="amp-dash-card amp-chart-card">
-                <div class="amp-card-head">
-                  <strong>This year&rsquo;s drift interception &amp; live repair</strong>
-                  <div class="arch-tabs-bar" role="group" aria-label="Scenario Selector">
-                    <button class="arch-tab is-active" type="button" data-scenario="rename">Renamed</button>
-                    <button class="arch-tab" type="button" data-scenario="nest">Nested</button>
-                    <button class="arch-tab" type="button" data-scenario="combo_v2">Combo v2</button>
-                  </div>
-                </div>
-
-                <!-- Signature Amplitux Mint-Teal Vertical Pill Bar Chart -->
-                <div class="amp-bar-chart" aria-hidden="true">
-                  <span class="amp-bar" style="--h: 48%"></span>
-                  <span class="amp-bar" style="--h: 72%"></span>
-                  <span class="amp-bar" style="--h: 35%"></span>
-                  <span class="amp-bar" style="--h: 84%"></span>
-                  <span class="amp-bar" style="--h: 56%"></span>
-                  <span class="amp-bar" style="--h: 94%"></span>
-                  <span class="amp-bar" style="--h: 64%"></span>
-                  <span class="amp-bar" style="--h: 42%"></span>
-                  <span class="amp-bar" style="--h: 88%"></span>
-                  <span class="amp-bar" style="--h: 76%"></span>
-                  <span class="amp-bar" style="--h: 52%"></span>
-                  <span class="amp-bar" style="--h: 96%"></span>
-                  <span class="amp-bar" style="--h: 68%"></span>
-                  <span class="amp-bar" style="--h: 82%"></span>
-                  <span class="amp-bar" style="--h: 60%"></span>
-                  <span class="amp-bar" style="--h: 90%"></span>
-                </div>
-
-                <!-- Compact Live Before / After JSON Specimen Strip -->
-                <div class="amp-hero-json-split">
-                  <div class="amp-mini-json">
-                    <span class="amp-json-tag amp-json-tag--bad">Upstream Drift</span>
-                    <pre class="code-area" data-specimen-before></pre>
-                  </div>
-                  <div class="amp-mini-json">
-                    <span class="amp-json-tag amp-json-tag--ok">AutoPatch Healed (0.14 ms)</span>
-                    <pre class="code-area" data-specimen-after></pre>
-                  </div>
-                </div>
-                <p class="amp-specimen-note" data-specimen-note>Rule cached in memory. In-process execution in 0.14 ms.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =====================================================================
-         2. AMPLITUX TRUST LOGO STRIP
-         ===================================================================== -->
-    <section class="amp-trust-strip" aria-label="Ecosystem integrations" data-reveal>
-      <div class="shell amp-trust-inner">
-        <p class="amp-trust-heading">
-          The world&rsquo;s best engineering teams trust AutoPatch
+        <p class="cl-hero-sub">
+          An autonomous self-healing reverse proxy that intercepts silent JSON schema drift, repairs payloads in 0.14 ms through 5 fail-closed safety gates, and ships permanent TypeScript pull requests.
         </p>
-        <div class="amp-logos-row">
-          <div class="amp-logo-pill">
-            <span class="amp-partner-logo-wrap">
-              <img src="/images/razoray%20logo.png" alt="Razorpay" class="amp-partner-logo" loading="lazy">
+
+        <div class="cl-hero-cta-row">
+          <a class="cl-split-btn" href="/console">
+            <span>Open Live Console</span>
+            <span class="cl-split-arrow">&rarr;</span>
+          </a>
+          <button class="cl-ghost-btn" type="button" data-open-judge-tour="0">
+            <span>Interactive Product Tour</span>
+          </button>
+        </div>
+
+        <div class="cl-hero-chips" aria-label="Core guarantees">
+          <span class="cl-chip-item">
+            <span class="cl-chip-ico">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </span>
-            <span>Razorpay API</span>
+            <span>0.14 ms Cache</span>
+          </span>
+          <span class="cl-chip-item">
+            <span class="cl-chip-ico">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </span>
+            <span>Zero-PII Gemini</span>
+          </span>
+          <span class="cl-chip-item">
+            <span class="cl-chip-ico">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span>5 Safety Gates</span>
+          </span>
+          <span class="cl-chip-item">
+            <span class="cl-chip-ico">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/></svg>
+            </span>
+            <span>Auto GitHub PRs</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Ecosystem Partner Logo Strip -->
+      <div class="cl-logo-strip" aria-label="Supported API ecosystems" data-reveal>
+        <span class="cl-partner">
+          <img src="/images/razoray%20logo.png" alt="Razorpay" loading="lazy">
+          <span>Razorpay API</span>
+        </span>
+        <span class="cl-partner">
+          <img src="/images/ondc%20logo.png" alt="ONDC Beckn" loading="lazy">
+          <span>ONDC Beckn</span>
+        </span>
+        <span class="cl-partner">
+          <img src="/images/stripe%20logo.png" alt="Stripe" loading="lazy">
+          <span>Stripe Webhooks</span>
+        </span>
+        <span class="cl-partner">
+          <img src="/images/gemini%20logo.webp" alt="Google Gemini" loading="lazy">
+          <span>Google Gemini</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         2. BUILT FOR CLARITY · 3-COLUMN BENTO SHOWCASE (Video 00:03 - 00:06)
+         ===================================================================== -->
+    <section class="cl-section" id="clarity" aria-labelledby="clarity-title">
+      <div class="cl-shell">
+        <div class="cl-section-head" data-reveal>
+          <span class="cl-eyebrow">Built for clarity</span>
+          <h2 class="cl-h2" id="clarity-title">
+            The way API resilience<br>should&rsquo;ve worked from the start
+          </h2>
+          <p class="cl-lead">
+            A deterministic pipeline where silent upstream mutations are healed in memory before they ever reach your production application.
+          </p>
+        </div>
+
+        <div class="cl-clarity-grid">
+          <!-- Card 1 -->
+          <article class="cl-clarity-card" data-reveal>
+            <div class="cl-mini-stage">
+              <div class="cl-mini-row">
+                <span class="cl-mini-row-l"><span class="cl-orange-dot-sq">01</span> Renamed keys</span>
+                <span style="color:#666970;font-size:11px;">id &rarr; user_id</span>
+              </div>
+              <div class="cl-mini-row">
+                <span class="cl-mini-row-l"><span class="cl-orange-dot-sq">02</span> Nested objects</span>
+                <span style="color:#666970;font-size:11px;">contact.email</span>
+              </div>
+              <div class="cl-mini-row">
+                <span class="cl-mini-row-l"><span class="cl-orange-dot-sq">03</span> Type mutations</span>
+                <span style="color:#666970;font-size:11px;">"450.50" &rarr; 450.5</span>
+              </div>
+            </div>
+            <div>
+              <h3>Intercept silent drift</h3>
+              <p>Catch renamed keys, deep nesting, array wraps, and type changes inside HTTP 200 responses with &lt;0.05 ms passthrough overhead.</p>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="cl-clarity-card" data-reveal>
+            <div class="cl-mini-stage">
+              <div class="cl-mini-row">
+                <span class="cl-mini-row-l"><span class="cl-dark-dot-sq">&check;</span> Zero-PII tokens verified</span>
+                <span style="color:#666970;font-size:11px;">Gate 1</span>
+              </div>
+              <div class="cl-mini-row">
+                <span class="cl-mini-row-l"><span class="cl-dark-dot-sq">&check;</span> data_id &ne; user_id lock</span>
+                <span style="color:#666970;font-size:11px;">Gate 5</span>
+              </div>
+              <span class="cl-stage-pill">5/5 Safety Gates Passed</span>
+            </div>
+            <div>
+              <h3>Verify every mapping</h3>
+              <p>Every rule must pass 5 deterministic in-process gates. Missing required financial fields fail closed with HTTP 502 instead of hallucinating.</p>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="cl-clarity-card" data-reveal>
+            <div class="cl-mini-stage">
+              <div class="cl-bubble-white">Upstream broke <code>/api/v1/checkout/user</code> &mdash; healed in 0.14 ms.</div>
+              <div class="cl-bubble-orange">PR #42 opened with typed <code>adapter.ts</code> &amp; passing <code>node:test</code> suite.</div>
+            </div>
+            <div>
+              <h3>Ship permanent fixes</h3>
+              <p>Keep production checkouts online in RAM while AutoPatch opens a ready-to-merge GitHub pull request to fix your codebase permanently.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         3. CORE FEATURES · ALTERNATING DEVICE + ORANGE STAT (Video 00:08 - 00:13)
+         ===================================================================== -->
+    <section class="cl-section" id="features" aria-labelledby="features-title" style="padding-top: 24px;">
+      <div class="cl-shell">
+        <div class="cl-section-head" data-reveal>
+          <span class="cl-eyebrow">Core features</span>
+          <h2 class="cl-h2" id="features-title">
+            Powerful features built<br>for zero downtime
+          </h2>
+          <p class="cl-lead">
+            Simple, deterministic infrastructure that heals broken payloads in microseconds without waking on-call engineers.
+          </p>
+        </div>
+
+        <div class="cl-alt-stack">
+          <!-- Row 1: Dark Device Frame Left + Serif Copy & Giant Orange Stat Right -->
+          <div class="cl-alt-row" data-reveal>
+            <div class="cl-device-dark">
+              <div class="cl-dev-meta">
+                <div>Route<strong>/api/v1/checkout/user</strong></div>
+                <div>Cache<strong>SHA-1 AST</strong></div>
+                <div>Mode<strong>Active</strong></div>
+              </div>
+              <div class="cl-dev-band cl-dev-band--dark">
+                <span>Renamed Keys</span>
+                <span class="cl-band-arrow">&rarr;</span>
+              </div>
+              <div class="cl-dev-band cl-dev-band--orange">
+                <span>Combo v2 Drift</span>
+                <span class="cl-band-arrow">&rarr;</span>
+              </div>
+              <div class="cl-dev-band cl-dev-band--white">
+                <span>Nested Objects</span>
+                <span class="cl-band-arrow">&rarr;</span>
+              </div>
+            </div>
+
+            <div class="cl-alt-copy">
+              <h3>Sub-millisecond<br>rule caching</h3>
+              <p>
+                Google Gemini 2.0 Flash is invoked only once per unique structural drift shape. Once verified, the rule is keyed by its SHA-1 fingerprint and served directly from memory on every subsequent request.
+              </p>
+              <div class="cl-big-orange-stat">
+                <span>Median cached repair latency</span>
+                <strong>0.14 ms</strong>
+              </div>
+            </div>
           </div>
-          <div class="amp-logo-pill">
-            <span class="amp-partner-logo-wrap amp-partner-logo-wrap--wide">
-              <img src="/images/ondc%20logo.png" alt="ONDC" class="amp-partner-logo amp-partner-logo--ondc" loading="lazy">
-            </span>
-            <span>ONDC Beckn</span>
-          </div>
-          <div class="amp-logo-pill">
-            <span class="amp-partner-logo-wrap amp-partner-logo-wrap--stripe">
-              <img src="/images/stripe%20logo.png" alt="Stripe" class="amp-partner-logo amp-partner-logo--stripe" loading="lazy">
-            </span>
-            <span>Stripe Webhooks</span>
-          </div>
-          <div class="amp-logo-pill">
-            <span class="amp-partner-logo-wrap">
-              <img src="/images/gemini%20logo.webp" alt="Google Gemini" class="amp-partner-logo amp-partner-logo--gemini" loading="lazy">
-            </span>
-            <span>Google Gemini</span>
+
+          <!-- Row 2: Serif Copy & Giant Stat Left + Vibrant Orange Frame Right -->
+          <div class="cl-alt-row" data-reveal>
+            <div class="cl-alt-copy">
+              <h3>Zero-PII 5-Gate<br>safety verification</h3>
+              <p>
+                Every customer email, UUID, and financial amount is redacted into structural value-class tokens before Gemini inference. Gate 5 enforces 1-to-1 source path exclusivity so <code>data_id</code> never collides with <code>user_id</code>.
+              </p>
+              <div class="cl-big-orange-stat">
+                <span>Production cache hit efficiency</span>
+                <strong>99.86%</strong>
+              </div>
+            </div>
+
+            <div class="cl-device-orange-frame">
+              <div class="cl-orange-inner-dark">
+                <div style="display:flex;justify-content:space-between;font-size:12px;">
+                  <strong>5-Gate Safety Pipeline</strong>
+                  <span>5 / 5 Passed</span>
+                </div>
+                <div class="cl-orange-progress"><span></span></div>
+              </div>
+              <div class="cl-orange-inner-white">
+                <div class="cl-mini-row">
+                  <span class="cl-mini-row-l"><span class="cl-dark-dot-sq">&check;</span> 100% Schema Coverage</span>
+                  <span style="color:#059669;font-size:11px;font-weight:600;">Passed</span>
+                </div>
+                <div class="cl-mini-row">
+                  <span class="cl-mini-row-l"><span class="cl-dark-dot-sq">&check;</span> Zero-PII Redacted Skeleton</span>
+                  <span style="color:#059669;font-size:11px;font-weight:600;">Verified</span>
+                </div>
+                <div class="cl-mini-row">
+                  <span class="cl-mini-row-l"><span class="cl-dark-dot-sq">&check;</span> 1-to-1 Path Exclusivity</span>
+                  <span style="color:#059669;font-size:11px;font-weight:600;">Enforced</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- =====================================================================
-         3. AMPLITUX BENTO FEATURE CARDS SECTION ("How finance analytics growth you")
+         4. DARK OBSIDIAN BENTO SHOWCASE (Video 00:14 - 00:19)
          ===================================================================== -->
-    <section class="amp-features-section" id="features" aria-labelledby="features-title">
-      <!-- Decorative Side Mint Arcs (Exact Amplitux Section Rings) -->
-      <div class="amp-sec-arc amp-sec-arc--left" aria-hidden="true"></div>
-      <div class="amp-sec-arc amp-sec-arc--right" aria-hidden="true"></div>
-
-      <div class="shell">
-        <div class="amp-section-header" data-reveal>
-          <span class="amp-eyebrow-pill">DATALY BEST SAAS ANALYTICS &amp; SELF-HEALING</span>
-          <h2 class="amp-section-title" id="features-title">
-            How autonomous proxy<br>healing scales your uptime
-          </h2>
+    <section class="cl-section" id="architecture" style="padding: 28px 20px;">
+      <div class="cl-dark-section" data-reveal>
+        <div class="cl-section-head">
+          <span class="cl-eyebrow">Architecture essentials</span>
+          <h2 class="cl-h2">Everything your APIs<br>need &mdash; all in one place</h2>
+          <p class="cl-lead">
+            Click any architectural card below to launch the interactive step-by-step product tour and verify it live against the running proxy.
+          </p>
         </div>
 
-        <!-- Bento Card 1: Text Left, Floating KPI & Bar Chart Right -->
-        <article class="amp-bento-card" data-reveal>
-          <div class="amp-bento-copy">
-            <div class="amp-teal-icon-circle">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <div class="cl-bento-grid">
+          <article class="cl-bento-card cl-bento-card--white" data-open-judge-tour="1">
+            <div>
+              <span class="cl-bento-ico">01</span>
+              <h3>Zero-PII Gemini Engine</h3>
+              <p>Strips raw emails, balances, and IDs into structural tokens before calling Google Gemini 2.0 Flash with strict JSON Schema output.</p>
             </div>
-            <h3>Real-Time drift insights</h3>
-            <p>
-              Intercept schema renames, deep object nesting, and type mutations in-flight. AutoPatch repairs drifted JSON payloads in 0.14 ms from its in-memory rule cache without waking on-call engineers.
-            </p>
-            <a class="amp-btn-white-pill" href="/console">Launch Live Console</a>
-          </div>
+          </article>
 
-          <div class="amp-bento-visual">
-            <!-- Floating Mini KPI Badge (Overlapping top-left of chart card, exact Amplitux design) -->
-            <div class="amp-float-kpi-card">
-              <span class="amp-fk-label">Protected Revenue</span>
-              <div class="amp-fk-row">
-                <strong class="amp-fk-val">$873.4k</strong>
-                <span class="amp-trend-up">+14.2%</span>
-              </div>
-            </div>
+          <article class="cl-bento-card cl-bento-card--orange" data-open-judge-tour="0">
+            <div class="cl-bento-stat">0.14 ms</div>
+            <span>median in-memory repair</span>
+          </article>
 
-            <!-- Main Chart Preview Card -->
-            <div class="amp-visual-chart-box">
-              <div class="amp-vc-head">
-                <strong>This year&rsquo;s self-healing growth</strong>
-                <span>0.14 ms p50</span>
-              </div>
-              <div class="amp-bar-chart amp-bar-chart--compact" aria-hidden="true">
-                <span class="amp-bar" style="--h: 40%"></span>
-                <span class="amp-bar" style="--h: 75%"></span>
-                <span class="amp-bar" style="--h: 50%"></span>
-                <span class="amp-bar" style="--h: 88%"></span>
-                <span class="amp-bar" style="--h: 62%"></span>
-                <span class="amp-bar" style="--h: 95%"></span>
-                <span class="amp-bar" style="--h: 45%"></span>
-                <span class="amp-bar" style="--h: 80%"></span>
-                <span class="amp-bar" style="--h: 70%"></span>
-                <span class="amp-bar" style="--h: 92%"></span>
-                <span class="amp-bar" style="--h: 58%"></span>
-                <span class="amp-bar" style="--h: 84%"></span>
-              </div>
+          <article class="cl-bento-card cl-bento-card--white" data-open-judge-tour="2">
+            <div>
+              <span class="cl-bento-ico">02</span>
+              <h3>data_id &ne; user_id Lock</h3>
+              <p>Entity-Domain Disambiguation + Gate 5 1-to-1 source path exclusivity prevent silent foreign-key corruption.</p>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <!-- Bento Card 2: Floating Gauge & Activity Table Left, Text Right -->
-        <article class="amp-bento-card amp-bento-card--reverse" data-reveal>
-          <div class="amp-bento-visual">
-            <!-- Floating Semi-Circle Gauge Card (Overlapping top-right, exact Amplitux design) -->
-            <div class="amp-float-gauge-card">
-              <svg class="amp-gauge-svg" viewBox="0 0 120 70" aria-hidden="true">
-                <path d="M 14 58 A 46 46 0 0 1 106 58" fill="none" stroke="#e2f6f3" stroke-width="12" stroke-linecap="round"/>
-                <path d="M 14 58 A 46 46 0 0 1 98 34" fill="none" stroke="#45c2b6" stroke-width="12" stroke-linecap="round"/>
-              </svg>
-              <div class="amp-gauge-score">100%</div>
-              <span class="amp-gauge-sub">5/5 Safety Gates</span>
-            </div>
+          <article class="cl-bento-card cl-bento-card--orange" data-open-judge-tour="5">
+            <div class="cl-bento-stat">200&times;</div>
+            <span>single-flight concurrency burst</span>
+          </article>
 
-            <!-- Activity Table Card -->
-            <div class="amp-visual-table-box">
-              <div class="amp-vc-head">
-                <strong>Recent Gate Activity</strong>
-                <span>Zero-PII Verified</span>
-              </div>
-              <table class="amp-mini-table">
-                <thead>
-                  <tr>
-                    <th>Gate</th>
-                    <th>Check</th>
-                    <th>Threshold</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Gate 01</td>
-                    <td>Schema Coverage</td>
-                    <td>100% Keys</td>
-                    <td><span class="amp-pill-ok">Passed</span></td>
-                  </tr>
-                  <tr>
-                    <td>Gate 03</td>
-                    <td>AI Confidence</td>
-                    <td>&ge; 70% Floor</td>
-                    <td><span class="amp-pill-ok">98%</span></td>
-                  </tr>
-                  <tr>
-                    <td>Gate 05</td>
-                    <td>Zero Hallucination</td>
-                    <td>Strict 502</td>
-                    <td><span class="amp-pill-ok">Enforced</span></td>
-                  </tr>
-                </tbody>
-              </table>
+          <article class="cl-bento-card cl-bento-card--white" data-open-judge-tour="3">
+            <div>
+              <span class="cl-bento-ico">03</span>
+              <h3>Universal AI Healing Studio</h3>
+              <p>Test any Razorpay, ONDC Beckn, or Stripe webhook live and synthesize dependency-free TypeScript adapters + node:test suites.</p>
             </div>
-          </div>
+          </article>
 
-          <div class="amp-bento-copy">
-            <div class="amp-teal-icon-circle">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <article class="cl-bento-card cl-bento-card--white" data-open-judge-tour="4">
+            <div>
+              <span class="cl-bento-ico">04</span>
+              <h3>30s Zero-Config Profiler</h3>
+              <p>LEARN_MODE passively observes healthy 200 OK traffic to infer contracts automatically with Shadow &rarr; 5% Canary rollout.</p>
             </div>
-            <h3>Data-Driven 5-Gate safety</h3>
-            <p>
-              Every raw string, email, ID, and financial balance is redacted into a Zero-PII structural skeleton before AI inference. Proposed rules must clear 5 deterministic gates or fail closed with HTTP 502.
-            </p>
-            <a class="amp-btn-white-pill" href="/console">Open AI Healing Studio</a>
-          </div>
-        </article>
+          </article>
+        </div>
       </div>
     </section>
 
     <!-- =====================================================================
-         4. INTERACTIVE DRIFT SIMULATOR (Amplitux Mint-Teal Card Style)
+         5. BEFORE -> AFTER RADIAL CONVERGENCE DIAGRAM (Video 00:20 - 00:23)
          ===================================================================== -->
-    <section class="amp-simulator-section" id="simulator" aria-labelledby="sim-title" data-reveal>
-      <div class="shell">
-        <div class="amp-section-header">
-          <span class="amp-eyebrow-pill">LIVE INTERACTIVE SANDBOX</span>
-          <h2 class="amp-section-title" id="sim-title">
-            Simulate upstream drift<br>&amp; inspect the live repair
+    <section class="cl-section" aria-labelledby="converge-title">
+      <div class="cl-shell">
+        <div class="cl-section-head" data-reveal>
+          <span class="cl-eyebrow">Before &rarr; After</span>
+          <h2 class="cl-h2" id="converge-title">
+            From fragile integrations to<br>self-healing APIs
           </h2>
+          <p class="cl-lead">
+            Clearer contracts, zero 3 AM pages, and every downstream client protected automatically without changing client code.
+          </p>
         </div>
 
-        <div class="amp-bento-card amp-sim-bento">
-          <div class="sim-controls-col">
-            <div class="sim-scenario-list" role="group" aria-label="Drift scenarios">
+        <div class="cl-converge-wrap" data-reveal>
+          <div class="cl-chaos-cloud" aria-label="Common upstream API failures">
+            <span class="cl-chaos-tag">Renamed keys</span>
+            <span class="cl-chaos-tag">TypeError 500</span>
+            <span class="cl-chaos-tag">Nested JSON</span>
+            <span class="cl-chaos-tag">3 AM PagerDuty</span>
+            <span class="cl-chaos-tag">Array wrappers</span>
+            <span class="cl-chaos-tag">Unix epochs</span>
+            <span class="cl-chaos-tag">Deleted fields</span>
+          </div>
+
+          <div class="cl-hub-center">
+            <div class="cl-hub-tile">AutoPatch</div>
+            <span class="cl-hub-caption">Your self-healing proxy</span>
+          </div>
+
+          <div class="cl-outcomes-list" aria-label="AutoPatch guarantees">
+            <div class="cl-outcome-pill"><span class="cl-outcome-dot">1</span><span>0.14 ms in-memory contract repair</span></div>
+            <div class="cl-outcome-pill"><span class="cl-outcome-dot">2</span><span>100% Zero-PII structural redaction</span></div>
+            <div class="cl-outcome-pill"><span class="cl-outcome-dot">3</span><span>5-Gate fail-closed HTTP 502 guard</span></div>
+            <div class="cl-outcome-pill"><span class="cl-outcome-dot">4</span><span>Single-flight 200-request surge shield</span></div>
+            <div class="cl-outcome-pill"><span class="cl-outcome-dot">5</span><span>Automated TypeScript GitHub PRs</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         6. LIVE INTERACTIVE DRIFT SIMULATOR (#simulator)
+         ===================================================================== -->
+    <section class="cl-section" id="simulator" aria-labelledby="sim-title" style="padding-top: 20px;">
+      <div class="cl-shell">
+        <div class="cl-section-head" data-reveal>
+          <span class="cl-eyebrow">Live sandbox</span>
+          <h2 class="cl-h2" id="sim-title">Test live upstream drift<br>right from your browser</h2>
+          <p class="cl-lead">Select any breaking mutation below to inspect the raw drifted JSON vs. AutoPatch&rsquo;s repaired contract output.</p>
+        </div>
+
+        <div class="cl-sim-card" data-reveal>
+          <div>
+            <div class="cl-sim-list" role="group" aria-label="Drift scenarios">
               <button class="sim-scenario-btn is-active" type="button" data-scenario="combo_v2">
                 <span class="scen-index">01</span>
-                <div class="scen-text">
-                  <strong>Combo v2 (Multi-Field Drift)</strong>
-                  <span>Renames, nesting, type coercion &amp; Unix epoch</span>
-                </div>
+                <div class="scen-text"><strong>Combo v2 (Multi-Field)</strong><span>Renames, nesting, coercions &amp; Unix epoch</span></div>
               </button>
               <button class="sim-scenario-btn" type="button" data-scenario="rename">
                 <span class="scen-index">02</span>
-                <div class="scen-text">
-                  <strong>Renamed Keys</strong>
-                  <span>user_id &rarr; id, email &rarr; user_email</span>
-                </div>
+                <div class="scen-text"><strong>Renamed Keys</strong><span>user_id &rarr; id, email &rarr; user_email</span></div>
               </button>
               <button class="sim-scenario-btn" type="button" data-scenario="nest">
                 <span class="scen-index">03</span>
-                <div class="scen-text">
-                  <strong>Object Nesting</strong>
-                  <span>email moved into contact.email_addr</span>
-                </div>
+                <div class="scen-text"><strong>Nested Object</strong><span>email moved inside contact.email_addr</span></div>
               </button>
               <button class="sim-scenario-btn" type="button" data-scenario="type_mismatch">
                 <span class="scen-index">04</span>
-                <div class="scen-text">
-                  <strong>Type Mutation</strong>
-                  <span>Numeric string &rarr; number, integer &rarr; boolean</span>
-                </div>
+                <div class="scen-text"><strong>Type Mutation</strong><span>"450.50" &rarr; 450.5, integer &rarr; boolean</span></div>
               </button>
               <button class="sim-scenario-btn" type="button" data-scenario="array_wrap">
                 <span class="scen-index">05</span>
-                <div class="scen-text">
-                  <strong>Array Wrapping</strong>
-                  <span>Payload enclosed inside data[0]</span>
-                </div>
+                <div class="scen-text"><strong>Array Wrapping</strong><span>Payload wrapped inside data[0]</span></div>
               </button>
-              <button class="sim-scenario-btn sim-scenario-btn--danger" type="button" data-scenario="field_deleted">
+              <button class="sim-scenario-btn" type="button" data-scenario="field_deleted">
                 <span class="scen-index">06</span>
-                <div class="scen-text">
-                  <strong>Field Deleted (Gate 5 Block)</strong>
-                  <span>email absent &middot; HTTP 502 Fail-Closed</span>
-                </div>
+                <div class="scen-text"><strong>Deleted Field (Gate 5)</strong><span>email absent &middot; HTTP 502 fail-closed</span></div>
               </button>
             </div>
 
-            <div class="sim-action-box">
-              <button class="amp-btn-dark amp-btn-block" id="cmd-simulate-btn" type="button">
+            <div style="margin-top: 16px;">
+              <button class="cl-split-btn" id="cmd-simulate-btn" type="button" style="width:100%;justify-content:space-between;">
                 <span>Deploy Drift to Live Upstream</span>
-                <span class="arrow-glyph">&rarr;</span>
+                <span class="cl-split-arrow">&rarr;</span>
               </button>
-              <p class="sim-status-label" id="sim-status">Ready to simulate.</p>
+              <p id="sim-status" style="font-size:12px;color:#666970;margin:8px 0 0;">Ready to simulate.</p>
             </div>
           </div>
 
-          <div class="sim-display-col">
-            <div class="arch-specimen arch-specimen--full" data-specimen="sim">
-              <div class="arch-specimen-header">
-                <div class="endpoint-badge">
-                  <span class="method-tag">GET</span>
-                  <code class="endpoint-path">/api/v1/checkout/user</code>
-                </div>
-                <div class="arch-pill arch-pill--ok" data-specimen-status>
-                  <span class="dot-green"></span>
-                  <span>HEALED &middot; 0.14 MS</span>
-                </div>
-              </div>
-
-              <div class="arch-panes-grid">
-                <div class="arch-pane arch-pane--raw">
-                  <div class="pane-title-bar">
-                    <span class="pane-indicator pane-indicator--red"></span>
-                    <span>OBSERVED UPSTREAM DRIFT</span>
-                  </div>
-                  <pre class="code-area" data-specimen-before>Loading scenario...</pre>
-                </div>
-                <div class="arch-pane arch-pane--healed">
-                  <div class="pane-title-bar">
-                    <span class="pane-indicator pane-indicator--green"></span>
-                    <span>DELIVERED CLIENT CONTRACT</span>
-                  </div>
-                  <pre class="code-area" data-specimen-after>Loading scenario...</pre>
-                </div>
-              </div>
-
-              <div class="arch-specimen-foot">
-                <span class="foot-meta" data-specimen-note>Rule cached. In-process coercion executed.</span>
-                <span class="mono foot-mode" data-specimen-mode>combo_v2</span>
+          <div class="cl-sim-specimen" data-specimen="sim">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+              <code style="font-size:12.5px;font-weight:600;">GET /api/v1/checkout/user</code>
+              <div class="arch-pill arch-pill--ok" data-specimen-status>
+                <span class="dot-green"></span>
+                <span>HEALED &middot; 0.14 MS</span>
               </div>
             </div>
 
-            <div class="live-runtime-strip" aria-label="Live AutoPatch instance state">
-              <div class="live-runtime-metrics">
-                <span class="live-kv"><span class="live-k">UPSTREAM</span> <strong class="live-v" data-live="upstream">checking</strong></span>
-                <span class="live-kv"><span class="live-k">CONTRACTS</span> <strong class="live-v" data-live="contracts">-</strong></span>
-                <span class="live-kv"><span class="live-k">RULES</span> <strong class="live-v" data-live="rules">-</strong></span>
-                <span class="live-kv"><span class="live-k">ENGINE</span> <strong class="live-v" data-live="model">-</strong></span>
+            <div class="cl-sim-panes">
+              <div class="cl-code-box">
+                <span class="cl-pane-lbl cl-pane-lbl--bad">OBSERVED UPSTREAM DRIFT</span>
+                <pre data-specimen-before>Loading...</pre>
               </div>
-              <div class="live-runtime-actions">
-                <span class="live-note" id="live-note">Reading runtime state...</span>
-                <button class="amp-btn-white-pill amp-btn-xs" id="live-refresh" type="button">Refresh</button>
+              <div class="cl-code-box">
+                <span class="cl-pane-lbl cl-pane-lbl--ok">AUTOPATCH HEALED CONTRACT</span>
+                <pre data-specimen-after>Loading...</pre>
               </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:#666970;">
+              <span data-specimen-note>Rule cached in memory.</span>
+              <span class="mono" data-specimen-mode>combo_v2</span>
+            </div>
+
+            <div class="cl-runtime-bar" aria-label="Live runtime telemetry">
+              <span>Upstream: <strong data-live="upstream">checking</strong></span>
+              <span>Contracts: <strong data-live="contracts">-</strong></span>
+              <span>Rules: <strong data-live="rules">-</strong></span>
+              <span>Engine: <strong data-live="model">-</strong></span>
+              <span id="live-note">Syncing...</span>
+              <button class="cl-ghost-btn" id="live-refresh" type="button" style="height:28px;padding:0 10px;font-size:11.5px;">Refresh</button>
             </div>
           </div>
         </div>
@@ -507,357 +470,147 @@
     </section>
 
     <!-- =====================================================================
-         5. CAPABILITIES ACCORDION & PRICING TIERS (Amplitux Clean Cards)
+         7. HOW IT WORKS · INTERACTIVE ORANGE ACCORDION (Video 00:28 - 00:32)
          ===================================================================== -->
-    <section class="amp-capabilities-section" id="capabilities" aria-labelledby="cap-title" data-reveal>
-      <div class="shell">
-        <div class="amp-section-header">
-          <span class="amp-eyebrow-pill">ENTERPRISE ARCHITECTURE</span>
-          <h2 class="amp-section-title" id="cap-title">
-            Five layers of autonomous<br>API contract defense
-          </h2>
+    <section class="cl-section" id="how-it-works" aria-labelledby="wf-title" style="padding-top: 24px;">
+      <div class="cl-shell">
+        <div class="cl-section-head" data-reveal>
+          <span class="cl-eyebrow">How it works</span>
+          <h2 class="cl-h2" id="wf-title">Simple workflow built<br>for zero friction</h2>
+          <p class="cl-lead">From zero-config onboarding to verified pull requests, every step runs deterministically without manual shims.</p>
         </div>
 
-        <div class="amp-cap-grid">
-          <article class="cap-row is-active" data-cap="1">
-            <div class="cap-row-main">
-              <span class="amp-teal-num">01</span>
-              <div class="cap-info">
-                <h3 class="cap-name">Zero-Config Traffic Auto-Profiling</h3>
-                <span class="cap-sub">Automatic Schema Learning in 30 Seconds</span>
-              </div>
-              <span class="cap-type">LEARN_MODE</span>
-              <span class="cap-toggle-glyph">&plus;</span>
+        <div class="cl-workflow-grid" data-reveal>
+          <div class="cl-workflow-visual">
+            <div class="cl-wf-card">
+              <span id="hero-live-status" style="color:#ff5e14;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">RUNTIME ACTIVE &middot; 0.14 MS</span>
+              <strong>AutoPatch Proxy</strong>
+              <span>Team Coders of Bharat &middot; Production Ready</span>
+              <a class="cl-split-btn cl-split-btn--sm" href="/console" style="width:100%;justify-content:space-between;">
+                <span>Launch Console</span>
+                <span class="cl-split-arrow">&rarr;</span>
+              </a>
             </div>
-            <div class="cap-row-drawer">
-              <p>Passively observes healthy 200 OK responses to infer and lock baseline field types, required keys, and ISO-8601 timestamps automatically without manual YAML or JSON Schema writing.</p>
-            </div>
-          </article>
-
-          <article class="cap-row" data-cap="2">
-            <div class="cap-row-main">
-              <span class="amp-teal-num">02</span>
-              <div class="cap-info">
-                <h3 class="cap-name">5-Gate Fail-Closed Verification Engine</h3>
-                <span class="cap-sub">Zero Hallucination &amp; Path Exclusivity</span>
-              </div>
-              <span class="cap-type">SAFETY_GATES</span>
-              <span class="cap-toggle-glyph">&plus;</span>
-            </div>
-            <div class="cap-row-drawer">
-              <p>Validates 100% schema coverage, null safety, confidence floor (&ge; 70%), in-process replay, and 1-to-1 source path exclusivity so `data_id` and `user_id` never collide.</p>
-            </div>
-          </article>
-
-          <article class="cap-row" data-cap="3">
-            <div class="cap-row-main">
-              <span class="amp-teal-num">03</span>
-              <div class="cap-info">
-                <h3 class="cap-name">Shadow, Canary (5%) &amp; Active Healing</h3>
-                <span class="cap-sub">Progressive Production Rollout</span>
-              </div>
-              <span class="cap-type">TRAFFIC_MODES</span>
-              <span class="cap-toggle-glyph">&plus;</span>
-            </div>
-            <div class="cap-row-drawer">
-              <p>Start in Shadow Mode to audit AI rules and GitHub PRs without touching live traffic, promote to 5% Canary traffic, and enable 100% Active Self-Heal with one click.</p>
-            </div>
-          </article>
-
-          <article class="cap-row" data-cap="4">
-            <div class="cap-row-main">
-              <span class="amp-teal-num">04</span>
-              <div class="cap-info">
-                <h3 class="cap-name">Autonomous GitHub PR &amp; Adapter Codegen</h3>
-                <span class="cap-sub">Permanent TypeScript Codebase Fix</span>
-              </div>
-              <span class="cap-type">GIT_AUTOMATION</span>
-              <span class="cap-toggle-glyph">&plus;</span>
-            </div>
-            <div class="cap-row-drawer">
-              <p>Synthesizes a dependency-free TypeScript adapter and a verified `node:test` regression suite, runs the test in-process, and dispatches a ready-to-merge GitHub Pull Request.</p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="amp-pricing-section" id="pricing" aria-labelledby="pricing-title" data-reveal>
-      <div class="shell">
-        <div class="amp-section-header">
-          <span class="amp-eyebrow-pill">PREDICTABLE SAAS TIERS</span>
-          <h2 class="amp-section-title" id="pricing-title">
-            Built for engineering teams<br>of every scale
-          </h2>
-        </div>
-
-        <div class="amp-pricing-grid">
-          <div class="amp-price-card">
-            <span class="amp-price-tier">Open Source Core</span>
-            <div class="amp-price-val">$0<span>/month</span></div>
-            <p class="amp-price-desc">Self-hosted Docker proxy for local development and CI drift testing.</p>
-            <ul class="amp-price-list">
-              <li>0.14 ms In-Memory Rule Cache</li>
-              <li>5-Gate Fail-Closed Verification</li>
-              <li>Universal AI Healing Studio</li>
-            </ul>
-            <a class="amp-btn-white-pill amp-btn-block" href="/console">Deploy Local Proxy</a>
           </div>
 
-          <div class="amp-price-card amp-price-card--featured">
-            <span class="amp-featured-tag">MOST POPULAR</span>
-            <span class="amp-price-tier">Pro Growth Team</span>
-            <div class="amp-price-val">$249<span>/month</span></div>
-            <p class="amp-price-desc">Production self-healing proxy with autonomous GitHub PRs &amp; Slack alerts.</p>
-            <ul class="amp-price-list">
-              <li>Zero-Config Traffic Auto-Profiler</li>
-              <li>Shadow &amp; Canary (5%) Rollout Modes</li>
-              <li>Autonomous GitHub PR Worker</li>
-              <li>Slack &amp; Discord Incident Webhooks</li>
-            </ul>
-            <a class="amp-btn-dark amp-btn-block" href="/console">Launch Live Console</a>
-          </div>
+          <div class="cl-accordion-list">
+            <article class="cap-row is-active" data-cap="1">
+              <div class="cl-acc-head">
+                <span class="cl-acc-title"><span class="cl-acc-num">(01)</span> Connect &amp; auto-profile</span>
+                <span>&minus;</span>
+              </div>
+              <div class="cl-acc-body">
+                Point your service at AutoPatch with zero code changes. LEARN_MODE passively observes healthy 200 OK traffic for 30 seconds to infer and lock baseline contracts automatically.
+              </div>
+            </article>
 
-          <div class="amp-price-card">
-            <span class="amp-price-tier">Enterprise Cloud</span>
-            <div class="amp-price-val">Custom</div>
-            <p class="amp-price-desc">Multi-region high-availability clusters with custom SLA &amp; VPC peering.</p>
-            <ul class="amp-price-list">
-              <li>100% Zero-PII Compliance Audit Log</li>
-              <li>Multi-Model Failover (Gemini + Groq)</li>
-              <li>Dedicated Solutions Architect</li>
-            </ul>
-            <a class="amp-btn-white-pill amp-btn-block" href="/demo">Explore Client Demo</a>
+            <article class="cap-row" data-cap="2">
+              <div class="cl-acc-head">
+                <span class="cl-acc-title"><span class="cl-acc-num">(02)</span> Redact PII &amp; heal in 0.14 ms</span>
+                <span>&plus;</span>
+              </div>
+              <div class="cl-acc-body">
+                When upstream JSON drifts, raw customer data is replaced with structural tokens, Google Gemini 2.0 Flash synthesizes the mapping rule once, and all future requests heal from RAM in 0.14 ms.
+              </div>
+            </article>
+
+            <article class="cap-row" data-cap="3">
+              <div class="cl-acc-head">
+                <span class="cl-acc-title"><span class="cl-acc-num">(03)</span> Merge permanent GitHub PR</span>
+                <span>&plus;</span>
+              </div>
+              <div class="cl-acc-body">
+                AutoPatch synthesizes a dependency-free TypeScript adapter and a verified node:test regression suite, runs it in-process, and opens a GitHub pull request automatically.
+              </div>
+            </article>
           </div>
         </div>
       </div>
     </section>
 
     <!-- =====================================================================
-         6. SYSTEM ARCHITECTURE PILLARS & INTERACTIVE LIVE VERIFICATION
+         8. TECHNICAL Q&A (#faq)
          ===================================================================== -->
-    <section class="amp-rubric-section" id="judge-rubric" aria-labelledby="rubric-title" data-reveal>
-      <div class="shell">
-        <div class="amp-section-header">
-          <span class="amp-eyebrow-pill">INTERACTIVE ARCHITECTURAL VERIFICATION</span>
-          <h2 class="amp-section-title" id="rubric-title">
-            Explore how AutoPatch runs<br>under the hood in real time
-          </h2>
-          <p class="amp-section-sub">
-            Click any architectural pillar below to launch the interactive step-by-step tour and execute live backend proofs against the running AutoPatch proxy.
-          </p>
-          <div style="margin-top: 18px;">
-            <button class="amp-btn-dark" type="button" data-open-judge-tour="0">
-              <span>Launch Step-by-Step Interactive Product Tour</span>
-              <span class="arrow-glyph">&rarr;</span>
+    <section class="cl-section" id="faq" aria-labelledby="faq-title" style="padding-top: 12px;">
+      <div class="cl-shell">
+        <div class="cl-section-head" data-reveal>
+          <span class="cl-eyebrow">Architecture Q&amp;A</span>
+          <h2 class="cl-h2" id="faq-title">Questions, answered clearly</h2>
+        </div>
+
+        <div class="cl-faq-list" data-reveal>
+          <details class="faq-arch-item" open>
+            <summary class="faq-summary"><span>What if a payload has both data_id and user_id?</span><span>&plus;</span></summary>
+            <div class="faq-answer">AutoPatch uses Entity-Domain Disambiguation (separating record/order/transaction IDs from user/customer IDs) plus Gate 5 1-to-1 Source Path Exclusivity so two target fields can never map from the same source path. If a required ID is deleted, Gate 5 returns HTTP 502 instead of corrupting foreign keys.</div>
+          </details>
+          <details class="faq-arch-item">
+            <summary class="faq-summary"><span>Does AutoPatch send customer PII or financial numbers to Gemini?</span><span>&plus;</span></summary>
+            <div class="faq-answer">Never. <code>src/healer/sanitizer.ts</code> replaces 100% of raw values with structural tokens (<code>string:email_like</code>, <code>number:float</code>, <code>number:epoch_like</code>) in local memory before any model call.</div>
+          </details>
+          <details class="faq-arch-item">
+            <summary class="faq-summary"><span>What happens if 200 concurrent requests hit a cold drifted route at once?</span><span>&plus;</span></summary>
+            <div class="faq-answer">Single-Flight Promise Deduplication coalesces all 200 concurrent misses into a single Gemini inference call, caches the 5-Gate verified rule, and returns HTTP 200 OK to all 200 requests simultaneously.</div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         9. DARK CTA BANNER & MONUMENTAL EDITORIAL SERIF FOOTER (Video 00:33-00:35)
+         ===================================================================== -->
+    <footer class="cl-footer">
+      <div class="cl-shell">
+        <div class="cl-cta-banner" data-reveal>
+          <h2>Deploy your first self-healing<br>proxy in minutes</h2>
+          <a class="cl-split-btn" href="/console" style="background:#ffffff;color:#141416;">
+            <span>Open Live Console</span>
+            <span class="cl-split-arrow">&rarr;</span>
+          </a>
+        </div>
+
+        <div class="cl-footer-top">
+          <div>
+            <p class="cl-footer-pitch">
+              Clarity-first self-healing API infrastructure. Zero-PII Gemini healing, 0.14 ms caching, and permanent GitHub PRs.
+            </p>
+            <button class="cl-split-btn cl-split-btn--sm" type="button" data-open-judge-tour="0">
+              <span>Interactive Tour</span>
+              <span class="cl-split-arrow">&rarr;</span>
             </button>
           </div>
-        </div>
 
-        <div class="amp-rubric-grid">
-          <article class="amp-rubric-card" data-open-judge-tour="3">
-            <div class="amp-rc-top">
-              <span class="amp-rc-weight">Live System</span>
-              <span class="amp-rc-tag">LIVE PROOF STEP 04</span>
-            </div>
-            <h3>Functional Product &amp; Implementation</h3>
-            <p>
-              End-to-end reverse proxy with 3 live workbenches (<code>/console</code>, <code>/demo</code>, AI Healing Studio), autonomous TypeScript adapter &amp; <code>node:test</code> synthesis, GitHub PR dispatch, and 99 passing stress tests.
-            </p>
-            <button class="amp-rc-btn" type="button" data-open-judge-tour="3">Run Live PR &amp; Studio Proof &rarr;</button>
-          </article>
-
-          <article class="amp-rubric-card" data-open-judge-tour="2">
-            <div class="amp-rc-top">
-              <span class="amp-rc-weight">Core Engine</span>
-              <span class="amp-rc-tag">LIVE PROOF STEP 03</span>
-            </div>
-            <h3>Technical Architecture &amp; Engineering Quality</h3>
-            <p>
-              SHA-1 structural fingerprinting, 0.14 ms in-memory rule cache, single-flight thundering herd deduplication (200 parallel requests &rarr; 1 AI inference), and 5 fail-closed deterministic safety gates.
-            </p>
-            <button class="amp-rc-btn" type="button" data-open-judge-tour="2">Run 5-Gate &amp; Entity Proof &rarr;</button>
-          </article>
-
-          <article class="amp-rubric-card" data-open-judge-tour="1">
-            <div class="amp-rc-top">
-              <span class="amp-rc-weight">Gemini AI</span>
-              <span class="amp-rc-tag">LIVE PROOF STEP 02</span>
-            </div>
-            <h3>Google AI Integration &amp; Depth</h3>
-            <p>
-              Deep Google Gemini integration (<code>@google/genai</code>) using strict JSON Schema structured outputs over Zero-PII redacted payload skeletons, backed by a 2.8s circuit-breaker failover chain.
-            </p>
-            <button class="amp-rc-btn" type="button" data-open-judge-tour="1">Run Zero-PII Gemini Proof &rarr;</button>
-          </article>
-
-          <article class="amp-rubric-card" data-open-judge-tour="0">
-            <div class="amp-rc-top">
-              <span class="amp-rc-weight">API Resilience</span>
-              <span class="amp-rc-tag">LIVE PROOF STEP 01</span>
-            </div>
-            <h3>Problem&ndash;Solution Alignment</h3>
-            <p>
-              Eliminates the #1 cause of fintech &amp; commerce API outages: unannounced third-party JSON schema drift across Razorpay, Stripe, and ONDC Beckn webhooks without breaking downstream apps.
-            </p>
-            <button class="amp-rc-btn" type="button" data-open-judge-tour="0">Run Drift Interception Proof &rarr;</button>
-          </article>
-
-          <article class="amp-rubric-card" data-open-judge-tour="5">
-            <div class="amp-rc-top">
-              <span class="amp-rc-weight">Developer UX</span>
-              <span class="amp-rc-tag">LIVE PROOF STEP 06</span>
-            </div>
-            <h3>UX, Usability &amp; Accessibility</h3>
-            <p>
-              Zero-config <code>LEARN_MODE</code> passive contract inference from healthy 200 OK traffic, progressive rollout modes (<code>SHADOW</code> &rarr; <code>CANARY 5%</code> &rarr; <code>ACTIVE</code>), and accessible WebSocket X-Ray UI.
-            </p>
-            <button class="amp-rc-btn" type="button" data-open-judge-tour="5">Run Live Telemetry Proof &rarr;</button>
-          </article>
-
-          <article class="amp-rubric-card" data-open-judge-tour="4">
-            <div class="amp-rc-top">
-              <span class="amp-rc-weight">Zero-Config</span>
-              <span class="amp-rc-tag">LIVE PROOF STEP 05</span>
-            </div>
-            <h3>Innovation &amp; Differentiation</h3>
-            <p>
-              Entity-Domain Disambiguation + Gate 5 1-to-1 Source Path Exclusivity prevents <code>data_id</code> and <code>user_id</code> collisions and blocks missing required financial fields with HTTP 502 instead of hallucinating.
-            </p>
-            <button class="amp-rc-btn" type="button" data-open-judge-tour="4">Run Auto-Profiler Proof &rarr;</button>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- =====================================================================
-         7. COMPREHENSIVE ARCHITECTURE & ENGINEERING Q&A
-         ===================================================================== -->
-    <section class="amp-faq-section" id="faq" aria-labelledby="faq-title" data-reveal>
-      <div class="shell amp-faq-shell">
-        <div class="amp-section-header">
-          <span class="amp-eyebrow-pill">TECHNICAL &amp; ARCHITECTURE Q&amp;A</span>
-          <h2 class="amp-section-title" id="faq-title">How AutoPatch works in detail</h2>
-        </div>
-
-        <div class="amp-faq-list">
-          <details class="faq-arch-item" open>
-            <summary class="faq-summary">
-              <span>1. What is AutoPatch doing in plain English, and why does it matter?</span>
-              <span class="faq-icon">&plus;</span>
-            </summary>
-            <div class="faq-answer">
-              <p>When an upstream API provider (like a payment gateway or logistics webhook) renames a field (e.g., <code>user_id</code> &rarr; <code>customer_uuid</code>), nests an object, or changes a type (e.g., <code>"1499.00"</code> &rarr; <code>149900</code>), your production checkout crashes. AutoPatch sits as an ultra-fast reverse proxy in front of your services, detects the schema break in real time, uses Google Gemini on a Zero-PII skeleton to synthesize a deterministic mapping rule, validates it through 5 fail-closed safety gates, heals the live response in <strong>0.14 ms</strong>, and opens a GitHub Pull Request with a permanent TypeScript adapter.</p>
-            </div>
-          </details>
-
-          <details class="faq-arch-item" open>
-            <summary class="faq-summary">
-              <span>2. What if a payload has both data_id and user_id? How does AutoPatch avoid mixing them up?</span>
-              <span class="faq-icon">&plus;</span>
-            </summary>
-            <div class="faq-answer">
-              <p>This is a critical production edge case solved by two layers in AutoPatch: first, <strong>Entity-Domain Disambiguation</strong> separates user/account/profile entity tokens from transaction/order/data/record entity tokens so a generic <code>data.id</code> is never mapped to <code>user_id</code> when a user identifier exists. Second, <strong>Gate 5 (1-to-1 Source Path Exclusivity)</strong> enforces a mathematical bijection lock (<code>seenSources</code>): two required target fields can <em>never</em> pull from the same upstream source path. If a required ID is genuinely missing, Gate 5 blocks the response with HTTP 502 rather than corrupting database foreign keys.</p>
-            </div>
-          </details>
-
-          <details class="faq-arch-item">
-            <summary class="faq-summary">
-              <span>3. Does AutoPatch ever send customer PII or financial numbers to Google Gemini?</span>
-              <span class="faq-icon">&plus;</span>
-            </summary>
-            <div class="faq-answer">
-              <p>Never. Before any external model call, <code>src/healer/sanitizer.ts</code> strips all raw values and replaces them with structural value-class tokens (<code>string:email_like</code>, <code>string:uuid_like</code>, <code>number:float</code>, <code>number:epoch_like</code>). Only JSON key names and structural type tokens leave the proxy; raw customer values remain strictly in local memory.</p>
-            </div>
-          </details>
-
-          <details class="faq-arch-item">
-            <summary class="faq-summary">
-              <span>4. What happens after the first cold AI heal, and what if 200 requests hit at once?</span>
-              <span class="faq-icon">&plus;</span>
-            </summary>
-            <div class="faq-answer">
-              <p>AutoPatch computes a deterministic <strong>SHA-1 structural fingerprint</strong> (<code>src/healer/fingerprint.ts</code>) of the upstream payload shape. During a 200-request traffic spike, <code>inflightHeals</code> (Single-Flight Deduplication) coalesces all 200 concurrent misses into a <strong>single</strong> AI inference call. Once verified by the 5 safety gates, the rule is cached in memory and persisted atomically to disk—healing every subsequent request in <strong>0.14 ms</strong> with zero LLM cost.</p>
-            </div>
-          </details>
-
-          <details class="faq-arch-item">
-            <summary class="faq-summary">
-              <span>5. What if an upstream API completely deletes a required financial or identity field?</span>
-              <span class="faq-icon">&plus;</span>
-            </summary>
-            <div class="faq-answer">
-              <p>AutoPatch is strictly <strong>Fail-Closed</strong>. It never invents or hallucinates dummy emails, fake balances, or default IDs. If a required contract field is completely missing from the upstream payload, <strong>Gate 5 (Zero-Hallucination &amp; Required Coverage)</strong> rejects the rule, returns a clean <code>HTTP 502 Bad Gateway</code> with an exact forensic diagnostic report, and triggers an immediate Slack/webhook alert.</p>
-            </div>
-          </details>
-
-          <details class="faq-arch-item">
-            <summary class="faq-summary">
-              <span>6. How do engineering teams adopt AutoPatch safely without risking live production traffic?</span>
-              <span class="faq-icon">&plus;</span>
-            </summary>
-            <div class="faq-answer">
-              <p>Teams start with <strong>Zero-Config Auto-Profiling (LEARN_MODE)</strong>, which passively observes healthy 200 OK traffic to lock baseline contracts automatically. Next, they run in <strong>Shadow Mode</strong> (where AI rules and GitHub PRs are generated in the background without mutating live responses), promote to <strong>5% Canary Mode</strong>, and finally enable <strong>100% Active Self-Healing</strong>.</p>
-            </div>
-          </details>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Amplitux Clean SaaS Footer -->
-  <footer class="site-footer">
-    <div class="footer-ambient-blur" aria-hidden="true"></div>
-    <div class="shell footer-inner">
-      <div class="footer-top-row">
-        <div class="footer-brand-block">
-          <div class="footer-wordmark">
-            <span class="amp-cob-badge" aria-hidden="true">
-              <img src="/images/coders-of-bharat-logo.png" alt="Coders of Bharat" class="amp-cob-logo-img">
-            </span>
-            <span class="brand-text">AutoPatch</span>
-          </div>
-          <p class="footer-bio">
-            Autonomous self-healing API reverse proxy. Engineered by Team Coders of Bharat for Google Startup Buildathon 2026.
-          </p>
-          <div class="footer-pill-status">
-            <span class="status-pulse-dot"></span>
-            <span>ALL SYSTEMS OPERATIONAL &middot; 0.14 MS OVERHEAD</span>
-          </div>
-        </div>
-
-        <div class="footer-links-grid">
-          <div class="footer-col">
-            <span class="footer-col-title">PRODUCT</span>
-            <a href="#features">Real-Time Insights</a>
-            <a href="#capabilities">5-Gate Safety</a>
+          <div class="cl-footer-col">
+            <span class="cl-footer-col-h">Product</span>
+            <a href="#clarity">How it works</a>
+            <a href="#features">5-Gate Safety</a>
             <a href="#simulator">Drift Simulator</a>
-            <a href="#judge-rubric">Architecture Tour</a>
+            <a href="#faq">Architecture Q&amp;A</a>
           </div>
-          <div class="footer-col">
-            <span class="footer-col-title">WORKBENCHES</span>
+
+          <div class="cl-footer-col">
+            <span class="cl-footer-col-h">Surfaces</span>
             <a href="/console">Operator Console</a>
             <a href="/console">AI Healing Studio</a>
-            <a href="/console">Contract Auto-Profiler</a>
-            <a href="/demo">Acme Billing Client</a>
+            <a href="/demo">Acme Billing Demo</a>
           </div>
-          <div class="footer-col">
-            <span class="footer-col-title">TEAM</span>
-            <span class="footer-static-item">Team Coders of Bharat</span>
-            <span class="footer-static-item">Anirudh Verma (Lead)</span>
-            <span class="footer-static-item">Google Startup Buildathon</span>
-            <span class="footer-static-item">Bangalore, India</span>
+
+          <div class="cl-footer-col">
+            <span class="cl-footer-col-h">Team</span>
+            <span class="cl-f-static">Coders of Bharat</span>
+            <span class="cl-f-static">Anirudh Verma</span>
+            <span class="cl-f-static">Startup Buildathon 2026</span>
           </div>
         </div>
-      </div>
 
-      <div class="footer-bottom-row">
-        <span>&copy; 2026 Coders of Bharat &middot; AutoPatch SaaS Platform</span>
-        <span class="footer-tagline">Powered by Google Gemini &middot; Zero-PII &middot; 5-Gate Deterministic Safety</span>
+        <div class="cl-monumental-wordmark" aria-hidden="true">AutoPatch</div>
+
+        <div class="cl-footer-legal">
+          <span>&copy; 2026 Coders of Bharat &middot; AutoPatch</span>
+          <span>Powered by Google Gemini 2.0 Flash &middot; Zero-PII &middot; 5-Gate Fail-Closed</span>
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+  </main>
 
   <script src="/motion.js" defer></script>
   <script src="/walkthrough.js" defer></script>
