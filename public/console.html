@@ -13,8 +13,7 @@
     (() => {
       try {
         const saved = localStorage.getItem('autopatch-theme');
-        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.dataset.theme = saved || (dark ? 'dark' : 'light');
+        document.documentElement.dataset.theme = saved === 'dark' ? 'dark' : 'light';
       } catch {
         document.documentElement.dataset.theme = 'light';
       }
@@ -22,370 +21,527 @@
   </script>
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/fundora.css">
 </head>
-<body class="console-editorial">
-  <div class="grid-axis-line" aria-hidden="true"></div>
+<body class="console-editorial fundora-console">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="app-shell">
-    <aside class="sidebar" id="sidebar" aria-label="Console navigation">
-      <div class="sidebar-head">
-        <a class="sidebar-brand" href="/">
-          <span class="brand-name-row">
-            <span class="amp-cob-badge" aria-hidden="true">
-              <img src="/images/coders-of-bharat-logo.png" alt="Coders of Bharat" class="amp-cob-logo-img">
-            </span>
-            <span class="brand-name">AutoPatch</span>
-            <span class="brand-ver-tag">v1.0.0</span>
+    <!-- =====================================================================
+         FUNDORA-STYLE CLEAN SIDEBAR (Grouped Navigation + Bottom Action Card)
+         ===================================================================== -->
+    <aside class="sidebar fd-sidebar" id="sidebar" aria-label="Console navigation">
+      <div class="sidebar-head fd-sidebar-head">
+        <a class="sidebar-brand fd-brand" href="/">
+          <span class="fd-brand-icon" aria-hidden="true">
+            <img src="/images/coders-of-bharat-favicon.svg" alt="Coders of Bharat" width="28" height="28">
           </span>
-          <span class="brand-sub">00 // OPERATOR CONSOLE</span>
+          <span class="fd-brand-text">AutoPatch</span>
         </a>
+        <span class="fd-ver-pill">v1.0</span>
         <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Close navigation">
           <span></span><span></span>
         </button>
       </div>
 
-      <nav class="tab-list" role="tablist" aria-label="Console sections" aria-orientation="vertical">
-        <button class="tab-btn is-active" type="button" id="tab-traffic" role="tab" aria-selected="true" data-tab="traffic" aria-controls="panel-traffic">
-          <span class="tab-label"><span class="tab-idx">01</span> Live traffic</span>
-          <span class="tab-count" id="nav-traffic-count">0</span>
+      <!-- Clean Search Input (Filters / Jumps to tabs) -->
+      <div class="fd-search-wrap">
+        <svg class="fd-search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="fd-quick-search" class="fd-search-input" placeholder="Search tools..." aria-label="Quick search console">
+        <span class="fd-kbd">⌘K</span>
+      </div>
+
+      <nav class="tab-list fd-nav-groups" role="tablist" aria-label="Console sections" aria-orientation="vertical">
+        <span class="fd-nav-section-label">MAIN MENU</span>
+
+        <button class="tab-btn fd-nav-item is-active" type="button" id="tab-traffic" role="tab" aria-selected="true" data-tab="traffic" aria-controls="panel-traffic">
+          <span class="tab-label">
+            <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span>Overview</span>
+          </span>
+          <span class="tab-count fd-pill-count" id="nav-traffic-count">0</span>
         </button>
-        <button class="tab-btn" type="button" id="tab-chaos" role="tab" aria-selected="false" data-tab="chaos" aria-controls="panel-chaos">
-          <span class="tab-label"><span class="tab-idx">02</span> Chaos lab</span>
+
+        <button class="tab-btn fd-nav-item" type="button" id="tab-chaos" role="tab" aria-selected="false" data-tab="chaos" aria-controls="panel-chaos">
+          <span class="tab-label">
+            <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Drift Simulator</span>
+          </span>
         </button>
-        <button class="tab-btn" type="button" id="tab-inspector" role="tab" aria-selected="false" data-tab="inspector" aria-controls="panel-inspector">
-          <span class="tab-label"><span class="tab-idx">03</span> Pipeline X-Ray</span>
+
+        <button class="tab-btn fd-nav-item" type="button" id="tab-inspector" role="tab" aria-selected="false" data-tab="inspector" aria-controls="panel-inspector">
+          <span class="tab-label">
+            <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>Healing X-Ray</span>
+          </span>
         </button>
-        <button class="tab-btn" type="button" id="tab-prs" role="tab" aria-selected="false" data-tab="prs" aria-controls="panel-prs">
-          <span class="tab-label"><span class="tab-idx">04</span> Pull requests</span>
-          <span class="tab-count" id="nav-pr-count">0</span>
+
+        <button class="tab-btn fd-nav-item" type="button" id="tab-prs" role="tab" aria-selected="false" data-tab="prs" aria-controls="panel-prs">
+          <span class="tab-label">
+            <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>
+            <span>Pull Requests</span>
+          </span>
+          <span class="tab-count fd-pill-count" id="nav-pr-count">0</span>
         </button>
-        <button class="tab-btn" type="button" id="tab-studio" role="tab" aria-selected="false" data-tab="studio" aria-controls="panel-studio">
-          <span class="tab-label"><span class="tab-idx">05</span> AI Healing Studio</span>
-          <span class="tab-badge-new">LIVE</span>
+
+        <span class="fd-nav-section-label">WORKBENCHES</span>
+
+        <button class="tab-btn fd-nav-item" type="button" id="tab-studio" role="tab" aria-selected="false" data-tab="studio" aria-controls="panel-studio">
+          <span class="tab-label">
+            <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>AI Healing Studio</span>
+          </span>
+          <span class="fd-live-badge">LIVE</span>
         </button>
-        <button class="tab-btn" type="button" id="tab-contracts" role="tab" aria-selected="false" data-tab="contracts" aria-controls="panel-contracts">
-          <span class="tab-label"><span class="tab-idx">06</span> Contracts &amp; Learn</span>
-          <span class="tab-count" id="nav-contracts-count">1</span>
+
+        <button class="tab-btn fd-nav-item" type="button" id="tab-contracts" role="tab" aria-selected="false" data-tab="contracts" aria-controls="panel-contracts">
+          <span class="tab-label">
+            <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Contracts &amp; Learn</span>
+          </span>
+          <span class="tab-count fd-pill-count" id="nav-contracts-count">1</span>
+        </button>
+
+        <span class="fd-nav-section-label">GENERAL</span>
+
+        <a class="fd-nav-link" href="/">
+          <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span>Landing Page</span>
+        </a>
+        <a class="fd-nav-link" href="/demo">
+          <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span>Billing Demo App</span>
+        </a>
+        <button class="fd-nav-link" type="button" data-open-judge-tour="0">
+          <svg class="fd-nav-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Guided Walkthrough</span>
         </button>
       </nav>
 
-      <div class="sidebar-status">
-        <p class="rail-label">Runtime</p>
-        <div class="status-row">
-          <span>Model</span>
-          <span class="chip" id="llm-pill"><span class="status-dot" id="llm-dot"></span><span id="llm-pill-text">LLM: mock</span></span>
+      <!-- Bottom Runtime & Connect Card (Matches Fundora "Starter Plan" card) -->
+      <div class="fd-sidebar-card">
+        <div class="fd-sc-head">
+          <strong>Live Proxy Engine</strong>
+          <span class="chip" id="ws-pill"><span class="status-dot" id="ws-dot"></span><span id="ws-label">Online</span></span>
         </div>
-        <div class="status-row">
-          <span>Event stream</span>
-          <span class="chip" id="ws-pill"><span class="status-dot" id="ws-dot"></span><span id="ws-label">Connecting</span></span>
+        <div class="fd-sc-row">
+          <span>AI Model</span>
+          <span class="chip" id="llm-pill"><span class="status-dot" id="llm-dot"></span><span id="llm-pill-text">Gemini</span></span>
         </div>
-      </div>
-
-      <div class="sidebar-foot">
-        <a href="/">Home</a>
-        <a href="/demo">Demo client</a>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle light or dark mode">
-          <span id="icon-sun">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-          </span>
-          <span id="icon-moon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </span>
-        </button>
+        <button class="fd-blue-cta" id="btn-open-connect-modal" type="button">Connect Any API</button>
       </div>
     </aside>
 
     <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
 
-    <div class="workspace">
-      <header class="topbar">
-        <button class="menu-btn" id="sidebar-toggle" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-
-        <div class="page-id">
-          <span class="console-kicker">01 // REAL-TIME INFRASTRUCTURE CONSOLE</span>
-          <h1>Operator console</h1>
+    <div class="workspace fd-workspace">
+      <!-- =====================================================================
+           CALM, AIRY FUNDORA HEADER BAR
+           ===================================================================== -->
+      <header class="topbar fd-topbar">
+        <div class="fd-topbar-left">
+          <button class="menu-btn" id="sidebar-toggle" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="fd-greeting">
+            <h1>Welcome back, Operator</h1>
+            <p>Monitor live API health, test breaking changes, and inspect 0.14 ms repairs.</p>
+          </div>
         </div>
 
-        <div class="topbar-actions">
-          <!-- Live Hospital ECG Waveform Monitor -->
-          <div class="ecg-monitor-pill" id="ecg-pill" title="Live Proxy Health Telemetry (Canvas Oscilloscope)">
-            <canvas id="ecg-canvas" width="120" height="26" class="ecg-canvas" aria-label="Live ECG heartbeat monitor"></canvas>
-            <div class="ecg-meta">
-              <span class="ecg-bpm" id="ecg-bpm-text">72 BPM</span>
-              <span class="ecg-status-badge" id="ecg-badge">STEADY</span>
-            </div>
-          </div>
+        <!-- Hidden ECG hooks so console.js telemetry loop stays 100% intact without cluttering topbar -->
+        <div id="ecg-pill" hidden aria-hidden="true">
+          <canvas id="ecg-canvas" width="120" height="26"></canvas>
+          <span id="ecg-bpm-text">72 BPM</span>
+          <span id="ecg-badge">STEADY</span>
+        </div>
 
-          <!-- ER Telemetry Web Audio Mute Toggle -->
-          <button class="sound-toggle-btn" id="sound-toggle" type="button" aria-label="Toggle telemetry sound effects" title="ER Audio Effects (Bandage snip & Gate 5 lock)">
-            <svg class="sound-icon sound-icon--on" id="sound-icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-            <svg class="sound-icon sound-icon--off" id="sound-icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-            <span class="sound-label" id="sound-label">Audio: Off</span>
-          </button>
-
-          <div class="op-mode-group" role="group" aria-label="Operation Mode" title="Enterprise Operation Mode">
-            <button class="op-btn is-active" id="op-btn-active" type="button" data-mode="active">Active (100%)</button>
-            <button class="op-btn" id="op-btn-canary" type="button" data-mode="canary">Canary (5%)</button>
+        <div class="topbar-actions fd-topbar-actions">
+          <div class="op-mode-group fd-mode-pills" role="group" aria-label="Operation Mode" title="Rollout Mode">
+            <button class="op-btn is-active" id="op-btn-active" type="button" data-mode="active">Active</button>
+            <button class="op-btn" id="op-btn-canary" type="button" data-mode="canary">Canary 5%</button>
             <button class="op-btn" id="op-btn-shadow" type="button" data-mode="shadow">Shadow</button>
           </div>
-          <button class="btn btn-secondary btn-sm" id="btn-open-connect-modal" type="button">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-            Connect API
+
+          <button class="fd-icon-btn" id="sound-toggle" type="button" aria-label="Toggle telemetry audio" title="Audio feedback">
+            <svg class="sound-icon sound-icon--on" id="sound-icon-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <svg class="sound-icon sound-icon--off" id="sound-icon-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <span class="sr-only" id="sound-label">Audio: Off</span>
           </button>
-          <button class="btn btn-primary btn-sm" id="btn-global-fire-request" type="button">Send live request</button>
+
+          <button class="fd-icon-btn theme-toggle" id="theme-toggle" type="button" aria-label="Toggle light or dark mode" title="Toggle theme">
+            <span id="icon-sun"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+            <span id="icon-moon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+          </button>
+
+          <button class="fd-blue-cta fd-blue-cta--sm" id="btn-global-fire-request" type="button">Send Test Request</button>
+
+          <div class="fd-user-profile" title="Team Coders of Bharat">
+            <span class="fd-user-avatar">CB</span>
+            <div class="fd-user-meta">
+              <strong>Coders of Bharat</strong>
+              <span>Anirudh Verma</span>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main class="main-content" id="main">
-        <section class="metrics-row roi-metrics" id="metrics" aria-label="Business ROI metrics" data-reveal>
-          <article class="metric metric--roi">
-            <div class="metric-top">
-              <p class="metric-label">Protected Revenue</p>
-              <span class="badge-roi">$120 AOV</span>
-            </div>
-            <p class="metric-value metric-value--green" data-metric="protected-revenue">$14,280</p>
-            <p class="metric-foot"><span data-metric="crashes">0</span> silent drifts neutralized</p>
-          </article>
+      <main class="main-content fd-main" id="main">
+        <!-- ===================================================================
+             TAB 01: OVERVIEW DASHBOARD (EXACT FUNDORA BENTO HIERARCHY)
+             =================================================================== -->
+        <section class="tab-panel is-active fd-overview-panel" id="panel-traffic" role="tabpanel" aria-labelledby="tab-traffic" tabindex="0">
 
-          <article class="metric metric--roi">
-            <div class="metric-top">
-              <p class="metric-label">Outages Prevented</p>
-              <span class="badge-roi badge-roi--shield">99.99% Up</span>
-            </div>
-            <p class="metric-value" data-metric="outages-prevented">12 Drifts</p>
-            <p class="metric-foot"><span data-metric="crashes-foot">0 cold · 0 cached</span> heals</p>
-          </article>
-
-          <article class="metric metric--roi">
-            <div class="metric-top">
-              <p class="metric-label">Median Heal Overhead</p>
-              <span class="badge-roi badge-roi--fast">sub-ms</span>
-            </div>
-            <div class="metric-sparkline-row">
-              <p class="metric-value metric-value--accent" data-metric="cached-overhead">0.14<span class="metric-unit"> ms</span></p>
-              <svg class="sparkline-svg" viewBox="0 0 80 24" aria-hidden="true">
-                <path d="M 0 20 L 25 18 L 45 4 L 55 19 L 80 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="80" cy="19" r="3" fill="currentColor"/>
-              </svg>
-            </div>
-            <p class="metric-foot">0.14 ms cache vs <span data-metric="cold-p50">420</span> ms cold AI</p>
-          </article>
-
-          <article class="metric metric--roi">
-            <div class="metric-top">
-              <p class="metric-label">Engineering Time Saved</p>
-              <span class="badge-roi">Auto-PR</span>
-            </div>
-            <p class="metric-value" data-metric="time-saved">~18 hrs</p>
-            <p class="metric-foot"><span data-metric="prs">0</span> PRs opened · 3.5h MTTR saved</p>
-          </article>
-        </section>
-
-        <section class="tab-panel is-active" id="panel-traffic" role="tabpanel" aria-labelledby="tab-traffic" tabindex="0">
-          <header class="panel-head">
-            <div>
-              <h2>Live traffic</h2>
-              <p>Newest first. Select a row to inspect the before and after payload.</p>
-            </div>
-            <div class="legend" aria-label="Status legend">
-              <span><span class="dot dot--blue"></span>Verified</span>
-              <span><span class="dot dot--green"></span>Healed</span>
-              <span><span class="dot dot--red"></span>Failed</span>
-            </div>
-          </header>
-
-          <!-- Live Split-Screen Victim App (Show, Don't Just Tell) -->
-          <section class="victim-sim-container" id="victim-sim-container" aria-label="Split-screen production checkout simulation">
-            <div class="victim-sim-head">
-              <div class="victim-sim-title-group">
-                <span class="victim-live-tag"><span class="pulse-dot"></span> LIVE APP TELEMETRY</span>
-                <h3>Split-Screen Production Simulator: Ecommerce Checkout</h3>
-                <p>Real-time visual comparison: Upstream contract drift breaks raw clients, while AutoPatch heals the payload in 0.14 ms.</p>
-              </div>
-              <div class="victim-sim-actions">
-                <button class="btn btn-secondary btn-xs" id="victim-toggle-drift-btn" type="button">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                  <span id="victim-drift-btn-text">Arm Upstream Drift</span>
-                </button>
-                <button class="btn btn-primary btn-xs" id="victim-test-checkout-btn" type="button">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                  Simulate Split Checkout
-                </button>
-              </div>
-            </div>
-
-            <div class="victim-split-grid">
-              <!-- Left Side: Without AutoPatch -->
-              <div class="victim-card victim-card--unprotected" id="victim-unprotected-card">
-                <div class="victim-card-badge victim-card-badge--danger">
-                  <span class="badge-num">01</span> DIRECT UPSTREAM (RAW UNPROTECTED)
+          <!-- ROW 1: 2 EQUAL HERO OVERVIEW CARDS (Matches Fundora Earning + Spending Row) -->
+          <div class="fd-top-grid" id="metrics" aria-label="Key health metrics">
+            <!-- Left Hero Card: Revenue Protected + Smooth Royal Blue Area Sparkline -->
+            <article class="fd-card fd-hero-card">
+              <div class="fd-card-head">
+                <div class="fd-card-title-row">
+                  <h2>Revenue Protected</h2>
+                  <span class="fd-info-dot" title="Estimated checkout revenue protected from silent schema drift outages">i</span>
                 </div>
-                
-                <div class="checkout-ui" id="unprotected-checkout-ui">
-                  <div class="checkout-head">
-                    <div class="checkout-store">
-                      <div class="store-avatar">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                      </div>
-                      <div>
-                        <strong>Pro SaaS Subscription</strong>
-                        <span class="mono-sub">api.acme.internal/checkout</span>
-                      </div>
-                    </div>
-                    <span class="checkout-price">$49.00</span>
-                  </div>
+                <span class="fd-select-pill">This Month</span>
+              </div>
 
-                  <div class="checkout-fields">
-                    <div class="checkout-field-row">
-                      <span class="checkout-field-label">Customer ID:</span>
-                      <code class="checkout-field-val" id="unprotected-user-val">user.user_id: "usr_99"</code>
-                    </div>
-                    <div class="checkout-field-row">
-                      <span class="checkout-field-label">Receipt Email:</span>
-                      <code class="checkout-field-val" id="unprotected-email-val">alex@acme.io</code>
-                    </div>
-                  </div>
+              <div class="fd-big-stat-row">
+                <strong class="fd-big-num" data-metric="protected-revenue">$14,280</strong>
+                <span class="fd-pill-dark">+99.99% &uarr;</span>
+              </div>
 
-                  <button class="checkout-pay-btn checkout-pay-btn--unprotected" id="unprotected-pay-btn" type="button">
-                    Complete Order ($49.00)
+              <div class="fd-area-chart-wrap">
+                <div class="fd-floating-tip">
+                  <span>Live Cache:</span>
+                  <strong>0.14 ms heal</strong>
+                </div>
+                <svg class="fd-area-svg" viewBox="0 0 420 110" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="fdBlueArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#2563EB" stop-opacity="0.22"/>
+                      <stop offset="100%" stop-color="#2563EB" stop-opacity="0.0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M 0 88 L 48 88 Q 72 88 88 58 Q 108 32 146 36 Q 178 40 198 62 Q 225 78 265 40 Q 295 24 328 52 Q 355 76 385 50 L 420 22 L 420 110 L 0 110 Z" fill="url(#fdBlueArea)"/>
+                  <path d="M 0 88 L 48 88 Q 72 88 88 58 Q 108 32 146 36 Q 178 40 198 62 Q 225 78 265 40 Q 295 24 328 52 Q 355 76 385 50 L 420 22" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round"/>
+                  <line x1="272" y1="38" x2="272" y2="108" stroke="#93C5FD" stroke-width="1.2" stroke-dasharray="3 3"/>
+                  <circle cx="272" cy="38" r="5" fill="#2563EB" stroke="#ffffff" stroke-width="2.5"/>
+                </svg>
+                <div class="fd-chart-axis">
+                  <span>T-5</span><span>T-4</span><span>T-3</span><span>T-2</span><span>T-1</span><span>Live</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Right Hero Card: Median Heal Speed + 3-Segment Breakdown Bar -->
+            <article class="fd-card fd-hero-card">
+              <div class="fd-card-head">
+                <div class="fd-card-title-row">
+                  <h2>Median Heal Latency</h2>
+                  <span class="fd-info-dot" title="Median in-memory cached rule execution time vs cold AI inference">i</span>
+                </div>
+                <span class="fd-select-pill">Sub-ms Cache</span>
+              </div>
+
+              <div class="fd-big-stat-row">
+                <strong class="fd-big-num" data-metric="cached-overhead">0.14 ms</strong>
+                <span class="fd-pill-green">-99.8% vs cold AI</span>
+              </div>
+
+              <div class="fd-breakdown-block">
+                <p class="fd-sub-label">Reliability Breakdown</p>
+                <div class="fd-breakdown-stats">
+                  <div class="fd-bd-item">
+                    <span class="fd-bd-k"><i class="fd-dot fd-dot--blue"></i>Drifts Healed</span>
+                    <strong data-metric="outages-prevented">12 Drifts</strong>
+                  </div>
+                  <div class="fd-bd-item">
+                    <span class="fd-bd-k"><i class="fd-dot fd-dot--soft"></i>Time Saved</span>
+                    <strong data-metric="time-saved">~18 hrs</strong>
+                  </div>
+                  <div class="fd-bd-item">
+                    <span class="fd-bd-k"><i class="fd-dot fd-dot--grey"></i>Auto-PRs</span>
+                    <strong data-metric="prs">0</strong>
+                  </div>
+                </div>
+                <div class="fd-segmented-bar" aria-hidden="true">
+                  <span class="fd-seg fd-seg--1" style="width: 54%"></span>
+                  <span class="fd-seg fd-seg--2" style="width: 30%"></span>
+                  <span class="fd-seg fd-seg--3" style="width: 16%"></span>
+                </div>
+                <p class="fd-micro-note">
+                  <span data-metric="crashes-foot">0 cold &middot; 0 cached</span> heals &middot; Cold p50: <span data-metric="cold-p50">420</span> ms
+                </p>
+              </div>
+            </article>
+          </div>
+
+          <!-- ROW 2: ASYMMETRIC 66% LEFT / 34% RIGHT BENTO SPLIT (Matches Fundora Cash Flow + Upcoming Payments) -->
+          <div class="fd-bento-split">
+            <!-- LEFT 66% COLUMN: Drift Activity Bar Chart + Live Requests Table -->
+            <div class="fd-left-stack">
+              <!-- Drift & Repair Flow Card (Matches Fundora Cash Flow 12-Bar Chart) -->
+              <article class="fd-card fd-flow-card">
+                <div class="fd-card-head">
+                  <div class="fd-card-title-row">
+                    <h2>API Self-Healing Activity</h2>
+                    <span class="fd-info-dot" title="Total breaking upstream mutations neutralized in-flight">i</span>
+                  </div>
+                  <span class="fd-select-pill">Real-Time</span>
+                </div>
+
+                <div class="fd-flow-top">
+                  <div>
+                    <strong class="fd-big-num"><span data-metric="crashes">0</span> <span class="fd-num-suffix">Neutralized</span></strong>
+                  </div>
+                  <div class="fd-filter-tabs" aria-label="Status legend">
+                    <span class="fd-ftab is-active">All Traffic</span>
+                    <span class="fd-ftab"><i class="dot dot--green"></i>Healed</span>
+                    <span class="fd-ftab"><i class="dot dot--blue"></i>Verified</span>
+                    <span class="fd-ftab"><i class="dot dot--red"></i>Gate 5 (502)</span>
+                  </div>
+                </div>
+
+                <!-- Fundora 12-Bar Vertical Chart with Glowing Blue Highlight Bar -->
+                <div class="fd-bar-chart" aria-hidden="true">
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:36%"></span><em>01</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:52%"></span><em>02</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:74%"></span><em>03</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:58%"></span><em>04</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:64%"></span><em>05</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:48%"></span><em>06</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:70%"></span><em>07</em></div>
+                  <div class="fd-bar-col is-featured">
+                    <div class="fd-bar-tooltip">
+                      <span>Cache Hit</span>
+                      <strong>0.14 ms</strong>
+                    </div>
+                    <span class="fd-bar fd-bar--blue" style="height:92%"></span>
+                    <em>Live</em>
+                  </div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:54%"></span><em>09</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:66%"></span><em>10</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:50%"></span><em>11</em></div>
+                  <div class="fd-bar-col"><span class="fd-bar" style="height:42%"></span><em>12</em></div>
+                </div>
+              </article>
+
+              <!-- Recent API Requests Card (Matches Fundora Recent Transaction Table) -->
+              <article class="fd-card fd-table-card">
+                <div class="fd-card-head">
+                  <div>
+                    <h2>Recent API Requests</h2>
+                    <p class="fd-card-sub">Click any row to inspect the before/after payload in Healing X-Ray.</p>
+                  </div>
+                  <div class="fd-table-actions">
+                    <button class="fd-btn-outline" id="load-mock-btn" type="button">Load Samples</button>
+                    <button class="fd-blue-cta fd-blue-cta--xs" id="btn-traffic-fire-request" type="button">Send Request</button>
+                  </div>
+                </div>
+
+                <div class="table-wrap fd-table-wrap" tabindex="0" role="region" aria-label="Intercepted API traffic log">
+                  <table class="traffic-table fd-table">
+                    <caption class="sr-only">Live intercepted API traffic and automated repair status</caption>
+                    <thead>
+                      <tr>
+                        <th scope="col" class="col-time">Time</th>
+                        <th scope="col">Endpoint</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="col-code">HTTP</th>
+                        <th scope="col" class="col-num">Upstream</th>
+                        <th scope="col" class="col-num">Overhead</th>
+                        <th scope="col" class="col-num">Heal</th>
+                        <th scope="col" class="col-fp">Fingerprint</th>
+                      </tr>
+                    </thead>
+                    <tbody id="traffic-body">
+                      <tr class="loading-row" id="traffic-loading">
+                        <td colspan="8">
+                          <div class="loading-state" aria-label="Loading traffic">
+                            <span class="skeleton-line"></span>
+                            <span class="skeleton-line"></span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr class="empty-row" id="traffic-empty" hidden>
+                        <td colspan="8">
+                          <div class="empty-state">
+                            <strong>No requests recorded yet</strong>
+                            <span>Pick a drift scenario on the right and click "Send Test Request" to watch AutoPatch heal it in 0.14 ms.</span>
+                            <div class="empty-actions">
+                              <button class="fd-blue-cta fd-blue-cta--sm" id="btn-empty-fire" type="button">Send Test Request</button>
+                              <a class="fd-btn-outline" href="/demo">Open Billing Demo</a>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr class="empty-row" id="traffic-error" hidden>
+                        <td colspan="8">
+                          <div class="empty-state empty-state--bad">
+                            <strong>Could not read proxy state</strong>
+                            <span>Check that the AutoPatch server is running and refresh.</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+            </div>
+
+            <!-- RIGHT 34% COLUMN: Quick 1-Click Drift Controls (Matches Fundora "Upcoming Bill & Payment" card) -->
+            <div class="fd-right-stack">
+              <article class="fd-card fd-quick-card">
+                <div class="fd-card-head">
+                  <div>
+                    <h2>Quick Drift Test</h2>
+                    <p class="fd-card-sub">1. Pick a break &rarr; 2. Click Send Test Request</p>
+                  </div>
+                  <button class="fd-plus-btn" type="button" onclick="document.getElementById('tab-chaos').click()" title="Open full Drift Simulator" aria-label="Open full Drift Simulator">+</button>
+                </div>
+
+                <div class="fd-quick-list">
+                  <button class="fd-quick-item chaos-tile is-active" type="button" data-mode="none">
+                    <div class="fd-qi-top">
+                      <span class="fd-qi-icon fd-qi-icon--green">OK</span>
+                      <div class="fd-qi-meta">
+                        <strong>Baseline Healthy</strong>
+                        <span>Standard contract · 0 mutations</span>
+                      </div>
+                      <span class="fd-qi-chevron">&rsaquo;</span>
+                    </div>
+                    <div class="fd-qi-foot">
+                      <strong>&lt;0.05 ms</strong>
+                      <span class="fd-status-tag">Verified</span>
+                    </div>
+                  </button>
+
+                  <button class="fd-quick-item chaos-tile" type="button" data-mode="rename">
+                    <div class="fd-qi-top">
+                      <span class="fd-qi-icon fd-qi-icon--blue">RN</span>
+                      <div class="fd-qi-meta">
+                        <strong>Renamed Keys</strong>
+                        <span>user_id &rarr; id, email &rarr; user_email</span>
+                      </div>
+                      <span class="fd-qi-chevron">&rsaquo;</span>
+                    </div>
+                    <div class="fd-qi-foot">
+                      <strong>0.14 ms</strong>
+                      <span class="fd-status-tag fd-status-tag--blue">Auto-Heal</span>
+                    </div>
+                  </button>
+
+                  <button class="fd-quick-item chaos-tile" type="button" data-mode="combo_v2">
+                    <div class="fd-qi-top">
+                      <span class="fd-qi-icon fd-qi-icon--indigo">V2</span>
+                      <div class="fd-qi-meta">
+                        <strong>Combo Multi-Drift</strong>
+                        <span>Renames + nesting + type shifts</span>
+                      </div>
+                      <span class="fd-qi-chevron">&rsaquo;</span>
+                    </div>
+                    <div class="fd-qi-foot">
+                      <strong>0.14 ms</strong>
+                      <span class="fd-status-tag fd-status-tag--blue">5-Gate Heal</span>
+                    </div>
+                  </button>
+
+                  <button class="fd-quick-item chaos-tile" type="button" data-mode="field_deleted">
+                    <div class="fd-qi-top">
+                      <span class="fd-qi-icon fd-qi-icon--red">502</span>
+                      <div class="fd-qi-meta">
+                        <strong>Deleted Field (Gate 5)</strong>
+                        <span>Email removed &middot; blocks hallucination</span>
+                      </div>
+                      <span class="fd-qi-chevron">&rsaquo;</span>
+                    </div>
+                    <div class="fd-qi-foot">
+                      <strong>HTTP 502</strong>
+                      <span class="fd-status-tag fd-status-tag--red">Fail-Closed</span>
+                    </div>
                   </button>
                 </div>
 
-                <!-- Shattered Glass Overlay & Stack Trace -->
-                <div class="glass-shatter-overlay" id="glass-shatter-overlay" hidden>
-                  <svg class="fracture-svg" viewBox="0 0 400 240" preserveAspectRatio="none">
-                    <line x1="0" y1="50" x2="180" y2="110" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="2 1"/>
-                    <line x1="180" y1="110" x2="400" y2="70" stroke="#ef4444" stroke-width="2"/>
-                    <line x1="180" y1="110" x2="140" y2="240" stroke="#ef4444" stroke-width="2"/>
-                    <line x1="90" y1="0" x2="180" y2="110" stroke="#ef4444" stroke-width="2"/>
-                    <polygon points="160,85 210,105 185,135" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="2"/>
-                  </svg>
-                  <div class="crash-terminal">
-                    <div class="crash-terminal-head">
-                      <span class="crash-dot"></span>
-                      <span>RUNTIME_ERROR: UNCAUGHT TYPEERROR &middot; HTTP 500</span>
-                    </div>
-                    <pre class="crash-stack"><code>TypeError: Cannot read properties of undefined (reading 'user_id')
-    at CheckoutSummary.render (CheckoutModal.tsx:42:15)
-    at ReactFiberWorkLoop.performUnitOfWork
-    [REVENUE LOST]: Cart abandoned. Payment rejected.</code></pre>
+                <button class="fd-view-all-btn" type="button" onclick="document.getElementById('tab-chaos').click()">Open All 6 Scenarios</button>
+              </article>
+
+              <!-- Compact Split-Screen Checkout Simulator Drawer Toggle (Clean & Non-Intrusive) -->
+              <article class="fd-card fd-sim-launcher">
+                <div class="fd-card-head">
+                  <div>
+                    <h2>Live Checkout Comparison</h2>
+                    <p class="fd-card-sub">Compare raw client crash vs. AutoPatch side-by-side.</p>
                   </div>
                 </div>
-              </div>
-
-              <!-- Right Side: With AutoPatch -->
-              <div class="victim-card victim-card--protected" id="victim-protected-card">
-                <div class="victim-card-badge victim-card-badge--success">
-                  <span class="badge-num badge-num--ok">02</span> AUTOPATCH RUNTIME (IN-FLIGHT HEALED)
+                <div class="fd-sim-btn-row">
+                  <button class="fd-btn-outline" id="victim-toggle-drift-btn" type="button">
+                    <span id="victim-drift-btn-text">Arm Drift</span>
+                  </button>
+                  <button class="fd-blue-cta fd-blue-cta--sm" id="victim-test-checkout-btn" type="button" onclick="document.getElementById('victim-sim-container').hidden = false">Run Split Test</button>
                 </div>
+              </article>
+            </div>
+          </div>
 
-                <div class="checkout-ui" id="protected-checkout-ui">
+          <!-- Collapsible Split-Screen Checkout Simulator (Hidden by default so overview stays 100% Fundora-clean!) -->
+          <section class="victim-sim-container fd-card" id="victim-sim-container" hidden aria-label="Split-screen production checkout simulation">
+            <div class="victim-sim-head">
+              <div class="victim-sim-title-group">
+                <h3>Split-Screen Checkout Comparison</h3>
+                <p>Left: Direct upstream throws TypeError on drift. Right: AutoPatch heals in 0.14 ms.</p>
+              </div>
+              <button class="fd-btn-outline" type="button" onclick="document.getElementById('victim-sim-container').hidden = true">Close</button>
+            </div>
+            <div class="victim-split-grid">
+              <div class="victim-card victim-card--unprotected" id="victim-unprotected-card">
+                <div class="victim-card-badge victim-card-badge--danger">01 DIRECT UPSTREAM (UNPROTECTED)</div>
+                <div class="checkout-ui" id="unprotected-checkout-ui">
                   <div class="checkout-head">
                     <div class="checkout-store">
-                      <div class="store-avatar store-avatar--green">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                      </div>
-                      <div>
-                        <strong>Pro SaaS Subscription</strong>
-                        <span class="mono-sub">proxied via localhost:8080</span>
-                      </div>
+                      <div><strong>Pro SaaS Subscription</strong><span class="mono-sub">api.acme.internal/checkout</span></div>
                     </div>
                     <span class="checkout-price">$49.00</span>
                   </div>
-
+                  <div class="checkout-fields">
+                    <div class="checkout-field-row"><span class="checkout-field-label">Customer ID:</span><code class="checkout-field-val" id="unprotected-user-val">user.user_id: "usr_99"</code></div>
+                    <div class="checkout-field-row"><span class="checkout-field-label">Receipt Email:</span><code class="checkout-field-val" id="unprotected-email-val">alex@acme.io</code></div>
+                  </div>
+                  <button class="checkout-pay-btn checkout-pay-btn--unprotected" id="unprotected-pay-btn" type="button">Complete Order ($49.00)</button>
+                </div>
+                <div class="glass-shatter-overlay" id="glass-shatter-overlay" hidden>
+                  <div class="crash-terminal">
+                    <div class="crash-terminal-head"><span class="crash-dot"></span><span>RUNTIME_ERROR: UNCAUGHT TYPEERROR &middot; HTTP 500</span></div>
+                    <pre class="crash-stack"><code>TypeError: Cannot read properties of undefined (reading 'user_id')</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="victim-card victim-card--protected" id="victim-protected-card">
+                <div class="victim-card-badge victim-card-badge--success">02 AUTOPATCH PROTECTED (0.14 MS HEAL)</div>
+                <div class="checkout-ui" id="protected-checkout-ui">
+                  <div class="checkout-head">
+                    <div class="checkout-store">
+                      <div><strong>Pro SaaS Subscription</strong><span class="mono-sub">proxied via AutoPatch</span></div>
+                    </div>
+                    <span class="checkout-price">$49.00</span>
+                  </div>
                   <div class="checkout-fields">
                     <div class="checkout-field-row">
                       <span class="checkout-field-label">Customer ID:</span>
                       <div class="healed-field-wrapper">
                         <code class="checkout-field-val checkout-field-val--healed" id="protected-user-val">user_id: "usr_99"</code>
-                        <span class="bandage-sticker" id="bandage-sticker">
-                          <img src="/bandage.png" alt="" width="14" height="14" class="sticker-img">
-                          <span class="sticker-text">0.14 ms heal</span>
-                        </span>
+                        <span class="bandage-sticker" id="bandage-sticker"><span class="sticker-text">0.14 ms heal</span></span>
                       </div>
                     </div>
-                    <div class="checkout-field-row">
-                      <span class="checkout-field-label">Receipt Email:</span>
-                      <code class="checkout-field-val" id="protected-email-val">alex@acme.io</code>
-                    </div>
+                    <div class="checkout-field-row"><span class="checkout-field-label">Receipt Email:</span><code class="checkout-field-val" id="protected-email-val">alex@acme.io</code></div>
                   </div>
-
-                  <button class="checkout-pay-btn checkout-pay-btn--protected" id="protected-pay-btn" type="button">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Order #4928 Captured (200 OK)</span>
-                  </button>
-
+                  <button class="checkout-pay-btn checkout-pay-btn--protected" id="protected-pay-btn" type="button">Order #4928 Captured (200 OK)</button>
                   <div class="heal-notice-banner" id="heal-notice-banner">
                     <span class="heal-badge-pill">CONTRACT SATISFIED</span>
-                    <span>Upstream sent <code>id</code> &rarr; AutoPatch mapped to <code>user_id</code> in 0.14 ms. Zero downtime.</span>
+                    <span>Upstream sent <code>id</code> &rarr; AutoPatch mapped to <code>user_id</code> in 0.14 ms.</span>
                   </div>
                 </div>
               </div>
             </div>
           </section>
-
-          <div class="traffic-toolbar">
-            <button class="btn btn-secondary btn-sm" id="btn-traffic-fire-request" type="button">Send live request</button>
-            <button class="btn btn-ghost btn-sm" id="load-mock-btn" type="button">Reload sample traces</button>
-            <span class="mono muted-text">GET /api/v1/checkout/user</span>
-          </div>
-
-          <div class="table-wrap" tabindex="0" role="region" aria-label="Intercepted API traffic log">
-            <table class="traffic-table">
-              <caption class="sr-only">Live intercepted API traffic and automated repair status</caption>
-              <thead>
-                <tr>
-                  <th scope="col" class="col-time">Time</th>
-                  <th scope="col">Request</th>
-                  <th scope="col">Status</th>
-                  <th scope="col" class="col-code">HTTP</th>
-                  <th scope="col" class="col-num">Upstream</th>
-                  <th scope="col" class="col-num">Overhead</th>
-                  <th scope="col" class="col-num">Heal</th>
-                  <th scope="col" class="col-fp">Fingerprint</th>
-                </tr>
-              </thead>
-              <tbody id="traffic-body">
-                <tr class="loading-row" id="traffic-loading">
-                  <td colspan="8">
-                    <div class="loading-state" aria-label="Loading traffic">
-                      <span class="skeleton-line"></span>
-                      <span class="skeleton-line"></span>
-                      <span class="skeleton-line"></span>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="empty-row" id="traffic-empty" hidden>
-                  <td colspan="8">
-                    <div class="empty-state">
-                      <strong>No requests yet</strong>
-                      <span>Send a live request here, or open the demo client and refresh the account.</span>
-                      <div class="empty-actions">
-                        <button class="btn btn-primary btn-sm" id="btn-empty-fire" type="button">Send live request</button>
-                        <a class="btn btn-secondary btn-sm" href="/demo">Open demo client</a>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="empty-row" id="traffic-error" hidden>
-                  <td colspan="8">
-                    <div class="empty-state empty-state--bad">
-                      <strong>Could not read the traffic state</strong>
-                      <span>The console is not connected to AutoPatch. Start the app with npm run dev and reload this page.</span>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <footer class="panel-foot">
-            <span>Click a row to open the Inspector.</span>
-            <span class="mono muted-text">GET /api/v1/checkout/user</span>
-          </footer>
         </section>
 
         <section class="tab-panel" id="panel-chaos" role="tabpanel" aria-labelledby="tab-chaos" hidden tabindex="0">
@@ -1216,6 +1372,34 @@
       document.getElementById('btn-empty-fire')?.addEventListener('click', () => {
         document.getElementById('btn-global-fire-request')?.click();
       });
+
+      const quickSearch = document.getElementById('fd-quick-search');
+      if (quickSearch) {
+        document.addEventListener('keydown', (e) => {
+          if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            quickSearch.focus();
+          }
+        });
+        quickSearch.addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter') return;
+          const q = quickSearch.value.trim().toLowerCase();
+          if (!q) return;
+          const map = [
+            ['drift', 'tab-chaos'], ['chaos', 'tab-chaos'], ['sim', 'tab-chaos'],
+            ['xray', 'tab-inspector'], ['inspect', 'tab-inspector'], ['gate', 'tab-inspector'],
+            ['pr', 'tab-prs'], ['pull', 'tab-prs'], ['git', 'tab-prs'],
+            ['studio', 'tab-studio'], ['razorpay', 'tab-studio'], ['ondc', 'tab-studio'],
+            ['contract', 'tab-contracts'], ['learn', 'tab-contracts'],
+            ['traffic', 'tab-traffic'], ['overview', 'tab-traffic'],
+          ];
+          const hit = map.find(([k]) => q.includes(k));
+          if (hit) {
+            document.getElementById(hit[1])?.click();
+            quickSearch.blur();
+          }
+        });
+      }
     })();
   </script>
   <script src="/motion.js" defer></script>
