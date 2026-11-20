@@ -3039,13 +3039,37 @@ body {
 }
 
 /* ==========================================================================
-   NEXOLA EDITORIAL ARCHITECTURAL OVERHAUL FOR /console
-   Matches Landing Page: 1px hairlines, bold Swiss neo-grotesque, matte obsidian
-   hardware surfaces, Framer spring transitions, zero AI slop.
+   NEXOLA SWISS ARCHITECTURAL GRID SYSTEM FOR /console
+   Strict Horizontal & Vertical Datum Lines · Zero Nested Box Clutter
+   Axes:
+     - V0: Sidebar Rail (236px)
+     - V1: Workspace Left Edge (0%) + 24px inner datum
+     - V2: Quarter Axis (25%)
+     - V3: Workspace Center Axis (50% — continuous vertical spine)
+     - V4: Three-Quarter Axis (75%)
+     - V5: Workspace Right Edge (100%) - 24px inner datum
    ========================================================================== */
 
 body.console-editorial {
   background: var(--bg);
+}
+
+/* Shift the architectural 50% vertical axis line to the exact center of .workspace */
+.console-editorial .grid-axis-line {
+  left: calc(236px + (100% - 236px) / 2);
+  opacity: 0.4;
+}
+
+@media (max-width: 1080px) {
+  .console-editorial .grid-axis-line {
+    left: calc(208px + (100% - 208px) / 2);
+  }
+}
+
+@media (max-width: 860px) {
+  .console-editorial .grid-axis-line {
+    display: none;
+  }
 }
 
 .console-editorial .app-shell {
@@ -3053,22 +3077,32 @@ body.console-editorial {
   z-index: 2;
 }
 
-/* Sidebar refinement */
+/* ── Axis V0: Sidebar Architectural Rail ─────────────────────────────── */
 .console-editorial .sidebar {
   background: var(--surface);
   border-right: 1px solid var(--line);
+  padding: 0;
+}
+
+.console-editorial .sidebar-head {
+  height: 64px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .console-editorial .brand-wordmark-dot {
   color: var(--ok);
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
 }
 
 .console-editorial .brand-name {
   font-weight: 700;
   letter-spacing: -0.03em;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .console-editorial .brand-ver-tag {
@@ -3077,7 +3111,7 @@ body.console-editorial {
   color: var(--muted);
   border: 1px solid var(--line);
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .console-editorial .brand-sub {
@@ -3085,14 +3119,27 @@ body.console-editorial {
   font-size: 9px;
   letter-spacing: 0.08em;
   color: var(--muted);
-  margin-top: 4px;
+  margin-top: 2px;
+}
+
+.console-editorial .tab-list {
+  padding: 0;
+  gap: 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .console-editorial .tab-btn {
   border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--line);
   border-left: 2px solid transparent;
-  padding: 11px 14px;
-  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 14px 20px;
+  font-size: 13px;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.console-editorial .tab-btn:last-child {
+  border-bottom: none;
 }
 
 .console-editorial .tab-btn:hover {
@@ -3110,32 +3157,42 @@ body.console-editorial {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--muted);
-  margin-right: 8px;
+  margin-right: 10px;
 }
 
 .console-editorial .tab-btn.is-active .tab-idx {
   color: var(--ok);
 }
 
-/* Topbar refinement */
+.console-editorial .sidebar-status {
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.console-editorial .sidebar-foot {
+  padding: 14px 20px;
+  border-top: 1px solid var(--line);
+}
+
+/* ── Horizon H0: Single-Line Architectural Topbar (64px) ─────────────── */
 .console-editorial .topbar {
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  height: 64px;
+  min-height: 64px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
-  padding: 12px clamp(16px, 2.4vw, 28px);
-  flex-wrap: wrap;
-}
-
-.console-editorial .topbar-actions {
+  padding: 0 24px;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  flex: 1 1 auto;
-  justify-content: flex-end;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+
+.console-editorial .page-id {
+  flex: 0 1 auto;
   min-width: 0;
-  max-width: 100%;
-  gap: 8px;
 }
 
 .console-kicker {
@@ -3145,69 +3202,138 @@ body.console-editorial {
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--muted);
+  line-height: 1.1;
   margin-bottom: 2px;
+  white-space: nowrap;
 }
 
 .console-editorial .page-id h1 {
-  font-size: clamp(20px, 2.2vw, 26px);
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   line-height: 1.1;
+  white-space: nowrap;
 }
 
-/* Architectural editorial pill buttons in topbar */
+.console-editorial .topbar-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.console-editorial .ecg-monitor-pill {
+  background: #08080a;
+  border: 1px solid #22242a;
+  border-radius: 2px;
+  padding: 2px 7px;
+  height: 32px;
+  box-shadow: none;
+}
+
+.console-editorial .ecg-canvas {
+  width: 76px;
+  height: 22px;
+}
+
+.console-editorial .sound-toggle-btn {
+  height: 32px;
+  padding: 0 9px;
+  border-radius: 2px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.console-editorial .op-mode-group {
+  height: 32px;
+  border-radius: 2px;
+  padding: 2px;
+}
+
+.console-editorial .op-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 1px;
+  white-space: nowrap;
+}
+
+.console-editorial .topbar-actions .btn-sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 11.5px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
 .console-editorial .topbar-actions .btn-primary {
   background: var(--ink);
   color: var(--bg);
   border: 1px solid var(--ink);
-  border-radius: 999px;
-  padding: 7px 16px;
   font-weight: 600;
-  transition: opacity 160ms ease, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.console-editorial .topbar-actions .btn-primary:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
 }
 
 .console-editorial .topbar-actions .btn-secondary {
-  border-radius: 999px;
   border-color: var(--line);
-  background: transparent;
+  background: var(--surface);
 }
 
-/* Editorial ECG oscilloscope pill */
-.console-editorial .ecg-monitor-pill {
-  background: #08080a;
-  border: 1px solid #22242a;
-  border-radius: 4px;
-  box-shadow: none;
+@media (max-width: 1180px) {
+  .console-editorial .sound-label,
+  .console-kicker {
+    display: none;
+  }
 }
 
-/* Bold Swiss Metrics Grid (1px architectural hairlines at all breakpoints) */
+@media (max-width: 960px) {
+  .console-editorial .topbar {
+    height: auto;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+  }
+  .console-editorial .topbar-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* ── Main Architectural Blueprint Sheet (.main-content) ──────────────── */
+.console-editorial .main-content {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Horizon H1: 4-Column ROI Metrics Bar (25% | 25% | 25% | 25%) ────── */
 .console-editorial .metrics-row.roi-metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
   border: 1px solid var(--line);
-  border-radius: var(--r-sm);
+  border-bottom: none;
+  border-radius: 0;
   background: var(--line);
-  overflow: hidden;
+  margin: 0;
   box-shadow: none;
 }
 
 .console-editorial .metric.metric--roi {
   border: none;
   border-radius: 0;
-  padding: 18px 20px;
+  padding: 20px 24px;
   background: var(--surface);
   box-shadow: none;
-  transition: background-color 180ms ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 116px;
 }
 
-.console-editorial .metric.metric--roi:hover {
-  background: var(--surface-2);
+.console-editorial .metric-top {
+  margin-bottom: 10px;
 }
 
 .console-editorial .metric-label {
@@ -3218,34 +3344,56 @@ body.console-editorial {
   color: var(--muted);
 }
 
-.console-editorial .metric-value {
-  font-size: clamp(22px, 2.2vw, 30px);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.05;
+.console-editorial .badge-roi {
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 9px;
 }
 
-@media (max-width: 1120px) {
+.console-editorial .metric-value {
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.console-editorial .metric-foot {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+@media (max-width: 1100px) {
   .console-editorial .metrics-row.roi-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .console-editorial .metrics-row.roi-metrics {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/* Framer-style tab panel entrance */
+/* ── Horizon H2+: Tab Panels as Unified Architectural Sheets ─────────── */
+.console-editorial .tab-panel {
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+}
+
 .console-editorial .tab-panel.is-active {
-  animation: nexolaPanelIn 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: nexolaPanelIn 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes nexolaPanelIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -3253,63 +3401,253 @@ body.console-editorial {
   }
 }
 
-.console-editorial .panel-head h2 {
-  font-size: clamp(20px, 2vw, 24px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+/* Panel Header Band — aligns to 24px left/right vertical datum */
+.console-editorial .panel-head {
+  padding: 20px 24px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-/* Victim Split-Screen: Clean Architectural Card */
+.console-editorial .panel-head h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0 0 2px;
+}
+
+.console-editorial .panel-head p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.console-editorial .panel-body {
+  padding: 0;
+}
+
+/* ── Live Traffic Tab: Flush Split-Screen Simulator (50% | 50% Axis) ─── */
 .console-editorial .victim-sim-container {
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
   box-shadow: none;
-  padding: 22px;
+  padding: 0;
+  margin: 0;
+}
+
+.console-editorial .victim-sim-head {
+  padding: 18px 24px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 .console-editorial .victim-live-tag {
-  background: var(--surface-2);
+  background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 2px 7px;
+  margin-bottom: 6px;
+}
+
+.console-editorial .victim-sim-actions .btn {
+  border-radius: 2px;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 11.5px;
+}
+
+/* Exact 50% / 50% Split — central 1px divider aligns with ROI Metric Center Axis! */
+.console-editorial .victim-split-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  margin: 0;
+}
+
+@media (max-width: 840px) {
+  .console-editorial .victim-split-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .console-editorial .victim-card {
-  background: var(--bg);
+  background: var(--surface);
+  border: none;
+  border-radius: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.console-editorial .victim-card-badge {
+  border-radius: 2px;
+  margin-bottom: 16px;
+  align-self: flex-start;
+}
+
+.console-editorial .checkout-ui {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.console-editorial .checkout-head {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.console-editorial .store-avatar {
+  border-radius: 2px;
   border: 1px solid var(--line);
-  border-radius: var(--r-sm);
 }
 
-.console-editorial .victim-card--unprotected.is-cracked {
-  border-color: var(--bad);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bad) 35%, transparent);
+/* Strict Aligned Key-Value Rows inside Split Cards (No text wrapping!) */
+.console-editorial .checkout-fields {
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--bg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-.console-editorial .victim-card--protected.is-healed-flash {
-  border-color: var(--ok);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ok) 35%, transparent);
+.console-editorial .checkout-field-row {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
 }
 
-.console-editorial .victim-card--protected.is-quarantined {
-  border-color: var(--bad);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bad) 35%, transparent);
+.console-editorial .checkout-field-row:last-child {
+  border-bottom: none;
 }
 
-/* Matte Obsidian & Titanium Hardware Switches (Chaos Lab) */
+.console-editorial .checkout-field-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.console-editorial .checkout-field-val {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  justify-self: end;
+}
+
+.console-editorial .healed-field-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+.console-editorial .bandage-sticker {
+  border-radius: 2px;
+  padding: 2px 7px;
+  font-size: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.console-editorial .checkout-pay-btn {
+  border-radius: 2px;
+  height: 40px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.console-editorial .heal-notice-banner {
+  border-radius: 2px;
+  margin-top: 4px;
+}
+
+/* Traffic Toolbar & Table — Flush to 24px Datum */
+.console-editorial .traffic-toolbar {
+  padding: 14px 24px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.console-editorial .traffic-toolbar .btn {
+  border-radius: 2px;
+}
+
+.console-editorial .traffic-toolbar .muted-text {
+  margin-left: auto;
+}
+
+.console-editorial #panel-traffic .table-wrap {
+  border: none;
+  border-radius: 0;
+  margin: 0;
+}
+
+.console-editorial .traffic-table th:first-child,
+.console-editorial .traffic-table td:first-child {
+  padding-left: 24px;
+}
+
+.console-editorial .traffic-table th:last-child,
+.console-editorial .traffic-table td:last-child {
+  padding-right: 24px;
+}
+
+.console-editorial .panel-foot {
+  padding: 14px 24px;
+  margin: 0;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+/* ── Chaos Lab Tab: Strict 50% | 50% Architectural Hardware Grid ─────── */
+.console-editorial .chaos-body {
+  padding: 0;
+  gap: 0;
+}
+
 .console-editorial .master-switch-card {
   background: #08080a;
-  border: 1px solid #22242a;
-  border-radius: var(--r-sm);
+  border: none;
+  border-bottom: 1px solid #22242a;
+  border-radius: 0;
   box-shadow: none;
-  padding: 24px 26px;
+  padding: 24px;
+  margin: 0;
 }
 
 .console-editorial .cockpit-badge {
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.28);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .console-editorial .master-switch-info h3 {
@@ -3322,48 +3660,121 @@ body.console-editorial {
   color: #a1a1aa;
 }
 
+/* 2-Column Switch Grid — Center divider sits directly on the 50% Workspace Axis! */
+.console-editorial .cockpit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: #22242a;
+  border-bottom: 1px solid var(--line);
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .console-editorial .cockpit-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .console-editorial .fighter-switch-unit {
   background: #0c0c0f;
-  border: 1px solid #22242a;
-  border-radius: var(--r-sm);
-  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+  border-radius: 0;
+  padding: 20px 24px;
+  transition: background-color 160ms ease;
 }
 
 .console-editorial .fighter-switch-unit:hover {
-  border-color: #3f3f46;
-  background: #101014;
+  background: #121217;
 }
 
 .console-editorial .fighter-switch-unit.is-armed {
-  border-color: #ef4444;
-  background: #140b0c;
-  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.25);
+  background: #170b0d;
+  box-shadow: inset 3px 0 0 #ef4444;
 }
 
 .console-editorial .switch-housing {
   background: #050507;
   border: 1px solid #27272a;
+  border-radius: 2px;
 }
 
 .console-editorial .switch-guard {
   background: linear-gradient(180deg, rgba(185, 28, 28, 0.92), rgba(127, 29, 29, 0.96));
   border: 1px solid rgba(248, 113, 113, 0.35);
-  border-radius: 4px;
+  border-radius: 2px;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55);
 }
 
-/* Inspector Architectural Telemetry Bar */
-.inspector-xray-bar {
+.console-editorial .chaos-actions {
+  padding: 16px 24px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.console-editorial .chaos-actions .btn {
+  border-radius: 2px;
+}
+
+.console-editorial .chaos-stats {
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  margin: 0;
+  background: var(--line);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+}
+
+.console-editorial .chaos-stats > div {
+  background: var(--surface);
+  border: none;
+  padding: 18px 24px;
+}
+
+.console-editorial .runner {
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 20px 24px;
+  background: var(--surface);
+}
+
+.console-editorial .runner .btn {
+  border-radius: 2px;
+}
+
+.console-editorial .result-strip {
+  border: none;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  margin: 0;
+  padding: 16px 24px;
+}
+
+/* ── Pipeline X-Ray (Inspector) Tab: Aligned Horizontal Bands ────────── */
+.console-editorial #panel-inspector .empty-state {
+  margin: 24px;
+  border-radius: 0;
+}
+
+.console-editorial .inspector-xray-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
+  padding: 14px 24px;
+  margin: 0;
+  background: var(--surface-2);
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
 }
 
 .xray-bar-left,
@@ -3371,7 +3782,7 @@ body.console-editorial {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
 }
 
 .xray-summary {
@@ -3394,13 +3805,15 @@ body.console-editorial {
   color: var(--muted);
 }
 
-/* Matte Obsidian 5-Gate Laser Vault */
+/* Matte Obsidian 5-Gate Laser Vault — Flush Full-Width Band */
 .console-editorial .laser-vault-container {
   background: #08080a;
-  border: 1px solid #22242a;
-  border-radius: var(--r-sm);
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
   box-shadow: none;
-  padding: 26px 22px;
+  padding: 28px 24px;
+  margin: 0;
 }
 
 .console-editorial .gate-ring {
@@ -3427,11 +3840,37 @@ body.console-editorial {
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.45);
 }
 
-/* 3-Column Diff & Code Viewer legibility + clean gutter stitch */
+.console-editorial .pii-banner {
+  margin: 0;
+  padding: 14px 24px;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+
+.console-editorial .pii-preview-drawer {
+  margin: 0;
+  padding: 16px 24px;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+
+.console-editorial .diff-3col-head {
+  padding: 16px 24px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+/* 3-Column Diff Grid — Flush 1px Hairline Columns, Single-Line Headers */
 .console-editorial .json-grid--3col {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 1px;
+  background: var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 0;
 }
 
 @media (max-width: 1120px) {
@@ -3442,7 +3881,26 @@ body.console-editorial {
 
 .console-editorial .json-panel {
   min-width: 0;
-  border-radius: var(--r-sm);
+  border: none;
+  border-radius: 0;
+  background: var(--surface);
+}
+
+.console-editorial .json-panel-head {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.console-editorial .json-panel-head span:first-child {
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .console-editorial .json-panel .json-block,
@@ -3450,22 +3908,71 @@ body.console-editorial {
   overflow-x: auto;
   font-size: 11.5px;
   line-height: 1.55;
-  padding: 12px 14px;
+  padding: 16px 18px;
   margin: 0;
+  border: none;
+  border-radius: 0;
 }
 
 .console-editorial .surgical-stitches-svg {
-  opacity: 0.22;
+  opacity: 0.18;
+}
+
+.console-editorial .rule-head {
+  padding: 16px 24px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.console-editorial #panel-inspector .table-wrap {
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  margin: 0;
+}
+
+.console-editorial .rule-table th:first-child,
+.console-editorial .rule-table td:first-child {
+  padding-left: 24px;
+}
+
+.console-editorial .rule-table th:last-child,
+.console-editorial .rule-table td:last-child {
+  padding-right: 24px;
+}
+
+.console-editorial .inspector-note {
+  padding: 14px 24px;
+  margin: 0;
+}
+
+.console-editorial .incident-card {
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  padding: 18px 24px;
+}
+
+/* ── Auto-PR Tab (#panel-prs) Aligned to 24px Datum ──────────────────── */
+.console-editorial #panel-prs .panel-body {
+  padding: 24px;
+}
+
+.console-editorial .pr-stepper,
+.console-editorial .code-preview {
+  border-radius: 0;
 }
 
 /* Console Footer Container */
 .console-footer {
-  margin-top: 40px;
+  margin-top: 24px;
   width: 100%;
 }
 
 .console-footer-inner {
-  padding: 0 clamp(20px, 3vw, 36px);
-  max-width: 1280px;
+  padding: 0 24px;
+  max-width: 1360px;
   margin: 0 auto;
 }
