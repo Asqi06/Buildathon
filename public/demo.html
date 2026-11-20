@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acme Billing: Billing overview</title>
+  <meta name="description" content="Acme Billing demo client. Switch between the raw upstream and the AutoPatch proxy to see the same page survive a schema change.">
+  <meta name="theme-color" content="#f2f2ee">
+  <link rel="preload" href="/vendor/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem('autopatch-theme');
+        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = saved || (dark ? 'dark' : 'light');
+      } catch {
+        document.documentElement.dataset.theme = 'light';
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/demo.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+  </svg>
+
+  <header class="app-header">
+    <div class="shell app-header-inner">
+      <a class="app-brand" href="/" aria-label="AutoPatch home">
+        <img src="/brand/coders-of-bharat-light.png" alt="Coders of Bharat" class="team-logo logo-light" width="88" height="34">
+        <img src="/brand/coders-of-bharat-dark.png" alt="Coders of Bharat" class="team-logo logo-dark" width="88" height="34">
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="app-name">Acme <span>Billing</span></span>
+      </a>
+
+      <nav class="app-nav" aria-label="Acme Billing">
+        <span class="nav-current" aria-current="page">Billing</span>
+        <a href="/console">Operator console</a>
+        <a href="/">AutoPatch home</a>
+      </nav>
+
+      <div class="app-actions">
+        <span class="workspace-chip"><span class="dot dot--green"></span>Demo workspace</span>
+        <span class="avatar" aria-hidden="true">AV</span>
+        <button class="theme-toggle" id="demo-theme-toggle" type="button" aria-label="Switch to dark theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell page" id="main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <span>Billing</span>
+      <span class="sep" aria-hidden="true">/</span>
+      <span class="current" aria-current="page">Overview</span>
+    </nav>
+
+    <div class="page-head">
+      <div>
+        <h1>Billing overview</h1>
+        <p class="page-sub" id="signed-in">Signed in to the demo workspace</p>
+      </div>
+      <div class="page-controls">
+        <div class="segmented" role="group" aria-label="Connection">
+          <button type="button" class="segmented-btn" id="btn-direct" data-mode="direct" aria-pressed="false">Direct upstream</button>
+          <button type="button" class="segmented-btn is-active" id="btn-proxy" data-mode="proxy" aria-pressed="true">Via AutoPatch</button>
+        </div>
+        <button type="button" class="refresh-btn" id="refresh">
+          <svg class="icon"><use href="#i-refresh"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <div class="mode-note" id="mode-note">
+      <span class="dot" id="mode-dot"></span>
+      <span class="mode-text" id="mode-note-text">Requests are routed through AutoPatch, which validates the response against the baseline contract.</span>
+      <span class="mode-endpoint mono" id="mode-endpoint">/api/v1/checkout/user</span>
+    </div>
+
+    <div class="content-grid" id="content-grid">
+      <section class="card account-card" id="account-card" aria-busy="true" aria-labelledby="account-title">
+        <header class="card-head">
+          <div>
+            <p class="card-kicker">Account</p>
+            <h2 id="account-title">Billing profile</h2>
+          </div>
+          <span class="status-pill" id="verified-pill"><span class="dot"></span><span>Verified</span></span>
+        </header>
+
+        <div class="skeleton" id="account-skeleton" aria-hidden="true">
+          <div class="skel-row">
+            <span class="skel skel-avatar"></span>
+            <span class="skel-lines">
+              <span class="skel skel-line w-40"></span>
+              <span class="skel skel-line w-60"></span>
+            </span>
+          </div>
+          <span class="skel skel-block"></span>
+          <span class="skel skel-line w-80"></span>
+          <span class="skel skel-line w-50"></span>
+        </div>
+
+        <div id="account-content" hidden>
+          <div class="person">
+            <span class="person-avatar" id="avatar">D</span>
+            <span class="person-copy">
+              <strong id="display-name">Billing account</strong>
+              <span id="profile-email">-</span>
+            </span>
+          </div>
+
+          <div class="balance-block">
+            <div>
+              <span class="field-label">Current balance</span>
+              <div class="balance num" id="balance">$0.00</div>
+            </div>
+            <span class="balance-note">USD · billing currency</span>
+          </div>
+
+          <dl class="detail-list">
+            <div><dt>Account ID</dt><dd id="detail-user-id">-</dd></div>
+            <div><dt>Billing email</dt><dd id="detail-email">-</dd></div>
+            <div><dt>Member since</dt><dd id="detail-created">-</dd></div>
+            <div><dt>Data source</dt><dd id="detail-source">-</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <aside class="card connection-card" aria-labelledby="connection-title">
+        <header class="card-head">
+          <div>
+            <p class="card-kicker">Route</p>
+            <h2 id="connection-title">Connection</h2>
+          </div>
+          <span class="tiny-pill" id="conn-mode-pill">proxy</span>
+        </header>
+
+        <dl class="conn-list">
+          <div><dt>Mode</dt><dd id="conn-mode">Via AutoPatch</dd></div>
+          <div><dt>Request</dt><dd class="mono" id="conn-endpoint">GET /api/v1/checkout/user</dd></div>
+          <div><dt>HTTP status</dt><dd id="conn-http">-</dd></div>
+          <div><dt>AutoPatch status</dt><dd class="mono" id="conn-status">-</dd></div>
+          <div><dt>Client fetch time</dt><dd class="mono" id="conn-time">-</dd></div>
+          <div><dt>Inference</dt><dd id="conn-llm">-</dd></div>
+        </dl>
+
+        <p class="conn-note" id="conn-note">The page renders baseline fields. AutoPatch keeps that promise when the upstream drifts.</p>
+
+        <div class="conn-foot">
+          <span id="last-updated">Not refreshed yet</span>
+          <a href="/console">Open console <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+      </aside>
+    </div>
+
+    <details class="card raw-card" id="raw-card" open>
+      <summary>
+        <span class="raw-summary">
+          <strong>Latest response</strong>
+          <span class="raw-meta mono" id="raw-meta">No response yet</span>
+        </span>
+        <span class="raw-toggle">JSON</span>
+      </summary>
+      <pre id="raw-json">{}</pre>
+    </details>
+
+    <section class="card crash-screen" id="crash-screen" hidden aria-live="assertive" aria-labelledby="crash-title">
+      <div class="crash-banner">
+        <svg class="icon"><use href="#i-alert"/></svg>
+        <span>Application error</span>
+        <span class="crash-mode" id="crash-mode">direct to upstream</span>
+      </div>
+      <div class="crash-body">
+        <div class="crash-title">
+          <span class="crash-icon"><svg class="icon"><use href="#i-alert"/></svg></span>
+          <div>
+            <h2 id="crash-title">This page could not render the account</h2>
+            <p>The client code reads baseline fields directly. With no mapping layer, the upstream change reaches the browser.</p>
+          </div>
+        </div>
+
+        <div class="error-block">
+          <span class="error-label">Exception message</span>
+          <p class="error-message" id="crash-message">-</p>
+          <span class="error-label">Stack · first line</span>
+          <pre class="error-stack" id="crash-stack">-</pre>
+        </div>
+
+        <p class="crash-source mono" id="crash-source">-</p>
+
+        <details class="crash-raw" id="crash-raw-wrap" hidden>
+          <summary>Response received from the upstream</summary>
+          <pre id="crash-raw"></pre>
+        </details>
+
+        <div class="crash-actions">
+          <button type="button" class="btn btn-primary" id="crash-retry">
+            <svg class="icon"><use href="#i-shield"/></svg>
+            Retry via AutoPatch
+          </button>
+          <a class="btn btn-secondary" href="/console">
+            Open console
+            <svg class="icon"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+
+        <p class="crash-foot">The crash above is genuine: the exception was thrown by this page, not staged by AutoPatch.</p>
+      </div>
+    </section>
+
+    <section class="card service-screen" id="service-error" hidden aria-live="assertive" aria-labelledby="service-title">
+      <div class="service-banner">
+        <svg class="icon"><use href="#i-shield"/></svg>
+        <span id="service-title">AutoPatch could not heal this response</span>
+        <span class="service-code mono" id="service-status">502</span>
+      </div>
+      <div class="service-body">
+        <div class="service-reason-row">
+          <span class="error-label">Reason</span>
+          <code id="service-reason">AUTOPATCH_UNRECOVERABLE</code>
+        </div>
+        <p class="service-message" id="service-message">-</p>
+
+        <div class="missing-wrap" id="service-missing-wrap" hidden>
+          <span class="error-label">Missing required fields</span>
+          <div class="missing-chips" id="service-missing"></div>
+        </div>
+
+        <div class="diag-wrap" id="service-diag-wrap" hidden>
+          <span class="error-label">Diagnostics</span>
+          <pre id="service-diagnostics"></pre>
+        </div>
+
+        <p class="service-note" id="service-note">No fabricated data was returned. AutoPatch fails loudly instead of guessing a value.</p>
+
+        <div class="crash-actions">
+          <button type="button" class="btn btn-primary" id="service-retry">
+            <svg class="icon"><use href="#i-refresh"/></svg>
+            Refresh
+          </button>
+          <a class="btn btn-secondary" href="/console">
+            Open console
+            <svg class="icon"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      <span>Acme Billing is a demo client. Data is synthetic.</span>
+      <span class="foot-right">Routing by <a href="/console">AutoPatch</a> · <span id="footer-llm">LLM: mock</span></span>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script>
+    (() => {
+      const button = document.getElementById('demo-theme-toggle');
+      const meta = document.querySelector('meta[name="theme-color"]');
+      const sync = () => {
+        const dark = document.documentElement.dataset.theme === 'dark';
+        if (button) button.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+        if (meta) meta.setAttribute('content', dark ? '#0e100d' : '#f2f2ee');
+      };
+      sync();
+      button?.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('autopatch-theme', next); } catch {}
+        sync();
+      });
+    })();
+  </script>
+  <script src="/demo.js" type="module"></script>
+</body>
+</html>

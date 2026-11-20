@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+data/rules.json
+data/*.json
+.coverage/
+.DS_Store
+*.log
+.venv/
+.opencode/
+.planning/
+

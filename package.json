@@ -1,0 +1,36 @@
+{
+  "name": "autopatch",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-healing reverse proxy for silently drifting upstream JSON APIs",
+  "scripts": {
+    "dev": "tsx scripts/dev.ts",
+    "dev:proxy": "tsx watch src/server.ts",
+    "dev:mock": "tsx watch src/mock-upstream/server.ts",
+    "build": "tsc --noEmit",
+    "start": "tsx src/server.ts",
+    "test": "vitest run",
+    "smoke": "tsx scripts/smoke.ts",
+    "prewarm": "tsx scripts/prewarm.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fastify/static": "10.1.11",
+    "@fastify/websocket": "11.3.7",
+    "@google/genai": "3.3.0",
+    "@octokit/rest": "22.0.1",
+    "dotenv": "18.0.10",
+    "fastify": "5.12.8",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "@types/ws": "8.18.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "5.1.0"
+  }
+}

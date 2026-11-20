@@ -1,0 +1,11 @@
+{
+  "endpoint": "/api/v1/checkout/user",
+  "method": "GET",
+  "expected_schema": {
+    "user_id": "string",
+    "email": "string",
+    "account_balance": "number",
+    "is_verified": "boolean",
+    "created_at": "iso_datetime"
+  }
+}
