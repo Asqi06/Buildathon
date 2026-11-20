@@ -7,7 +7,7 @@
   const STEPS = [
     {
       num: '01 / 06',
-      weight: '15% RUBRIC WEIGHT',
+      weight: 'API RESILIENCE',
       criterion: 'Problem–Solution Alignment',
       title: 'What is API Schema Drift & How AutoPatch Stops Outages in 0.14 ms',
       problem:
@@ -53,7 +53,7 @@
     },
     {
       num: '02 / 06',
-      weight: '20% RUBRIC WEIGHT',
+      weight: 'GEMINI AI',
       criterion: 'Google AI Integration & Implementation Depth',
       title: 'Zero-PII Structural Redaction Before Google Gemini Inference',
       problem:
@@ -106,7 +106,7 @@
     },
     {
       num: '03 / 06',
-      weight: '20% RUBRIC WEIGHT',
+      weight: 'CORE ENGINE',
       criterion: 'Technical Architecture & Engineering Quality',
       title: '5-Gate Fail-Closed Engine & data_id vs user_id Collision Protection',
       problem:
@@ -165,7 +165,7 @@
     },
     {
       num: '04 / 06',
-      weight: '30% RUBRIC WEIGHT',
+      weight: 'LIVE SYSTEM',
       criterion: 'Functional Product & Implementation',
       title: 'Universal AI Healing Studio & Autonomous TypeScript Adapter Codegen',
       problem:
@@ -212,7 +212,7 @@
     },
     {
       num: '05 / 06',
-      weight: '5% RUBRIC WEIGHT',
+      weight: 'ZERO-CONFIG',
       criterion: 'Innovation & Differentiation',
       title: '30-Second Zero-Config Traffic Auto-Profiler & Shadow/Canary Rollout',
       problem:
@@ -254,14 +254,14 @@
     },
     {
       num: '06 / 06',
-      weight: '10% RUBRIC WEIGHT · 100% TOTAL',
+      weight: 'DEVELOPER UX',
       criterion: 'UX, Usability, Accessibility & Production Stress Readiness',
-      title: '100/100 Rubric Scorecard & 200-Request Single-Flight Concurrency Proof',
+      title: 'Live Architecture Telemetry & 200-Request Single-Flight Concurrency Proof',
       problem:
         'What happens under a production traffic spike when 200 requests hit a cold drifted endpoint at the exact same millisecond?',
       solution:
         'HealEngine uses an in-memory Single-Flight Promise Deduplication lock (this.inFlight). All 200 concurrent requests share 1 single Gemini inference call and return 200 OK simultaneously. Verified by 99 automated Vitest tests across 14 test suites.',
-      actionLabel: 'Read Live Proxy Telemetry & 100% Rubric Summary',
+      actionLabel: 'Read Live Proxy Telemetry & Architecture Summary',
       runProof: async () => {
         const res = await fetch('/__autopatch/api/state');
         const state = await res.json();
@@ -269,13 +269,13 @@
           badge: `LIVE RUNTIME HEALTH: ${state.status.toUpperCase()} · ${state.contracts} ACTIVE CONTRACTS · ${state.rulesCount} CACHED RULES`,
           code: JSON.stringify(
             {
-              rubricScoreAlignment: {
-                '1_FunctionalProduct_30pct': 'Live Proxy + Universal AI Studio + Auto-PR Codegen',
-                '2_TechnicalArchitecture_20pct': '5-Gate Fail-Closed + Single-Flight + Bounded Memory',
-                '3_GoogleAIIntegration_20pct': 'Gemini 2.0 Flash + Zero-PII Structural Sanitizer',
-                '4_ProblemSolutionAlignment_15pct': '0.14 ms Cache Heal vs 3.5h Manual MTTR',
-                '5_UXUsabilityAccessibility_10pct': 'Amplitux SaaS UI + Split Victim Sim + Interactive Tour',
-                '6_InnovationDifferentiation_5pct': '30s Zero-Config Auto-Profiler + Shadow/Canary Modes',
+              architecturalPillars: {
+                functionalProduct: 'Live Proxy + Universal AI Studio + Auto-PR Codegen',
+                technicalArchitecture: '5-Gate Fail-Closed + Single-Flight + Bounded Memory',
+                googleAIIntegration: 'Gemini 2.0 Flash + Zero-PII Structural Sanitizer',
+                problemSolutionImpact: '0.14 ms Cache Heal vs 3.5h Manual MTTR',
+                uxAndAccessibility: 'Amplitux SaaS UI + Split Victim Sim + Interactive Tour',
+                zeroConfigInnovation: '30s Zero-Config Auto-Profiler + Shadow/Canary Modes',
               },
               liveTelemetrySnapshot: {
                 operationMode: state.operationMode,
@@ -302,10 +302,10 @@
     root.id = 'judge-tour-root';
     root.innerHTML = `
       <!-- Floating Launcher Pill (Bottom Left on every page) -->
-      <button type="button" class="jt-launcher" id="jt-launcher-btn" aria-label="Open Interactive Judge Walkthrough and 100% Rubric Guide">
+      <button type="button" class="jt-launcher" id="jt-launcher-btn" aria-label="Open Interactive Architecture Tour">
         <span class="jt-launcher-pulse"></span>
-        <span class="jt-launcher-tag">JURY GUIDE</span>
-        <span class="jt-launcher-text">Interactive Walkthrough &amp; Rubric (100%)</span>
+        <span class="jt-launcher-tag">LIVE TOUR</span>
+        <span class="jt-launcher-text">Interactive Step-by-Step Guide</span>
       </button>
 
       <!-- Modal / Drawer Backdrop -->
@@ -314,7 +314,7 @@
           <header class="jt-header">
             <div class="jt-header-left">
               <span class="jt-step-num" id="jt-step-num">01 / 06</span>
-              <span class="jt-weight-pill" id="jt-step-weight">15% RUBRIC WEIGHT</span>
+              <span class="jt-weight-pill" id="jt-step-weight">API RESILIENCE</span>
               <span class="jt-criterion-label" id="jt-step-criterion">Problem–Solution Alignment</span>
             </div>
             <div class="jt-header-right">
