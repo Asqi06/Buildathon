@@ -23,6 +23,15 @@ function inferFieldType(val: unknown): FieldType {
   return 'string';
 }
 
+export function inferSchemaFromPayload(payload: unknown): Record<string, FieldType> {
+  if (!isObject(payload)) return {};
+  const inferred: Record<string, FieldType> = {};
+  for (const [k, v] of Object.entries(payload)) {
+    inferred[k] = inferFieldType(v);
+  }
+  return inferred;
+}
+
 export class ContractRegistry {
   private readonly contracts: Contract[];
   private readonly learned = new Map<string, LearnedContract>();
@@ -80,6 +89,24 @@ export class ContractRegistry {
 
   all(): Contract[] {
     return [...this.contracts];
+  }
+
+  upsert(contract: Contract): Contract {
+    const normalizedMethod = contract.method.toUpperCase();
+    const cleaned: Contract = {
+      method: normalizedMethod,
+      endpoint: contract.endpoint,
+      expected_schema: { ...contract.expected_schema },
+    };
+    const existingIndex = this.contracts.findIndex(
+      (c) => c.method === normalizedMethod && c.endpoint === contract.endpoint,
+    );
+    if (existingIndex >= 0) {
+      this.contracts[existingIndex] = cleaned;
+    } else {
+      this.contracts.push(cleaned);
+    }
+    return cleaned;
   }
 
   get size(): number {

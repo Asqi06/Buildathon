@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { ContractRegistry } from '../src/contracts/registry.js';
+import { ContractRegistry, inferSchemaFromPayload } from '../src/contracts/registry.js';
 import { AlertManager } from '../src/alerts/webhook.js';
+import { MockMapper } from '../src/healer/mock-llm.js';
+import { sanitize } from '../src/healer/sanitizer.js';
+import { verifyRule } from '../src/healer/rule.js';
 
 describe('Auto-Profiling (Traffic Learning Engine)', () => {
   it('learns schema from healthy 200 OK payloads and auto-locks at threshold', () => {
@@ -77,5 +80,96 @@ describe('Human-in-the-Loop AlertManager', () => {
 
     manager.approveAlert(alert.id);
     expect(manager.getAlerts()[0]?.status).toBe('approved');
+  });
+});
+
+describe('Universal AI Healing Studio (Arbitrary Custom Schema Mapper)', () => {
+  it('heals custom Razorpay v1->v2 webhook drift with nested entities and coercions', async () => {
+    const baselineSample = {
+      payment_id: 'pay_Pq9821Lk01',
+      customer_email: 'priya.sharma@finharat.in',
+      amount_inr: 1499.5,
+      is_captured: true,
+      captured_at: '2026-11-20T09:30:00.000Z',
+    };
+    const driftedPayload = {
+      entity: {
+        id: 'pay_Pq9821Lk01',
+        contact: {
+          email_address: 'priya.sharma@finharat.in',
+        },
+        amount: '1499.50',
+        captured: 1,
+        created_timestamp: 1763631000,
+      },
+    };
+
+    const expectedSchema = inferSchemaFromPayload(baselineSample);
+    expect(expectedSchema).toEqual({
+      payment_id: 'string',
+      customer_email: 'string',
+      amount_inr: 'number',
+      is_captured: 'boolean',
+      captured_at: 'iso_datetime',
+    });
+
+    const mapper = new MockMapper();
+    const rule = await mapper.map({
+      endpoint: '/api/v2/payments/razorpay-webhook',
+      method: 'POST',
+      expectedSchema,
+      structure: sanitize(driftedPayload),
+    });
+
+    const verified = verifyRule({
+      rule,
+      contract: {
+        method: 'POST',
+        endpoint: '/api/v2/payments/razorpay-webhook',
+        expected_schema: expectedSchema,
+      },
+      payload: driftedPayload,
+      minConfidence: 0.7,
+    });
+
+    expect(verified.ok).toBe(true);
+    expect(verified.applied).toEqual({
+      payment_id: 'pay_Pq9821Lk01',
+      customer_email: 'priya.sharma@finharat.in',
+      amount_inr: 1499.5,
+      is_captured: true,
+      captured_at: '2025-11-20T09:30:00.000Z',
+    });
+  });
+
+  it('enforces Gate 5 fail-closed quarantine when a required financial field is missing', async () => {
+    const expectedSchema = inferSchemaFromPayload({
+      payment_id: 'pay_Pq9821Lk01',
+      amount_inr: 1499.5,
+    });
+    const tamperedPayload = {
+      entity: { id: 'pay_Pq9821Lk01' },
+    };
+
+    const mapper = new MockMapper();
+    const rule = await mapper.map({
+      endpoint: '/api/v2/payments/razorpay-webhook',
+      method: 'POST',
+      expectedSchema,
+      structure: sanitize(tamperedPayload),
+    });
+
+    const verified = verifyRule({
+      rule,
+      contract: {
+        method: 'POST',
+        endpoint: '/api/v2/payments/razorpay-webhook',
+        expected_schema: expectedSchema,
+      },
+      payload: tamperedPayload,
+      minConfidence: 0.7,
+    });
+
+    expect(verified.ok).toBe(false);
   });
 });

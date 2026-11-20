@@ -3976,3 +3976,396 @@ body.console-editorial {
   max-width: 1360px;
   margin: 0 auto;
 }
+
+/* ==========================================================================
+   05 // AI HEALING STUDIO & 06 // CONTRACT REGISTRY (SWISS GRID ALIGNED)
+   Every 50/50 split aligns its center 1px divider to the 50% Workspace Axis.
+   ========================================================================== */
+
+.tab-badge-new {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: var(--ok-soft);
+  color: var(--ok);
+  border: 1px solid color-mix(in srgb, var(--ok) 30%, var(--line));
+}
+
+.studio-toolbar-band {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.studio-route-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  flex: 1 1 320px;
+  max-width: 520px;
+}
+
+.studio-select {
+  height: 34px;
+  padding: 0 10px;
+  border: none;
+  border-right: 1px solid var(--line);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.studio-input {
+  height: 34px;
+  padding: 0 12px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  width: 100%;
+  outline: none;
+}
+
+.studio-presets-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.studio-preset-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-right: 4px;
+}
+
+.studio-preset-btn {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.studio-preset-btn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.studio-preset-btn.is-active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+.studio-preset-btn--danger.is-active {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: #fff;
+}
+
+/* Exact 50% | 50% Architectural Split — Center 1px line sits on 50% Workspace Spine */
+.studio-split-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+@media (max-width: 960px) {
+  .studio-split-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.studio-pane {
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.studio-pane-head {
+  min-height: 58px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.studio-pane-head--sub {
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.studio-pane-kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.studio-pane-head strong {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.studio-textarea {
+  width: 100%;
+  min-height: 220px;
+  padding: 16px 24px;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: var(--code-bg);
+  color: var(--code-ink);
+  font-size: 12px;
+  line-height: 1.55;
+  resize: vertical;
+  outline: none;
+}
+
+.studio-textarea:focus {
+  background: var(--surface);
+  box-shadow: inset 3px 0 0 var(--ink);
+}
+
+.studio-schema-bar {
+  padding: 10px 24px;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 40px;
+}
+
+.schema-type-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.schema-type-pill strong {
+  color: var(--ink);
+}
+
+.schema-type-pill span {
+  color: var(--ok);
+}
+
+.studio-action-band {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.studio-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.studio-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.studio-action-band .btn {
+  border-radius: 2px;
+}
+
+/* 5-Gate Verification Scorecard Strip (5 Equal Architectural Cells) */
+.studio-gates-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+@media (max-width: 960px) {
+  .studio-gates-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.studio-gate-cell {
+  background: var(--surface);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-top: 2px solid transparent;
+}
+
+.studio-gate-cell.is-pass {
+  border-top-color: var(--ok);
+}
+
+.studio-gate-cell.is-fail {
+  border-top-color: var(--bad);
+  background: var(--bad-soft);
+}
+
+.sg-num {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.studio-gate-cell.is-pass .sg-num {
+  color: var(--ok);
+}
+
+.studio-gate-cell.is-fail .sg-num {
+  color: var(--bad);
+}
+
+.sg-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.sg-detail {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.studio-code-output {
+  margin: 0;
+  padding: 16px 24px;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  font-size: 11.5px;
+  line-height: 1.55;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  max-height: 240px;
+}
+
+.studio-code-output--tall {
+  max-height: 440px;
+  flex: 1;
+  border-bottom: none;
+}
+
+.studio-rule-table-wrap {
+  border: none !important;
+  border-bottom: none !important;
+}
+
+.studio-code-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Contract Registry & Auto-Profiler Styles */
+.contracts-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contract-form-band {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.contract-form-band .studio-route-group {
+  max-width: 100%;
+}
+
+.contracts-list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.contract-item-row {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contract-item-row:last-child {
+  border-bottom: none;
+}
+
+.contract-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.contract-item-route {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.contract-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contract-item-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}

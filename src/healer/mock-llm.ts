@@ -16,17 +16,109 @@ export interface LlmMapper {
 }
 
 const CANDIDATES: Record<string, string[]> = {
-  user_id: ['user_id', 'id', 'userId'],
-  email: ['email', 'user_email', 'contact.email_addr', 'contact.email'],
-  account_balance: ['account_balance', 'balance'],
-  is_verified: ['is_verified', 'verified', 'isVerified'],
-  created_at: ['created_at', 'created', 'createdAt'],
+  user_id: ['user_id', 'id', 'userId', 'uid', 'customer_id', 'customer.id'],
+  email: ['email', 'user_email', 'contact.email_addr', 'contact.email', 'customer.email', 'payer.email'],
+  account_balance: ['account_balance', 'balance', 'amount', 'total', 'wallet.balance'],
+  is_verified: ['is_verified', 'verified', 'isVerified', 'active', 'kyc_verified'],
+  created_at: ['created_at', 'created', 'createdAt', 'timestamp', 'issued_at'],
 };
+
+const SYNONYM_GROUPS: Array<{ type?: string; words: string[] }> = [
+  { type: 'string', words: ['id', 'uid', 'userid', 'customerid', 'accountid', 'orderid', 'paymentid', 'txnid', 'chargeid', 'key', 'ref', 'transactionid'] },
+  { type: 'string', words: ['email', 'mail', 'emailaddr', 'emailaddress', 'useremail', 'contactemail', 'customeremail', 'receiptemail'] },
+  { type: 'number', words: ['balance', 'accountbalance', 'amount', 'amountinr', 'amountusd', 'total', 'totalprice', 'totalamount', 'price', 'subtotal', 'netamount', 'value', 'paise', 'cents'] },
+  { type: 'boolean', words: ['verified', 'isverified', 'active', 'isactive', 'confirmed', 'isconfirmed', 'enabled', 'captured', 'iscaptured', 'paid', 'ispaid', 'valid', 'statuspaid'] },
+  { type: 'iso_datetime', words: ['createdat', 'created', 'capturedat', 'timestamp', 'createdtimestamp', 'date', 'issuedat', 'time', 'updatedat', 'paidat'] },
+  { type: 'string', words: ['name', 'fullname', 'displayname', 'username', 'customername', 'title', 'itemname'] },
+  { type: 'string', words: ['phone', 'mobile', 'buyerphone', 'customermobile', 'phonenumber', 'contactnumber', 'msisdn', 'tel'] },
+  { type: 'string', words: ['currency', 'curr', 'currencycode', 'isocurrency'] },
+  { type: 'string', words: ['status', 'state', 'orderstatus', 'paymentstatus'] },
+];
+
+function normalizeToken(key: string): string {
+  return key.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function splitWords(key: string): string[] {
+  return key
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((w) => w.length > 1 && w !== 'is' && w !== 'at');
+}
+
+function tokensMatchSemantically(
+  targetKey: string,
+  candidateLeaf: string,
+  candidateFullPath: string,
+  expectedType: string,
+  candidateClass: string,
+): number {
+  const tNorm = normalizeToken(targetKey);
+  const cNorm = normalizeToken(candidateLeaf);
+  const pNorm = normalizeToken(candidateFullPath);
+
+  if (tNorm === cNorm) return 100;
+  if (tNorm === pNorm) return 96;
+
+  // Type compatibility bonus / penalty
+  let typeBonus = 0;
+  if (expectedType === 'iso_datetime') {
+    if (candidateClass.includes('epoch') || candidateClass.includes('iso_datetime')) typeBonus += 15;
+  } else if (expectedType === 'number') {
+    if (candidateClass.includes('number') || candidateClass.includes('numeric')) typeBonus += 10;
+  }
+
+  if (cNorm.endsWith(tNorm) || tNorm.endsWith(cNorm)) return 88 + typeBonus;
+  if (pNorm.endsWith(tNorm)) return 84 + typeBonus;
+
+  const targetWords = [tNorm, ...splitWords(targetKey)];
+  const candWords = [cNorm, ...splitWords(candidateLeaf), ...splitWords(candidateFullPath)];
+
+  for (const group of SYNONYM_GROUPS) {
+    if (group.type && group.type !== expectedType && expectedType === 'iso_datetime') continue;
+    if (group.type === 'iso_datetime' && expectedType !== 'iso_datetime') continue;
+    const targetInGroup = targetWords.some((w) => group.words.includes(w));
+    const candInGroup = candWords.some((w) => group.words.includes(w));
+    if (targetInGroup && candInGroup) {
+      const sameTypeBonus = group.type === expectedType ? 8 : 0;
+      return 80 + sameTypeBonus + typeBonus;
+    }
+  }
+  return 0;
+}
+
+function collectLeafPaths(node: unknown, prefix = '', out: Array<{ path: string; leaf: string; cls: string }> = []) {
+  if (node === null || node === undefined) return out;
+  if (typeof node === 'string') {
+    const parts = prefix.split('.');
+    const leaf = (parts[parts.length - 1] ?? prefix).replace(/\[\d+\]/g, '');
+    out.push({ path: prefix, leaf, cls: node });
+    return out;
+  }
+  if (Array.isArray(node)) {
+    if (node.length > 0) {
+      collectLeafPaths(node[0], `${prefix}[0]`, out);
+    }
+    return out;
+  }
+  if (typeof node === 'object') {
+    for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
+      const next = prefix ? `${prefix}.${k}` : k;
+      collectLeafPaths(v, next, out);
+    }
+  }
+  return out;
+}
 
 function unwrapPrefix(structure: unknown): string | null {
   if (typeof structure !== 'object' || structure === null) return null;
   const record = structure as Record<string, unknown>;
-  if (Array.isArray(record.data) && record.data.length > 0) return 'data[0].';
+  for (const key of ['data', 'items', 'results', 'records']) {
+    if (Array.isArray(record[key]) && (record[key] as unknown[]).length > 0) {
+      return `${key}[0].`;
+    }
+  }
   return null;
 }
 
@@ -48,7 +140,10 @@ export class MockMapper implements LlmMapper {
   async map(input: MapperInput): Promise<MappingRule> {
     input.onAttempt?.();
     const prefix = unwrapPrefix(input.structure) ?? '';
-    const scoped = prefix === '' ? input.structure : resolvePath(input.structure, 'data[0]').value;
+    const unwrapKey = prefix.endsWith('.') ? prefix.slice(0, -1) : '';
+    const scoped = prefix === '' ? input.structure : resolvePath(input.structure, unwrapKey).value;
+    const allLeaves = collectLeafPaths(input.structure);
+    const usedPaths = new Set<string>();
 
     const fields: MappingRule['fields'] = {};
     const unmappable: string[] = [];
@@ -64,7 +159,27 @@ export class MockMapper implements LlmMapper {
         if (foundClass !== null) {
           source = `${prefix}${candidate}`;
           sourceClass = foundClass;
+          usedPaths.add(source);
           break;
+        }
+      }
+
+      // Universal semantic AST fallback for arbitrary user schemas
+      if (source === null) {
+        let bestScore = 0;
+        let bestLeaf: { path: string; leaf: string; cls: string } | null = null;
+        for (const item of allLeaves) {
+          if (usedPaths.has(item.path)) continue;
+          const score = tokensMatchSemantically(field, item.leaf, item.path, expectedType, item.cls);
+          if (score > bestScore) {
+            bestScore = score;
+            bestLeaf = item;
+          }
+        }
+        if (bestLeaf && bestScore >= 80) {
+          source = bestLeaf.path;
+          sourceClass = bestLeaf.cls;
+          usedPaths.add(source);
         }
       }
 

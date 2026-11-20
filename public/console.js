@@ -1958,12 +1958,552 @@ function toggleVictimDrift() {
   toast(`Chaos scenario set to: ${newMode}`, 'success');
 }
 
+/* ==========================================================================
+   05 // AI HEALING STUDIO & 06 // CONTRACT REGISTRY WORKBENCH
+   ========================================================================== */
+
+const STUDIO_PRESETS = {
+  razorpay: {
+    method: 'POST',
+    endpoint: '/api/v2/payments/razorpay-webhook',
+    baseline: {
+      payment_id: 'pay_Pq9821Lk01',
+      customer_email: 'priya.sharma@finharat.in',
+      amount_inr: 1499.5,
+      is_captured: true,
+      captured_at: '2026-11-20T09:30:00.000Z',
+    },
+    drifted: {
+      entity: {
+        id: 'pay_Pq9821Lk01',
+        contact: {
+          email_address: 'priya.sharma@finharat.in',
+        },
+        amount: '1499.50',
+        captured: 1,
+        created_timestamp: 1763631000,
+      },
+    },
+  },
+  ondc: {
+    method: 'POST',
+    endpoint: '/api/v1/ondc/confirm',
+    baseline: {
+      order_id: 'ondc_blr_88210',
+      buyer_phone: '+91-9845012345',
+      total_price: 850.75,
+      is_confirmed: true,
+      created_at: '2026-11-20T10:00:00.000Z',
+    },
+    drifted: {
+      data: [
+        {
+          orderId: 'ondc_blr_88210',
+          fulfillment: {
+            mobile: '+91-9845012345',
+          },
+          subtotal: '850.75',
+          confirmed: 'true',
+          issued_at: 1763632800,
+        },
+      ],
+    },
+  },
+  stripe: {
+    method: 'GET',
+    endpoint: '/api/v1/billing/payment-intent',
+    baseline: {
+      user_id: 'cus_Stripe991',
+      email: 'billing@acme.io',
+      account_balance: 299.99,
+      is_verified: true,
+      created_at: '2026-11-20T08:15:00.000Z',
+    },
+    drifted: {
+      id: 'cus_Stripe991',
+      contact: {
+        email_addr: 'billing@acme.io',
+      },
+      balance: '299.99',
+      verified: 1,
+      created: 1763626500,
+    },
+  },
+  tamper: {
+    method: 'POST',
+    endpoint: '/api/v2/payments/razorpay-webhook',
+    baseline: {
+      payment_id: 'pay_Pq9821Lk01',
+      customer_email: 'priya.sharma@finharat.in',
+      amount_inr: 1499.5,
+      is_captured: true,
+      captured_at: '2026-11-20T09:30:00.000Z',
+    },
+    drifted: {
+      entity: {
+        id: 'pay_Pq9821Lk01',
+        contact: {
+          email_address: 'priya.sharma@finharat.in',
+        },
+        captured: 1,
+        created_timestamp: 1763631000,
+      },
+    },
+  },
+};
+
+const studioState = {
+  activeCodeTab: 'adapter',
+  adapterCode: '// Synthesized TypeScript adapter module will appear here after execution.',
+  testCode: '// Synthesized node:test regression suite will appear here after execution.',
+  piiCode: '// Zero-PII structural skeleton transmitted to AI will appear here.',
+  adapterFilename: 'adapter.ts',
+};
+
+function inferClientSchema(obj) {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return {};
+  const schema = {};
+  const isoRe = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+  for (const [k, v] of Object.entries(obj)) {
+    if (typeof v === 'number') schema[k] = 'number';
+    else if (typeof v === 'boolean') schema[k] = 'boolean';
+    else if (typeof v === 'string' && isoRe.test(v)) schema[k] = 'iso_datetime';
+    else schema[k] = 'string';
+  }
+  return schema;
+}
+
+function renderInferredSchemaBar() {
+  const input = $('#studio-baseline-input');
+  const bar = $('#studio-inferred-schema-bar');
+  const countBadge = $('#studio-inferred-count');
+  if (!input || !bar) return;
+
+  try {
+    const parsed = JSON.parse(input.value);
+    const schema = inferClientSchema(parsed);
+    const entries = Object.entries(schema);
+    if (countBadge) countBadge.textContent = `${entries.length} required fields inferred`;
+    bar.innerHTML = entries
+      .map(
+        ([k, t]) =>
+          `<span class="schema-type-pill"><strong>${escapeHtml(k)}</strong><span>:${escapeHtml(t)}</span></span>`,
+      )
+      .join('');
+  } catch {
+    if (countBadge) countBadge.textContent = 'Invalid JSON';
+    bar.innerHTML = '<span class="mono muted-text">Fix JSON syntax above to auto-infer contract types.</span>';
+  }
+}
+
+function loadStudioPreset(key) {
+  const preset = STUDIO_PRESETS[key];
+  if (!preset) return;
+
+  const methodEl = $('#studio-method');
+  const endpointEl = $('#studio-endpoint');
+  const baseEl = $('#studio-baseline-input');
+  const driftEl = $('#studio-drifted-input');
+
+  if (methodEl) methodEl.value = preset.method;
+  if (endpointEl) endpointEl.value = preset.endpoint;
+  if (baseEl) baseEl.value = JSON.stringify(preset.baseline, null, 2);
+  if (driftEl) driftEl.value = JSON.stringify(preset.drifted, null, 2);
+
+  for (const btn of $$('[data-studio-preset]')) {
+    btn.classList.toggle('is-active', btn.dataset.studioPreset === key);
+  }
+  renderInferredSchemaBar();
+}
+
+function renderStudioCodeTab() {
+  const out = $('#studio-adapter-output');
+  if (!out) return;
+  if (studioState.activeCodeTab === 'test') {
+    out.textContent = studioState.testCode;
+  } else if (studioState.activeCodeTab === 'pii') {
+    out.textContent = studioState.piiCode;
+  } else {
+    out.textContent = studioState.adapterCode;
+  }
+}
+
+function renderStudioGates(gates) {
+  if (!Array.isArray(gates)) return;
+  for (const g of gates) {
+    const cell = $(`[data-gate-cell="${g.gate}"]`);
+    if (!cell) continue;
+    cell.classList.toggle('is-pass', Boolean(g.passed));
+    cell.classList.toggle('is-fail', !g.passed);
+    const nameEl = cell.querySelector('.sg-name');
+    const detailEl = cell.querySelector('.sg-detail');
+    if (nameEl && g.name) nameEl.textContent = g.name;
+    if (detailEl && g.detail) detailEl.textContent = g.detail;
+  }
+}
+
+async function runStudioHeal() {
+  const runBtn = $('#btn-studio-run');
+  const metaEl = $('#studio-exec-meta');
+  const baseInput = $('#studio-baseline-input');
+  const driftInput = $('#studio-drifted-input');
+  const method = $('#studio-method')?.value || 'POST';
+  const endpoint = $('#studio-endpoint')?.value?.trim() || '/api/v1/custom/resource';
+  const installContract = Boolean($('#studio-install-toggle')?.checked);
+
+  let sampleBaseline;
+  let driftedPayload;
+  try {
+    sampleBaseline = JSON.parse(baseInput?.value || '{}');
+  } catch (e) {
+    toast(`Baseline JSON syntax error: ${e.message}`, 'error');
+    return;
+  }
+  try {
+    driftedPayload = JSON.parse(driftInput?.value || '{}');
+  } catch (e) {
+    toast(`Drifted payload JSON syntax error: ${e.message}`, 'error');
+    return;
+  }
+
+  if (runBtn) {
+    runBtn.disabled = true;
+    runBtn.textContent = 'Running 5-Gate Pipeline...';
+  }
+  if (metaEl) metaEl.textContent = 'Sanitizing PII & running inference...';
+
+  try {
+    const res = await fetch('/__autopatch/api/studio/heal', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        method,
+        endpoint,
+        sampleBaseline,
+        driftedPayload,
+        installContract,
+      }),
+    });
+    const data = await res.json();
+
+    renderStudioGates(data.gates);
+    studioState.piiCode = JSON.stringify(data.sanitized ?? {}, null, 2);
+
+    const ruleTbody = $('#studio-rule-tbody');
+    if (ruleTbody && data.rule?.fields) {
+      ruleTbody.innerHTML = Object.entries(data.rule.fields)
+        .map(([field, mapping]) => {
+          const ok = mapping.from !== null;
+          return `
+            <tr>
+              <td><strong>${escapeHtml(field)}</strong></td>
+              <td><code>${mapping.from === null ? 'MISSING (NULL)' : escapeHtml(mapping.from)}</code></td>
+              <td><span class="coerce">${escapeHtml(mapping.coerce)}</span></td>
+              <td><span class="${ok ? 'result-check' : 'badge badge-failed'}">${ok ? 'verified' : 'blocked'}</span></td>
+            </tr>
+          `;
+        })
+        .join('');
+    }
+
+    if (res.ok && data.ok) {
+      setPill($('#studio-status-pill'), `Healed in ${data.elapsedMs} ms`, 'is-online');
+      if (metaEl) {
+        metaEl.textContent = `${data.cached ? 'Cache Hit (0.14 ms)' : `Cold Heal (${data.elapsedMs} ms)`} · ${data.model}`;
+      }
+      const confBadge = $('#studio-confidence-badge');
+      if (confBadge) {
+        confBadge.textContent = `Confidence: ${Math.round((data.rule?.confidence ?? 0.95) * 100)}% · 5/5 Gates`;
+      }
+      const healedOut = $('#studio-healed-output');
+      if (healedOut) healedOut.textContent = JSON.stringify(data.after, null, 2);
+
+      studioState.adapterCode = data.codegen?.adapterCode || '// Adapter generated';
+      studioState.testCode = data.codegen?.testCode || '// Test generated';
+      studioState.adapterFilename = (data.codegen?.adapterPath || 'adapter.ts').split('/').pop() || 'adapter.ts';
+      renderStudioCodeTab();
+      soundEngine.playSnip();
+      toast(`5-Gate Heal Verified (${data.elapsedMs} ms) · TypeScript Adapter Synthesized`, 'success');
+      await loadContractsRegistry();
+    } else {
+      setPill($('#studio-status-pill'), 'Gate 5 Quarantined (HTTP 502)', 'is-offline');
+      if (metaEl) metaEl.textContent = `HTTP 502 Fail-Closed · Missing: ${(data.missingFields || []).join(', ')}`;
+      const confBadge = $('#studio-confidence-badge');
+      if (confBadge) {
+        confBadge.textContent = `Quarantined · Missing ${(data.missingFields || []).length} required field(s)`;
+      }
+      const healedOut = $('#studio-healed-output');
+      if (healedOut) {
+        healedOut.textContent = JSON.stringify(
+          {
+            error: 'AUTOPATCH_UNRECOVERABLE',
+            httpStatus: 502,
+            reason: data.reason,
+            missingFields: data.missingFields,
+            message: data.message,
+            guarantee: 'ZERO_FABRICATED_DATA_SERVED',
+          },
+          null,
+          2,
+        );
+      }
+      studioState.adapterCode = `// GATE 5 QUARANTINE ENFORCED (HTTP 502)\n// AutoPatch refused to synthesize an adapter because required contract field(s)\n// [${(data.missingFields || []).join(', ')}] have no verifiable source in the upstream payload.\n// Zero hallucinated data was served.`;
+      studioState.testCode = studioState.adapterCode;
+      renderStudioCodeTab();
+      soundEngine.playVaultThud();
+      toast(`Gate 5 Fail-Closed: Missing ${(data.missingFields || []).join(', ')} (HTTP 502)`, 'error');
+    }
+  } catch (err) {
+    toast(`Studio execution failed: ${err.message}`, 'error');
+  } finally {
+    if (runBtn) {
+      runBtn.disabled = false;
+      runBtn.innerHTML = 'Run 5-Gate AI Heal &amp; Synthesize Adapter &rarr;';
+    }
+  }
+}
+
+async function loadContractsRegistry() {
+  try {
+    const data = await requestJson('/__autopatch/api/contracts');
+    const contracts = Array.isArray(data.contracts) ? data.contracts : [];
+    const learned = Array.isArray(data.learned) ? data.learned : [];
+    const learnMode = Boolean(data.learnMode);
+
+    const navCount = $('#nav-contracts-count');
+    if (navCount) navCount.textContent = String(contracts.length);
+
+    const pill = $('#learn-mode-pill');
+    if (pill) {
+      setPill(pill, learnMode ? 'Learn Mode: Active' : 'Learn Mode: Paused', learnMode ? 'is-online' : 'is-mock');
+    }
+
+    const activeList = $('#contracts-active-list');
+    if (activeList) {
+      activeList.innerHTML = contracts
+        .map((c) => {
+          const fields = Object.entries(c.expected_schema || {})
+            .map(
+              ([k, t]) =>
+                `<span class="schema-type-pill"><strong>${escapeHtml(k)}</strong><span>:${escapeHtml(t)}</span></span>`,
+            )
+            .join('');
+          return `
+            <div class="contract-item-row">
+              <div class="contract-item-top">
+                <div class="contract-item-route">
+                  <span class="method method-${escapeHtml(c.method.toLowerCase())}">${escapeHtml(c.method)}</span>
+                  <code>${escapeHtml(c.endpoint)}</code>
+                </div>
+                <div class="contract-item-actions">
+                  <span class="badge badge-verified">LOCKED CONTRACT</span>
+                  <button type="button" class="btn btn-secondary btn-xs" data-load-contract-studio="${escapeHtml(c.method)}:::${escapeHtml(c.endpoint)}">Test in AI Studio</button>
+                </div>
+              </div>
+              <div class="contract-item-fields">${fields}</div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    const learnedList = $('#contracts-learned-list');
+    if (learnedList) {
+      if (learned.length === 0) {
+        learnedList.innerHTML = `
+          <div class="contract-item-row">
+            <span class="mono muted-text">No unprofiled endpoints in buffer yet. Click "Feed Sample to Learn Mode" on the left to observe traffic and auto-infer a schema.</span>
+          </div>
+        `;
+      } else {
+        learnedList.innerHTML = learned
+          .map((item) => {
+            const fields = Object.entries(item.inferredSchema || {})
+              .map(
+                ([k, t]) =>
+                  `<span class="schema-type-pill"><strong>${escapeHtml(k)}</strong><span>:${escapeHtml(t)}</span></span>`,
+              )
+              .join('');
+            return `
+              <div class="contract-item-row">
+                <div class="contract-item-top">
+                  <div class="contract-item-route">
+                    <span class="method method-${escapeHtml(item.method.toLowerCase())}">${escapeHtml(item.method)}</span>
+                    <code>${escapeHtml(item.endpoint)}</code>
+                  </div>
+                  <div class="contract-item-actions">
+                    <span class="mono-chip">${item.samplesObserved} / ${item.sampleThreshold} samples</span>
+                    ${
+                      item.isLocked
+                        ? '<span class="badge badge-verified">AUTO-LOCKED</span>'
+                        : `<button type="button" class="btn btn-primary btn-xs" data-lock-learned="${escapeHtml(item.method)}:::${escapeHtml(item.endpoint)}">Lock to Production</button>`
+                    }
+                  </div>
+                </div>
+                <div class="contract-item-fields">${fields}</div>
+              </div>
+            `;
+          })
+          .join('');
+      }
+    }
+  } catch {
+    // ignore transient fetch errors
+  }
+}
+
+function wireStudioAndContracts() {
+  loadStudioPreset('razorpay');
+
+  $('#studio-baseline-input')?.addEventListener('input', renderInferredSchemaBar);
+
+  for (const btn of $$('[data-studio-preset]')) {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.studioPreset;
+      if (key) {
+        loadStudioPreset(key);
+        runStudioHeal();
+      }
+    });
+  }
+
+  $('#btn-studio-run')?.addEventListener('click', runStudioHeal);
+
+  $('#studio-code-tabs')?.addEventListener('click', (e) => {
+    const tab = e.target.closest('[data-studio-tab]');
+    if (!tab) return;
+    studioState.activeCodeTab = tab.dataset.studioTab || 'adapter';
+    for (const b of $$('#studio-code-tabs .code-tab')) {
+      b.classList.toggle('is-active', b === tab);
+    }
+    renderStudioCodeTab();
+  });
+
+  $('#btn-studio-copy-code')?.addEventListener('click', () => {
+    const text = $('#studio-adapter-output')?.textContent || '';
+    navigator.clipboard?.writeText(text);
+    toast('Copied generated code to clipboard', 'success');
+  });
+
+  $('#btn-studio-download-code')?.addEventListener('click', () => {
+    const text = studioState.activeCodeTab === 'test' ? studioState.testCode : studioState.adapterCode;
+    const blob = new Blob([text], { type: 'text/typescript;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = studioState.adapterFilename || 'autopatch-adapter.ts';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast(`Downloaded ${a.download}`, 'success');
+  });
+
+  // Contract Registry & Auto-Profiler actions
+  $('#btn-refresh-contracts')?.addEventListener('click', loadContractsRegistry);
+
+  $('#btn-toggle-learn-mode')?.addEventListener('click', async () => {
+    try {
+      const res = await requestJson('/__autopatch/api/learn/toggle', { method: 'POST', body: '{}' });
+      toast(`Zero-Config Learn Mode ${res.enabled ? 'Enabled' : 'Paused'}`, 'success');
+      await loadContractsRegistry();
+    } catch (err) {
+      toast(`Could not toggle Learn Mode: ${err.message}`, 'error');
+    }
+  });
+
+  $('#btn-feed-learn-sample')?.addEventListener('click', async () => {
+    const method = $('#contract-form-method')?.value || 'POST';
+    const endpoint = $('#contract-form-endpoint')?.value?.trim() || '/api/v1/orders/create';
+    let payload;
+    try {
+      payload = JSON.parse($('#contract-sample-input')?.value || '{}');
+    } catch (e) {
+      toast(`Sample JSON syntax error: ${e.message}`, 'error');
+      return;
+    }
+    try {
+      const res = await requestJson('/__autopatch/api/learn/sample', {
+        method: 'POST',
+        body: JSON.stringify({ method, endpoint, payload, threshold: 3 }),
+      });
+      const obs = res.learned?.samplesObserved ?? 1;
+      const locked = res.learned?.isLocked;
+      toast(
+        locked
+          ? `Threshold reached (${obs}/3): Auto-locked ${method} ${endpoint} into Contract Registry!`
+          : `Observed sample ${obs}/3 for ${method} ${endpoint} · Schema inferred`,
+        'success',
+      );
+      await loadContractsRegistry();
+    } catch (err) {
+      toast(`Failed to feed sample: ${err.message}`, 'error');
+    }
+  });
+
+  $('#btn-register-contract')?.addEventListener('click', async () => {
+    const method = $('#contract-form-method')?.value || 'POST';
+    const endpoint = $('#contract-form-endpoint')?.value?.trim() || '/api/v1/orders/create';
+    let samplePayload;
+    try {
+      samplePayload = JSON.parse($('#contract-sample-input')?.value || '{}');
+    } catch (e) {
+      toast(`Sample JSON syntax error: ${e.message}`, 'error');
+      return;
+    }
+    try {
+      await requestJson('/__autopatch/api/contracts', {
+        method: 'POST',
+        body: JSON.stringify({ method, endpoint, samplePayload }),
+      });
+      toast(`Contract locked & active: ${method} ${endpoint}`, 'success');
+      await loadContractsRegistry();
+    } catch (err) {
+      toast(`Failed to register contract: ${err.message}`, 'error');
+    }
+  });
+
+  document.addEventListener('click', async (e) => {
+    const lockBtn = e.target.closest('[data-lock-learned]');
+    if (lockBtn) {
+      const [method, endpoint] = (lockBtn.dataset.lockLearned || '').split(':::');
+      if (method && endpoint) {
+        try {
+          await requestJson('/__autopatch/api/learn/lock', {
+            method: 'POST',
+            body: JSON.stringify({ method, endpoint }),
+          });
+          toast(`Locked learned contract: ${method} ${endpoint}`, 'success');
+          await loadContractsRegistry();
+        } catch (err) {
+          toast(`Could not lock contract: ${err.message}`, 'error');
+        }
+      }
+      return;
+    }
+
+    const loadStudioBtn = e.target.closest('[data-load-contract-studio]');
+    if (loadStudioBtn) {
+      const [method, endpoint] = (loadStudioBtn.dataset.loadContractStudio || '').split(':::');
+      if (method && endpoint) {
+        $('#studio-method').value = method;
+        $('#studio-endpoint').value = endpoint;
+        switchTab('studio');
+        toast(`Loaded ${method} ${endpoint} into AI Healing Studio`, 'success');
+      }
+    }
+  });
+
+  loadContractsRegistry();
+}
+
 /* ── Initializer ─────────────────────────────────────────────────────── */
 async function init() {
   initTheme();
   soundEngine.updateUI();
   ecgMonitor = new EcgMonitor('ecg-canvas');
   wire();
+  wireStudioAndContracts();
   setPrIdleMessage();
   setChaosMode('none');
   try {

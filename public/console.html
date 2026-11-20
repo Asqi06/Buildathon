@@ -57,6 +57,14 @@
           <span class="tab-label"><span class="tab-idx">04</span> Pull requests</span>
           <span class="tab-count" id="nav-pr-count">0</span>
         </button>
+        <button class="tab-btn" type="button" id="tab-studio" role="tab" aria-selected="false" data-tab="studio" aria-controls="panel-studio">
+          <span class="tab-label"><span class="tab-idx">05</span> AI Healing Studio</span>
+          <span class="tab-badge-new">LIVE</span>
+        </button>
+        <button class="tab-btn" type="button" id="tab-contracts" role="tab" aria-selected="false" data-tab="contracts" aria-controls="panel-contracts">
+          <span class="tab-label"><span class="tab-idx">06</span> Contracts &amp; Learn</span>
+          <span class="tab-count" id="nav-contracts-count">1</span>
+        </button>
       </nav>
 
       <div class="sidebar-status">
@@ -848,6 +856,238 @@
               <span>Verified in-process before any GitHub call.</span>
               <span class="mono" id="pr-state-label">idle</span>
             </p>
+          </div>
+        </section>
+
+        <!-- 05 // AI Healing Studio (Universal Custom Schema & Drift Workbench) -->
+        <section class="tab-panel" id="panel-studio" role="tabpanel" aria-labelledby="tab-studio" hidden tabindex="0">
+          <header class="panel-head">
+            <div>
+              <h2>AI Healing Studio &middot; Universal Schema Workbench</h2>
+              <p>Paste any baseline contract or sample JSON and any broken upstream payload. Runs Zero-PII redaction, live AI inference, 5-Gate verification, and TypeScript adapter synthesis.</p>
+            </div>
+            <span class="chip is-online" id="studio-status-pill"><span class="status-dot dot--online"></span><span id="studio-status-text">5-Gate Engine Ready</span></span>
+          </header>
+
+          <div class="panel-body">
+            <!-- Horizon S1: Route Selector & 1-Click Production Drift Templates -->
+            <div class="studio-toolbar-band">
+              <div class="studio-route-group">
+                <label class="sr-only" for="studio-method">HTTP Method</label>
+                <select id="studio-method" class="studio-select mono">
+                  <option value="POST" selected>POST</option>
+                  <option value="GET">GET</option>
+                  <option value="PUT">PUT</option>
+                </select>
+                <label class="sr-only" for="studio-endpoint">Endpoint Path</label>
+                <input type="text" id="studio-endpoint" class="studio-input mono" value="/api/v2/payments/razorpay-webhook" placeholder="/api/v1/your/endpoint">
+              </div>
+
+              <div class="studio-presets-group" role="group" aria-label="Production API Drift Presets">
+                <span class="studio-preset-label mono">TEMPLATES:</span>
+                <button type="button" class="studio-preset-btn is-active" data-studio-preset="razorpay">01 Razorpay v1&rarr;v2</button>
+                <button type="button" class="studio-preset-btn" data-studio-preset="ondc">02 ONDC Beckn Order</button>
+                <button type="button" class="studio-preset-btn" data-studio-preset="stripe">03 Stripe Charge&rarr;Intent</button>
+                <button type="button" class="studio-preset-btn studio-preset-btn--danger" data-studio-preset="tamper">04 Gate 5 Financial Tamper (502)</button>
+              </div>
+            </div>
+
+            <!-- Horizon S2: Strict 50% | 50% Dual JSON Editor Sheet -->
+            <div class="studio-split-grid">
+              <!-- Left Column (0% - 50%): Target Baseline Sample JSON -->
+              <div class="studio-pane">
+                <div class="studio-pane-head">
+                  <div>
+                    <span class="studio-pane-kicker">01 // EXPECTED CLIENT CONTRACT (BASELINE 200 OK JSON)</span>
+                    <strong>Target Baseline Shape</strong>
+                  </div>
+                  <span class="mono-chip" id="studio-inferred-count">5 required fields inferred</span>
+                </div>
+                <textarea id="studio-baseline-input" class="studio-textarea mono" rows="11" spellcheck="false" aria-label="Target Baseline Sample JSON"></textarea>
+                <div class="studio-schema-bar" id="studio-inferred-schema-bar"></div>
+              </div>
+
+              <!-- Right Column (50% - 100%): Broken / Drifted Upstream Payload -->
+              <div class="studio-pane">
+                <div class="studio-pane-head">
+                  <div>
+                    <span class="studio-pane-kicker">02 // BROKEN UPSTREAM PAYLOAD (DRIFTED INPUT)</span>
+                    <strong>Drifted Upstream Response / Webhook</strong>
+                  </div>
+                  <span class="mono-chip">Zero-PII Auto-Redacted</span>
+                </div>
+                <textarea id="studio-drifted-input" class="studio-textarea mono" rows="11" spellcheck="false" aria-label="Drifted Upstream JSON Payload"></textarea>
+                <div class="studio-schema-bar">
+                  <span class="mono muted-text" id="studio-pii-summary">All raw strings, emails, IDs, and amounts are stripped to structural type tokens before AI inference.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Horizon S3: Execution Control Band -->
+            <div class="studio-action-band">
+              <label class="studio-checkbox-label">
+                <input type="checkbox" id="studio-install-toggle" checked>
+                <span>Register contract &amp; cache verified rule in live proxy runtime (<code>:8080</code>)</span>
+              </label>
+              <div class="studio-action-buttons">
+                <span class="mono muted-text" id="studio-exec-meta">Ready to execute</span>
+                <button type="button" class="btn btn-primary" id="btn-studio-run">
+                  Run 5-Gate AI Heal &amp; Synthesize Adapter &rarr;
+                </button>
+              </div>
+            </div>
+
+            <!-- Horizon S4: 5-Gate Verification Scorecard Strip -->
+            <div class="studio-gates-strip" id="studio-gates-grid" aria-label="5-Gate Verification Scorecard">
+              <div class="studio-gate-cell is-pass" data-gate-cell="1">
+                <span class="sg-num">GATE 01</span>
+                <strong class="sg-name">Schema Coverage</strong>
+                <span class="sg-detail">100% required keys</span>
+              </div>
+              <div class="studio-gate-cell is-pass" data-gate-cell="2">
+                <span class="sg-num">GATE 02</span>
+                <strong class="sg-name">Null-Pointer Safety</strong>
+                <span class="sg-detail">0 null dereferences</span>
+              </div>
+              <div class="studio-gate-cell is-pass" data-gate-cell="3">
+                <span class="sg-num">GATE 03</span>
+                <strong class="sg-name">Confidence Floor</strong>
+                <span class="sg-detail">&ge; 70% threshold</span>
+              </div>
+              <div class="studio-gate-cell is-pass" data-gate-cell="4">
+                <span class="sg-num">GATE 04</span>
+                <strong class="sg-name">Deterministic Replay</strong>
+                <span class="sg-detail">In-process verified</span>
+              </div>
+              <div class="studio-gate-cell is-pass" data-gate-cell="5">
+                <span class="sg-num">GATE 05</span>
+                <strong class="sg-name">Zero Hallucination</strong>
+                <span class="sg-detail">No fabricated values</span>
+              </div>
+            </div>
+
+            <!-- Horizon S5: Strict 50% | 50% Output & Codegen Sheet -->
+            <div class="studio-split-grid studio-output-grid">
+              <!-- Left Output (0% - 50%): Healed Output JSON + Field Mapping Table -->
+              <div class="studio-pane">
+                <div class="studio-pane-head">
+                  <div>
+                    <span class="studio-pane-kicker">03 // VERIFIED OUTPUT &amp; FIELD MAPPING RULE</span>
+                    <strong id="studio-output-title">Healed Contract-Compliant Payload</strong>
+                  </div>
+                  <span class="mono-chip" id="studio-confidence-badge">Confidence: --</span>
+                </div>
+                <pre class="studio-code-output mono" id="studio-healed-output">Click "Run 5-Gate AI Heal &amp; Synthesize Adapter" above to execute the live pipeline.</pre>
+                <div class="table-wrap studio-rule-table-wrap">
+                  <table class="rule-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Target field</th>
+                        <th scope="col">Resolved source path</th>
+                        <th scope="col">Coercion</th>
+                        <th scope="col">Gate status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="studio-rule-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Right Output (50% - 100%): Synthesized TypeScript Adapter, node:test & Zero-PII Skeleton -->
+              <div class="studio-pane">
+                <div class="studio-pane-head">
+                  <div class="code-tabs" id="studio-code-tabs">
+                    <button type="button" class="code-tab is-active" data-studio-tab="adapter">adapter.ts</button>
+                    <button type="button" class="code-tab" data-studio-tab="test">adapter.test.ts</button>
+                    <button type="button" class="code-tab" data-studio-tab="pii">Zero-PII Skeleton</button>
+                  </div>
+                  <div class="studio-code-actions">
+                    <button type="button" class="btn btn-secondary btn-xs" id="btn-studio-copy-code">Copy code</button>
+                    <button type="button" class="btn btn-secondary btn-xs" id="btn-studio-download-code">Download .ts</button>
+                  </div>
+                </div>
+                <pre class="studio-code-output studio-code-output--tall mono" id="studio-adapter-output">// Synthesized TypeScript adapter module will appear here after execution.</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 06 // Live Contract Registry & Zero-Config Traffic Auto-Profiler -->
+        <section class="tab-panel" id="panel-contracts" role="tabpanel" aria-labelledby="tab-contracts" hidden tabindex="0">
+          <header class="panel-head">
+            <div>
+              <h2>Contract Registry &amp; Zero-Config Auto-Profiler</h2>
+              <p>Inspect locked production contracts, register new endpoints from sample 200 OK JSON responses, or auto-learn schemas from live traffic.</p>
+            </div>
+            <div class="contracts-head-actions">
+              <span class="chip is-online" id="learn-mode-pill"><span class="status-dot dot--online"></span><span id="learn-mode-text">Learn Mode: Active</span></span>
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-toggle-learn-mode">Toggle Learn Mode</button>
+            </div>
+          </header>
+
+          <div class="panel-body">
+            <!-- Strict 50% | 50% Split Sheet -->
+            <div class="studio-split-grid">
+              <!-- Left Column (0% - 50%): Register or Feed Auto-Profiler Sample -->
+              <div class="studio-pane">
+                <div class="studio-pane-head">
+                  <div>
+                    <span class="studio-pane-kicker">01 // ZERO-CONFIG ONBOARDING (30 SECONDS)</span>
+                    <strong>Register Contract or Feed Auto-Profiler Sample</strong>
+                  </div>
+                  <span class="mono-chip">Auto-Type Inference</span>
+                </div>
+
+                <div class="contract-form-band">
+                  <div class="studio-route-group">
+                    <select id="contract-form-method" class="studio-select mono" aria-label="Contract HTTP Method">
+                      <option value="POST" selected>POST</option>
+                      <option value="GET">GET</option>
+                      <option value="PUT">PUT</option>
+                    </select>
+                    <input type="text" id="contract-form-endpoint" class="studio-input mono" value="/api/v1/orders/create" placeholder="/api/v1/orders/create" aria-label="Contract Endpoint Path">
+                  </div>
+                </div>
+
+                <textarea id="contract-sample-input" class="studio-textarea mono" rows="10" spellcheck="false" aria-label="Sample 200 OK JSON Response">{
+  "order_id": "ord_90210",
+  "customer_mobile": "+91-9876543210",
+  "total_amount": 1299.5,
+  "is_paid": true,
+  "created_at": "2026-11-20T09:15:00Z"
+}</textarea>
+
+                <div class="studio-action-band">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-feed-learn-sample">
+                    Feed Sample to Learn Mode (+1 Observation)
+                  </button>
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-register-contract">
+                    Lock &amp; Register Contract Immediately &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right Column (50% - 100%): Locked Contracts & Learned Candidates -->
+              <div class="studio-pane">
+                <div class="studio-pane-head">
+                  <div>
+                    <span class="studio-pane-kicker">02 // ACTIVE PROXY CONTRACTS &amp; LEARNED CANDIDATES</span>
+                    <strong>Locked Baseline Contracts</strong>
+                  </div>
+                  <button type="button" class="btn btn-ghost btn-xs" id="btn-refresh-contracts">Refresh</button>
+                </div>
+
+                <div class="contracts-list-container" id="contracts-active-list"></div>
+
+                <div class="studio-pane-head studio-pane-head--sub">
+                  <div>
+                    <span class="studio-pane-kicker">03 // TRAFFIC AUTO-PROFILER (LEARN MODE BUFFER)</span>
+                    <strong>Auto-Inferred Endpoints in Progress</strong>
+                  </div>
+                </div>
+                <div class="contracts-list-container" id="contracts-learned-list"></div>
+              </div>
+            </div>
           </div>
         </section>
       </main>
