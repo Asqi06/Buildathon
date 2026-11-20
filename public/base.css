@@ -43,6 +43,7 @@
   --warn: #8a5a00;
   --warn-soft: #f3e7cb;
   --bad: #a32a20;
+  --danger: var(--bad);
   --bad-soft: #f4deda;
   --info: #2f5e86;
   --info-soft: #e0e9f1;
@@ -499,7 +500,228 @@ samp {
   display: block;
 }
 
+/* ==========================================================================
+   SHARED NEXOLA ARCHITECTURAL & FRAMER MOTION LAYER
+   ========================================================================== */
+
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.72;
+  will-change: transform;
+}
+
+.grid-axis-line {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--line);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .grid-axis-line {
+    display: none;
+  }
+}
+
+/* Framer-inspired spring reveals */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+[data-reveal='fade'] {
+  transform: none;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Shared Nexola Dark Editorial Footer with Ambient Gradient Blur */
+.site-footer {
+  position: relative;
+  background: #070709;
+  color: #f4f4f5;
+  padding: clamp(56px, 7vw, 96px) 0 36px;
+  overflow: hidden;
+  border-top: 1px solid #18181c;
+}
+
+.site-footer--compact {
+  padding: 48px 0 32px;
+  margin-top: 48px;
+}
+
+.footer-ambient-blur {
+  position: absolute;
+  bottom: -48px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(920px, 120vw);
+  height: 360px;
+  background: radial-gradient(
+    ellipse 65% 55% at 50% 115%,
+    rgba(16, 185, 129, 0.24) 0%,
+    rgba(14, 165, 233, 0.09) 45%,
+    transparent 74%
+  );
+  filter: blur(52px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.footer-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.footer-top-row {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr;
+  gap: clamp(28px, 5vw, 72px);
+  padding-bottom: 48px;
+  border-bottom: 1px solid #1a1a20;
+}
+
+@media (max-width: 800px) {
+  .footer-top-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.footer-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.footer-wordmark .brand-dot {
+  color: #10b981;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.footer-bio {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #a1a1aa;
+  max-width: 340px;
+  margin: 0 0 18px;
+}
+
+.footer-pill-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.status-pulse-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.footer-links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+@media (max-width: 600px) {
+  .footer-links-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-col-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.footer-col a {
+  font-size: 13px;
+  color: #a1a1aa;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footer-col a:hover {
+  color: #ffffff;
+}
+
+.footer-static-item {
+  font-size: 13px;
+  color: #71717a;
+}
+
+.footer-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 24px;
+  font-size: 12px;
+  color: #71717a;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.footer-tagline {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   html {
     scroll-behavior: auto;
   }

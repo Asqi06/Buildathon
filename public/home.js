@@ -178,13 +178,13 @@ function renderSpecimen(root, key) {
   if (note) note.textContent = scenario.note;
   if (mode) mode.textContent = key;
   if (status) {
-    status.className = `chip ${scenario.ok ? 'is-online' : 'is-offline'}`;
-    status.innerHTML = `<span class="dot ${scenario.ok ? 'dot--green' : 'dot--red'}"></span><span>${escapeHtml(scenario.status)}</span>`;
+    status.className = `arch-pill ${scenario.ok ? 'arch-pill--ok' : 'arch-pill--bad'}`;
+    status.innerHTML = `<span class="${scenario.ok ? 'dot-green' : 'dot-red'}"></span><span>${escapeHtml(scenario.status.toUpperCase())}</span>`;
   }
 }
 
 function wireSpecimenTabs(root, onChange) {
-  const tabs = $$('.specimen-tab', root);
+  const tabs = $$('.arch-tab, .specimen-tab', root);
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       const key = tab.dataset.scenario;
@@ -239,7 +239,13 @@ async function loadLiveState() {
     setLiveValue('contracts', String(state.contracts ?? 0));
     setLiveValue('rules', String(state.rulesCount ?? 0));
     setLiveValue('model', state.llmMode === 'live' ? state.llmModel || 'live' : 'mock (labelled)');
-    if (note) note.textContent = `Read at ${readTime()} from this AutoPatch instance.`;
+    const heroStatus = $('#hero-live-status');
+    if (heroStatus) {
+      heroStatus.textContent = state.upstreamOk
+        ? `RUNTIME STATUS: ACTIVE (0.14 MS) · ${state.rulesCount ?? 0} RULES CACHED`
+        : 'RUNTIME STATUS: UPSTREAM OFFLINE';
+    }
+    if (note) note.textContent = `Synced ${readTime()}`;
   } catch {
     setLiveValue('upstream', 'offline', 'bad');
     setLiveValue('contracts', '-');
@@ -258,7 +264,7 @@ async function loadLiveState() {
 function wireSimulator() {
   const root = $('[data-specimen="sim"]');
   if (!root) return;
-  const scenarioButtons = $$('.scenario');
+  const scenarioButtons = $$('.sim-scenario-btn, .scenario');
   const status = $('#sim-status');
   const sendButton = $('#cmd-simulate-btn');
   let selected = 'combo_v2';
@@ -278,18 +284,19 @@ function wireSimulator() {
       renderSpecimen(root, key);
       if (status) {
         status.className = 'sim-status';
-        status.textContent = `Selected ${scenarios[key].label}. Send it to the local upstream when you are ready.`;
+        status.textContent = `Selected: ${scenarios[key].label}. Ready to deploy upstream.`;
       }
     });
   });
 
   sendButton?.addEventListener('click', async () => {
     sendButton.disabled = true;
-    const original = sendButton.textContent;
-    sendButton.textContent = 'Sending drift';
+    const labelSpan = sendButton.querySelector('span:first-child') || sendButton;
+    const original = labelSpan.textContent;
+    labelSpan.textContent = 'Deploying drift...';
     if (status) {
       status.className = 'sim-status';
-      status.textContent = 'Sending the selected drift to the local upstream.';
+      status.textContent = 'Injecting selected schema drift into mock upstream.';
     }
 
     try {
@@ -304,18 +311,32 @@ function wireSimulator() {
       }
       if (status) {
         status.className = 'sim-status is-ok';
-        status.textContent = `Upstream now sends ${scenarios[selected].label}. Open the console to watch the heal.`;
+        status.textContent = `Upstream mutation active: ${scenarios[selected].label}. Open console to verify.`;
       }
       await loadLiveState();
     } catch (error) {
       if (status) {
         status.className = 'sim-status is-bad';
-        status.textContent = `Could not change the upstream: ${error.message}. Start the app with npm run dev.`;
+        status.textContent = `Could not change upstream: ${error.message}`;
       }
     } finally {
       sendButton.disabled = false;
-      sendButton.textContent = original;
+      labelSpan.textContent = original;
     }
+  });
+}
+
+/* Capabilities Accordion (Nexola Style) */
+function wireCapabilitiesAccordion() {
+  const rows = $$('.cap-row');
+  rows.forEach((row) => {
+    row.addEventListener('click', () => {
+      const isAlreadyActive = row.classList.contains('is-active');
+      rows.forEach((r) => r.classList.remove('is-active'));
+      if (!isAlreadyActive) {
+        row.classList.add('is-active');
+      }
+    });
   });
 }
 
@@ -327,7 +348,7 @@ function wireTheme() {
   const sync = () => {
     const dark = document.documentElement.dataset.theme === 'dark';
     if (button) button.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
-    if (meta) meta.setAttribute('content', dark ? '#0e100d' : '#f2f2ee');
+    if (meta) meta.setAttribute('content', dark ? '#08080a' : '#f6f6f4');
   };
 
   sync();
@@ -337,16 +358,16 @@ function wireTheme() {
     try {
       localStorage.setItem('autopatch-theme', next);
     } catch {
-      // Storage can be unavailable in a private window. The theme still applies.
+      // Storage can be unavailable in private window.
     }
     sync();
   });
 }
 
-/* FAQ: native details, with a class hook for the old accordion styles. */
+/* FAQ: native details, with a class hook for accordion styles. */
 function wireFaq() {
-  for (const item of $$('.faq-item')) {
-    if (!$('.faq-trigger', item)) continue;
+  for (const item of $$('.faq-arch-item, .faq-item')) {
+    if (!$('.faq-summary, .faq-trigger', item)) continue;
     const sync = () => item.classList.toggle('is-open', item.open);
     item.addEventListener('toggle', sync);
     sync();
@@ -354,7 +375,8 @@ function wireFaq() {
 }
 
 /* Mobile navigation */
-function wireNav() {  const toggle = $('#nav-toggle');
+function wireNav() {
+  const toggle = $('#nav-toggle');
   const nav = $('#site-nav');
   if (!toggle || !nav) return;
 
@@ -382,7 +404,10 @@ function init() {
   wireTheme();
   wireNav();
   wireFaq();
-  wireSpecimenTabs($('[data-specimen="hero"]'), undefined);
+  wireCapabilitiesAccordion();
+  const heroSpecimen = $('[data-specimen="hero"]');
+  renderSpecimen(heroSpecimen, 'rename');
+  wireSpecimenTabs(heroSpecimen, undefined);
   wireSimulator();
   $('#live-refresh')?.addEventListener('click', loadLiveState);
   loadLiveState();

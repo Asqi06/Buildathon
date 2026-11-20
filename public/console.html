@@ -22,7 +22,8 @@
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+<body class="console-editorial">
+  <div class="grid-axis-line" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="app-shell">
@@ -30,10 +31,11 @@
       <div class="sidebar-head">
         <a class="sidebar-brand" href="/">
           <span class="brand-name-row">
-            <img src="/bandage.png" alt="" class="brand-bandage" width="20" height="20" aria-hidden="true">
+            <span class="brand-wordmark-dot" aria-hidden="true">&bull;</span>
             <span class="brand-name">AutoPatch</span>
+            <span class="brand-ver-tag">v1.0.0</span>
           </span>
-          <span class="brand-sub">Operator console</span>
+          <span class="brand-sub">00 // OPERATOR CONSOLE</span>
         </a>
         <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Close navigation">
           <span></span><span></span>
@@ -42,17 +44,17 @@
 
       <nav class="tab-list" role="tablist" aria-label="Console sections" aria-orientation="vertical">
         <button class="tab-btn is-active" type="button" id="tab-traffic" role="tab" aria-selected="true" data-tab="traffic" aria-controls="panel-traffic">
-          <span class="tab-label">Live traffic</span>
+          <span class="tab-label"><span class="tab-idx">01</span> Live traffic</span>
           <span class="tab-count" id="nav-traffic-count">0</span>
         </button>
         <button class="tab-btn" type="button" id="tab-chaos" role="tab" aria-selected="false" data-tab="chaos" aria-controls="panel-chaos">
-          <span class="tab-label">Chaos lab</span>
+          <span class="tab-label"><span class="tab-idx">02</span> Chaos lab</span>
         </button>
         <button class="tab-btn" type="button" id="tab-inspector" role="tab" aria-selected="false" data-tab="inspector" aria-controls="panel-inspector">
-          <span class="tab-label">Inspector</span>
+          <span class="tab-label"><span class="tab-idx">03</span> Pipeline X-Ray</span>
         </button>
         <button class="tab-btn" type="button" id="tab-prs" role="tab" aria-selected="false" data-tab="prs" aria-controls="panel-prs">
-          <span class="tab-label">Pull requests</span>
+          <span class="tab-label"><span class="tab-idx">04</span> Pull requests</span>
           <span class="tab-count" id="nav-pr-count">0</span>
         </button>
       </nav>
@@ -92,8 +94,8 @@
         </button>
 
         <div class="page-id">
+          <span class="console-kicker">01 // REAL-TIME INFRASTRUCTURE CONSOLE</span>
           <h1>Operator console</h1>
-          <p>Live traffic, drift scenarios, payload diffs, and generated pull requests.</p>
         </div>
 
         <div class="topbar-actions">
@@ -127,7 +129,7 @@
       </header>
 
       <main class="main-content" id="main">
-        <section class="metrics-row roi-metrics" id="metrics" aria-label="Business ROI metrics">
+        <section class="metrics-row roi-metrics" id="metrics" aria-label="Business ROI metrics" data-reveal>
           <article class="metric metric--roi">
             <div class="metric-top">
               <p class="metric-label">Protected Revenue</p>
@@ -208,13 +210,15 @@
               <!-- Left Side: Without AutoPatch -->
               <div class="victim-card victim-card--unprotected" id="victim-unprotected-card">
                 <div class="victim-card-badge victim-card-badge--danger">
-                  <span class="status-cross">✕</span> DIRECT UPSTREAM (WITHOUT AUTOPATCH)
+                  <span class="badge-num">01</span> DIRECT UPSTREAM (RAW UNPROTECTED)
                 </div>
                 
                 <div class="checkout-ui" id="unprotected-checkout-ui">
                   <div class="checkout-head">
                     <div class="checkout-store">
-                      <div class="store-avatar">🛒</div>
+                      <div class="store-avatar">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                      </div>
                       <div>
                         <strong>Pro SaaS Subscription</strong>
                         <span class="mono-sub">api.acme.internal/checkout</span>
@@ -251,7 +255,7 @@
                   <div class="crash-terminal">
                     <div class="crash-terminal-head">
                       <span class="crash-dot"></span>
-                      <span>💥 UNCAUGHT RUNTIME EXCEPTION · HTTP 500</span>
+                      <span>RUNTIME_ERROR: UNCAUGHT TYPEERROR &middot; HTTP 500</span>
                     </div>
                     <pre class="crash-stack"><code>TypeError: Cannot read properties of undefined (reading 'user_id')
     at CheckoutSummary.render (CheckoutModal.tsx:42:15)
@@ -264,13 +268,15 @@
               <!-- Right Side: With AutoPatch -->
               <div class="victim-card victim-card--protected" id="victim-protected-card">
                 <div class="victim-card-badge victim-card-badge--success">
-                  <span class="status-shield">🛡️</span> PROTECTED BY AUTOPATCH (IN-FLIGHT HEAL)
+                  <span class="badge-num badge-num--ok">02</span> AUTOPATCH RUNTIME (IN-FLIGHT HEALED)
                 </div>
 
                 <div class="checkout-ui" id="protected-checkout-ui">
                   <div class="checkout-head">
                     <div class="checkout-store">
-                      <div class="store-avatar store-avatar--green">⚡</div>
+                      <div class="store-avatar store-avatar--green">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      </div>
                       <div>
                         <strong>Pro SaaS Subscription</strong>
                         <span class="mono-sub">proxied via localhost:8080</span>
@@ -285,7 +291,7 @@
                       <div class="healed-field-wrapper">
                         <code class="checkout-field-val checkout-field-val--healed" id="protected-user-val">user_id: "usr_99"</code>
                         <span class="bandage-sticker" id="bandage-sticker">
-                          <img src="/bandage.png" alt="" width="16" height="16" class="sticker-img">
+                          <img src="/bandage.png" alt="" width="14" height="14" class="sticker-img">
                           <span class="sticker-text">0.14 ms heal</span>
                         </span>
                       </div>
@@ -297,13 +303,13 @@
                   </div>
 
                   <button class="checkout-pay-btn checkout-pay-btn--protected" id="protected-pay-btn" type="button">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>✓ Order #4928 Placed · $49.00 Captured</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Order #4928 Captured (200 OK)</span>
                   </button>
 
                   <div class="heal-notice-banner" id="heal-notice-banner">
-                    <span class="heal-badge-pill">CONTRACT 100% SATISFIED</span>
-                    <span>Upstream drifted <code>id</code> &rarr; AutoPatch coerced back to <code>user_id</code> in 0.14 ms. Zero downtime.</span>
+                    <span class="heal-badge-pill">CONTRACT SATISFIED</span>
+                    <span>Upstream sent <code>id</code> &rarr; AutoPatch mapped to <code>user_id</code> in 0.14 ms. Zero downtime.</span>
                   </div>
                 </div>
               </div>
@@ -563,6 +569,18 @@
             </div>
 
             <div id="inspector-live" hidden>
+              <!-- Architectural Pipeline Telemetry Strip -->
+              <div class="inspector-xray-bar">
+                <div class="xray-bar-left">
+                  <span class="chip is-online" id="inspector-mode"><span class="status-dot"></span><span>Cached (0 model calls)</span></span>
+                  <span class="xray-summary mono" id="inspector-summary">GET /api/v1/checkout/user · runtime</span>
+                </div>
+                <div class="xray-bar-right">
+                  <span class="xray-kv"><span class="xray-k">ROUTE</span> <code id="xray-endpoint">GET /api/v1/checkout/user</code></span>
+                  <span class="xray-kv"><span class="xray-k">LATENCY</span> <strong id="xray-latency">0.14 ms</strong></span>
+                </div>
+              </div>
+
               <!-- Interactive 5-Gate Laser Vault (Fail-Closed Safety Engine) -->
               <div class="laser-vault-container" id="laser-vault" role="region" aria-label="Interactive 5-Gate Laser Vault Safety Pipeline">
                 <div class="laser-vault-track">
@@ -575,9 +593,9 @@
                   <!-- Gate 1 -->
                   <div class="gate-checkpoint is-passed" id="gate-1">
                     <div class="gate-laser-emitter"></div>
-                    <div class="gate-ring"><span class="gate-icon">✓</span></div>
+                    <div class="gate-ring"><span class="gate-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span></div>
                     <div class="gate-info">
-                      <strong class="gate-title">Gate 1: Coverage</strong>
+                      <strong class="gate-title">01 / Coverage</strong>
                       <span class="gate-desc">100% Schema Keys</span>
                     </div>
                   </div>
@@ -587,9 +605,9 @@
                   <!-- Gate 2 -->
                   <div class="gate-checkpoint is-passed" id="gate-2">
                     <div class="gate-laser-emitter"></div>
-                    <div class="gate-ring"><span class="gate-icon">✓</span></div>
+                    <div class="gate-ring"><span class="gate-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span></div>
                     <div class="gate-info">
-                      <strong class="gate-title">Gate 2: Null Safety</strong>
+                      <strong class="gate-title">02 / Null Safety</strong>
                       <span class="gate-desc">0 Null Dereferences</span>
                     </div>
                   </div>
@@ -599,10 +617,10 @@
                   <!-- Gate 3 -->
                   <div class="gate-checkpoint is-passed" id="gate-3">
                     <div class="gate-laser-emitter"></div>
-                    <div class="gate-ring"><span class="gate-icon">✓</span></div>
+                    <div class="gate-ring"><span class="gate-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span></div>
                     <div class="gate-info">
-                      <strong class="gate-title">Gate 3: Confidence</strong>
-                      <span class="gate-desc">&ge; 70% (Scored 95%)</span>
+                      <strong class="gate-title">03 / Confidence</strong>
+                      <span class="gate-desc">&ge; 70% Threshold</span>
                     </div>
                   </div>
 
@@ -611,10 +629,10 @@
                   <!-- Gate 4 -->
                   <div class="gate-checkpoint is-passed" id="gate-4">
                     <div class="gate-laser-emitter"></div>
-                    <div class="gate-ring"><span class="gate-icon">✓</span></div>
+                    <div class="gate-ring"><span class="gate-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span></div>
                     <div class="gate-info">
-                      <strong class="gate-title">Gate 4: Replay</strong>
-                      <span class="gate-desc">In-process Verified</span>
+                      <strong class="gate-title">04 / Replay</strong>
+                      <span class="gate-desc">In-Process Verified</span>
                     </div>
                   </div>
 
@@ -623,9 +641,9 @@
                   <!-- Gate 5 (With Hydraulic Blast Door for Rejection) -->
                   <div class="gate-checkpoint is-passed gate-checkpoint--blast" id="gate-5">
                     <div class="gate-laser-emitter"></div>
-                    <div class="gate-ring"><span class="gate-icon" id="gate-5-icon">✓</span></div>
+                    <div class="gate-ring"><span class="gate-icon" id="gate-5-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span></div>
                     <div class="gate-info">
-                      <strong class="gate-title">Gate 5: Quarantine</strong>
+                      <strong class="gate-title">05 / Quarantine</strong>
                       <span class="gate-desc" id="gate-5-desc">Zero Hallucination</span>
                     </div>
 
@@ -745,11 +763,11 @@
               <!-- Human-in-the-Loop Incident Alert Card -->
               <div class="incident-card" id="incident-card" hidden>
                 <div class="incident-head">
-                  <span class="incident-pill">⚡ Slack / Discord Webhook Card Preview</span>
+                  <span class="incident-pill">WEBHOOK_ALERT &middot; SLACK &amp; DISCORD CARD</span>
                   <span class="mono text-muted" id="incident-ts"></span>
                 </div>
                 <div class="incident-body">
-                  <div class="incident-title" id="incident-title">⚠️ Drift Incident: Missing field detected</div>
+                  <div class="incident-title" id="incident-title">DRIFT INCIDENT // REQUIRED FIELD MISSING</div>
                   <p class="incident-diff" id="incident-diff">Field diff: <code>email -> null (Blocked at Gate 5)</code></p>
                   <div class="incident-actions">
                     <button class="btn btn-primary btn-sm" id="btn-force-approve" type="button">Force Approve Rule</button>
@@ -820,7 +838,7 @@
                   <div class="stamp-inner">
                     <span class="stamp-verified">AUTONOMOUS DISPATCH</span>
                     <strong class="stamp-heading">PR #42 DISPATCHED</strong>
-                    <span class="stamp-tests">&check; 100% PASSING (NODE:TEST)</span>
+                    <span class="stamp-tests">100% PASSING (NODE:TEST)</span>
                   </div>
                 </div>
               </div>
@@ -833,6 +851,54 @@
           </div>
         </section>
       </main>
+
+      <!-- Shared Nexola Editorial Footer with Ambient Gradient Blur -->
+      <footer class="site-footer site-footer--compact console-footer">
+        <div class="footer-ambient-blur" aria-hidden="true"></div>
+        <div class="console-footer-inner footer-inner">
+          <div class="footer-top-row">
+            <div class="footer-brand-block">
+              <div class="footer-wordmark">
+                <span class="brand-dot">&bull;</span>
+                <span class="brand-text">AutoPatch</span>
+              </div>
+              <p class="footer-bio">
+                Real-time self-healing reverse proxy telemetry, chaos fault injection, and 5-gate fail-closed verification console.
+              </p>
+              <div class="footer-pill-status">
+                <span class="status-pulse-dot"></span>
+                <span>RUNTIME TELEMETRY ACTIVE &middot; 0.14 MS OVERHEAD</span>
+              </div>
+            </div>
+
+            <div class="footer-links-grid">
+              <div class="footer-col">
+                <span class="footer-col-title">SURFACES</span>
+                <a href="/">Landing Overview</a>
+                <a href="/console">Operator Console</a>
+                <a href="/demo">Acme Billing Demo</a>
+              </div>
+              <div class="footer-col">
+                <span class="footer-col-title">GUARANTEES</span>
+                <span class="footer-static-item">5-Gate Fail-Closed</span>
+                <span class="footer-static-item">Zero-PII Redaction</span>
+                <span class="footer-static-item">Autonomous PR Worker</span>
+              </div>
+              <div class="footer-col">
+                <span class="footer-col-title">TEAM</span>
+                <span class="footer-static-item">Team Coders of Bharat</span>
+                <span class="footer-static-item">Google Startup Buildathon</span>
+                <span class="footer-static-item">Bangalore, India</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-bottom-row">
+            <span>&copy; 2026 Coders of Bharat &middot; Autonomous API Self-Healing</span>
+            <span class="footer-tagline">Architected with Gemini &middot; Zero Slop &middot; 100% Deterministic Safety</span>
+          </div>
+        </div>
+      </footer>
     </div>
   </div>
 
@@ -909,6 +975,7 @@
       });
     })();
   </script>
+  <script src="/motion.js" defer></script>
   <script src="/console.js" type="module"></script>
 </body>
 </html>

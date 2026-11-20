@@ -2178,6 +2178,17 @@ body {
   margin-bottom: 12px;
 }
 
+.badge-num {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: var(--danger);
+  margin-right: 4px;
+}
+
+.badge-num--ok {
+  color: var(--ok);
+}
+
 .victim-card-badge--danger {
   background: rgba(239, 68, 68, 0.15);
   color: var(--danger);
@@ -3025,4 +3036,436 @@ body {
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   NEXOLA EDITORIAL ARCHITECTURAL OVERHAUL FOR /console
+   Matches Landing Page: 1px hairlines, bold Swiss neo-grotesque, matte obsidian
+   hardware surfaces, Framer spring transitions, zero AI slop.
+   ========================================================================== */
+
+body.console-editorial {
+  background: var(--bg);
+}
+
+.console-editorial .app-shell {
+  position: relative;
+  z-index: 2;
+}
+
+/* Sidebar refinement */
+.console-editorial .sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+}
+
+.console-editorial .brand-wordmark-dot {
+  color: var(--ok);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.console-editorial .brand-name {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-size: 16px;
+}
+
+.console-editorial .brand-ver-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.console-editorial .brand-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.console-editorial .tab-btn {
+  border-radius: 0;
+  border-left: 2px solid transparent;
+  padding: 11px 14px;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.console-editorial .tab-btn:hover {
+  background: var(--surface-2);
+}
+
+.console-editorial .tab-btn.is-active {
+  border-left-color: var(--ink);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.console-editorial .tab-idx {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-right: 8px;
+}
+
+.console-editorial .tab-btn.is-active .tab-idx {
+  color: var(--ok);
+}
+
+/* Topbar refinement */
+.console-editorial .topbar {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  padding: 12px clamp(16px, 2.4vw, 28px);
+  flex-wrap: wrap;
+}
+
+.console-editorial .topbar-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+  max-width: 100%;
+  gap: 8px;
+}
+
+.console-kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.console-editorial .page-id h1 {
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+/* Architectural editorial pill buttons in topbar */
+.console-editorial .topbar-actions .btn-primary {
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-weight: 600;
+  transition: opacity 160ms ease, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.console-editorial .topbar-actions .btn-primary:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.console-editorial .topbar-actions .btn-secondary {
+  border-radius: 999px;
+  border-color: var(--line);
+  background: transparent;
+}
+
+/* Editorial ECG oscilloscope pill */
+.console-editorial .ecg-monitor-pill {
+  background: #08080a;
+  border: 1px solid #22242a;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+/* Bold Swiss Metrics Grid (1px architectural hairlines at all breakpoints) */
+.console-editorial .metrics-row.roi-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--line);
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.console-editorial .metric.metric--roi {
+  border: none;
+  border-radius: 0;
+  padding: 18px 20px;
+  background: var(--surface);
+  box-shadow: none;
+  transition: background-color 180ms ease;
+}
+
+.console-editorial .metric.metric--roi:hover {
+  background: var(--surface-2);
+}
+
+.console-editorial .metric-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.console-editorial .metric-value {
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+@media (max-width: 1120px) {
+  .console-editorial .metrics-row.roi-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .console-editorial .metrics-row.roi-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Framer-style tab panel entrance */
+.console-editorial .tab-panel.is-active {
+  animation: nexolaPanelIn 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes nexolaPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.console-editorial .panel-head h2 {
+  font-size: clamp(20px, 2vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+/* Victim Split-Screen: Clean Architectural Card */
+.console-editorial .victim-sim-container {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  box-shadow: none;
+  padding: 22px;
+}
+
+.console-editorial .victim-live-tag {
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px 7px;
+}
+
+.console-editorial .victim-card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.console-editorial .victim-card--unprotected.is-cracked {
+  border-color: var(--bad);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bad) 35%, transparent);
+}
+
+.console-editorial .victim-card--protected.is-healed-flash {
+  border-color: var(--ok);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ok) 35%, transparent);
+}
+
+.console-editorial .victim-card--protected.is-quarantined {
+  border-color: var(--bad);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bad) 35%, transparent);
+}
+
+/* Matte Obsidian & Titanium Hardware Switches (Chaos Lab) */
+.console-editorial .master-switch-card {
+  background: #08080a;
+  border: 1px solid #22242a;
+  border-radius: var(--r-sm);
+  box-shadow: none;
+  padding: 24px 26px;
+}
+
+.console-editorial .cockpit-badge {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  border-radius: 3px;
+}
+
+.console-editorial .master-switch-info h3 {
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.console-editorial .master-switch-info p {
+  color: #a1a1aa;
+}
+
+.console-editorial .fighter-switch-unit {
+  background: #0c0c0f;
+  border: 1px solid #22242a;
+  border-radius: var(--r-sm);
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.console-editorial .fighter-switch-unit:hover {
+  border-color: #3f3f46;
+  background: #101014;
+}
+
+.console-editorial .fighter-switch-unit.is-armed {
+  border-color: #ef4444;
+  background: #140b0c;
+  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.25);
+}
+
+.console-editorial .switch-housing {
+  background: #050507;
+  border: 1px solid #27272a;
+}
+
+.console-editorial .switch-guard {
+  background: linear-gradient(180deg, rgba(185, 28, 28, 0.92), rgba(127, 29, 29, 0.96));
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 4px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55);
+}
+
+/* Inspector Architectural Telemetry Bar */
+.inspector-xray-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.xray-bar-left,
+.xray-bar-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.xray-summary {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.xray-kv {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink);
+}
+
+.xray-k {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* Matte Obsidian 5-Gate Laser Vault */
+.console-editorial .laser-vault-container {
+  background: #08080a;
+  border: 1px solid #22242a;
+  border-radius: var(--r-sm);
+  box-shadow: none;
+  padding: 26px 22px;
+}
+
+.console-editorial .gate-ring {
+  background: #0c0c0f;
+  border: 1.5px solid #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.22);
+}
+
+.console-editorial .gate-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f4f4f5;
+}
+
+.console-editorial .gate-desc {
+  color: #a1a1aa;
+}
+
+.console-editorial .laser-beam-connector {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.35), #10b981, rgba(16, 185, 129, 0.35));
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.45);
+}
+
+/* 3-Column Diff & Code Viewer legibility + clean gutter stitch */
+.console-editorial .json-grid--3col {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 1120px) {
+  .console-editorial .json-grid--3col {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.console-editorial .json-panel {
+  min-width: 0;
+  border-radius: var(--r-sm);
+}
+
+.console-editorial .json-panel .json-block,
+.console-editorial .json-panel .code-block {
+  overflow-x: auto;
+  font-size: 11.5px;
+  line-height: 1.55;
+  padding: 12px 14px;
+  margin: 0;
+}
+
+.console-editorial .surgical-stitches-svg {
+  opacity: 0.22;
+}
+
+/* Console Footer Container */
+.console-footer {
+  margin-top: 40px;
+  width: 100%;
+}
+
+.console-footer-inner {
+  padding: 0 clamp(20px, 3vw, 36px);
+  max-width: 1280px;
+  margin: 0 auto;
 }

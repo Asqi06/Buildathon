@@ -123,7 +123,16 @@ function applyInferenceLabel() {
   const mode = state.llmMode ?? 'unknown';
   const model = state.llmMode === 'live' && state.llmModel ? ` · ${state.llmModel}` : '';
   if (footer) footer.textContent = `LLM: ${mode}${model}`;
-  if (cell) cell.textContent = state.llmMode === 'mock' ? 'mock mapper (labelled)' : state.llmMode === 'live' ? `Gemini${state.llmModel ? ` · ${state.llmModel}` : ''}` : 'unknown';
+  if (cell) {
+    if (state.llmMode === 'mock') {
+      cell.textContent = 'mock mapper (labelled)';
+    } else if (state.llmMode === 'live') {
+      const provider = state.llmModel && /llama|groq/i.test(state.llmModel) ? 'Groq' : 'Gemini';
+      cell.textContent = `${provider}${state.llmModel ? ` · ${state.llmModel}` : ''}`;
+    } else {
+      cell.textContent = 'unknown';
+    }
+  }
 }
 
 function setText(selector, value) {

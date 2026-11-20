@@ -290,12 +290,16 @@ function applyState(snapshot) {
   state.githubConfigured = Boolean(snapshot.githubConfigured);
   state.latestPr = snapshot.latestPr ?? state.latestPr;
 
-  // Determine provider name
+  // Determine active provider name accurately from llmModel first
   let providerLabel = 'LLM';
-  if (snapshot.groqConfigured || (snapshot.llmModel && /llama|groq/i.test(snapshot.llmModel))) {
-    providerLabel = 'Groq';
-  } else if (snapshot.geminiConfigured || (snapshot.llmModel && /gemini/i.test(snapshot.llmModel))) {
+  if (snapshot.llmModel && /gemini/i.test(snapshot.llmModel)) {
     providerLabel = 'Gemini';
+  } else if (snapshot.llmModel && /llama|groq/i.test(snapshot.llmModel)) {
+    providerLabel = 'Groq';
+  } else if (snapshot.geminiConfigured) {
+    providerLabel = 'Gemini';
+  } else if (snapshot.groqConfigured) {
+    providerLabel = 'Groq';
   }
 
   const pillText = state.llmMode === 'live' ? `${providerLabel}: live` : 'LLM: mock';
@@ -336,8 +340,17 @@ function setChaosMode(mode) {
   const label = chaosLabels[mode] ?? mode;
   const pill = $('#chaos-pill-text');
   if (pill) pill.textContent = label;
+  const chaosPillWrap = $('#chaos-pill');
+  if (chaosPillWrap) {
+    chaosPillWrap.classList.toggle('is-chaos', mode !== 'none');
+    chaosPillWrap.classList.toggle('is-online', mode === 'none');
+  }
   const runner = $('#runner-current-mode');
   if (runner) runner.textContent = label;
+  const victimBtnText = $('#victim-drift-btn-text');
+  if (victimBtnText) {
+    victimBtnText.textContent = mode === 'none' ? 'Arm Upstream Drift' : 'Disarm Drift (Baseline)';
+  }
   for (const button of $$('.chaos-primary-btn, .chaos-tile')) {
     const active = button.dataset.mode === mode;
     button.classList.toggle('is-active', active);
@@ -351,7 +364,10 @@ function setChaosMode(mode) {
     unit.classList.toggle('is-armed', isTarget);
 
     const guard = unit.querySelector('.switch-guard');
-    if (guard && isTarget) guard.classList.add('is-open');
+    if (guard) {
+      if (isTarget) guard.classList.add('is-open');
+      else if (mode === 'none') guard.classList.remove('is-open');
+    }
 
     const lever = unit.querySelector('.switch-lever');
     if (lever) {
@@ -363,7 +379,7 @@ function setChaosMode(mode) {
     if (led) led.classList.toggle('is-active', isTarget);
 
     const tag = unit.querySelector('.switch-state-tag, .switch-label-armed');
-    if (tag) tag.textContent = isTarget ? 'ARMED' : 'STANDBY';
+    if (tag) tag.textContent = isTarget ? 'ARMED' : (unit.classList.contains('master-switch-unit') ? 'SAFE' : 'STANDBY');
   }
 }
 
@@ -460,7 +476,8 @@ function showInspectorEmpty(kind) {
 function showInspectorFailure(event) {
   state.currentHeal = null;
   $('#inspector-empty').hidden = true;
-  $('#inspector-live').hidden = true;
+  const live = $('#inspector-live');
+  if (live) live.hidden = false;
   const failure = $('#inspector-failure');
   failure.hidden = false;
   const detail = event.failure;
@@ -472,6 +489,28 @@ function showInspectorFailure(event) {
   $('#inspector-failure-text').textContent = text;
   $('#inspector-fingerprint').hidden = !event.fingerprint;
   if (event.fingerprint) $('#inspector-fingerprint').textContent = event.fingerprint;
+
+  const modePill = $('#inspector-mode');
+  if (modePill) setPill(modePill, 'Gate 5 Blocked (HTTP 502)', 'is-offline');
+  const summary = $('#inspector-summary');
+  if (summary) summary.textContent = `${event.method} ${event.path} · Fail-Closed Quarantine · Zero fabricated data`;
+  const endpointEl = $('#xray-endpoint');
+  if (endpointEl) endpointEl.textContent = `${event.method || 'GET'} ${event.path || '/api/v1/checkout/user'}`;
+  const latencyEl = $('#xray-latency');
+  if (latencyEl) latencyEl.textContent = 'HTTP 502 (Blocked)';
+
+  const incidentCard = $('#incident-card');
+  if (incidentCard) {
+    incidentCard.hidden = false;
+    const tsEl = $('#incident-ts');
+    if (tsEl) tsEl.textContent = formatTime(event.ts || Date.now());
+    const diffEl = $('#incident-diff');
+    if (diffEl) {
+      const missing = detail?.missingFields?.length ? detail.missingFields.join(', ') : 'required contract field';
+      diffEl.innerHTML = `Field diff: <code>${escapeHtml(missing)} &rarr; missing (Blocked at Gate 5)</code>`;
+    }
+  }
+  animateLaserVault(true, event);
 }
 
 /* ── Inspector rendering ─────────────────────────────────────────────── */
@@ -566,15 +605,20 @@ function renderInspector(heal) {
   fingerprint.hidden = !fingerprintValue;
   fingerprint.textContent = fingerprintValue || 'not reported';
 
-  setPill(
-    $('#inspector-mode'),
-    heal.cached ? 'Cached (0 model calls)' : 'Cold heal (model verified)',
-    heal.cached ? 'is-online' : 'is-chaos',
-  );
+  const modePill = $('#inspector-mode');
+  if (modePill) {
+    setPill(
+      modePill,
+      heal.cached ? 'Cached (0 model calls)' : 'Cold heal (model verified)',
+      heal.cached ? 'is-online' : 'is-chaos',
+    );
+  }
   const confidence = heal.rule?.confidence;
   const confidenceText = Number.isFinite(confidence) ? `${(confidence * 100).toFixed(0)}%` : 'not reported';
   const summary = $('#inspector-summary');
-  summary.textContent = `${heal.method} ${heal.endpoint} · ${heal.model ?? heal.llmMode ?? 'runtime'} · Confidence ${confidenceText}`;
+  if (summary) {
+    summary.textContent = `${heal.method} ${heal.endpoint} · ${heal.model ?? heal.llmMode ?? 'runtime'} · Confidence ${confidenceText}`;
+  }
 
   const beforePayload = heal.before ?? heal.observedBody ?? {
     id: 'usr_99',
@@ -1051,74 +1095,56 @@ async function fireLiveRequest() {
     const isHealed = statusHeader.includes('healed');
     const statusLabel = isHealed ? 'AUTO_HEALED' : (res.ok ? 'VERIFIED' : 'UNRECOVERABLE');
 
-    // Create live trace record
-    const liveTraceId = `live-${Date.now()}`;
-    const liveEvent = {
-      id: liveTraceId,
-      ts: Date.now(),
-      method: 'GET',
-      path: '/api/v1/checkout/user',
-      status: statusLabel,
-      httpStatus: res.status,
-      upstreamMs: null,
-      overheadMs: overhead,
-      healMs: overhead,
-      cached: statusHeader.includes('cached'),
-      fingerprint: fingerprint
-    };
+    const wsConnected = socket && socket.readyState === WebSocket.OPEN;
 
-    // Synthesize heal object for Inspector
-    const healDetails = {
-      requestId: liveTraceId,
-      method: 'GET',
-      endpoint: '/api/v1/checkout/user',
-      cached: statusHeader.includes('cached'),
-      model: state.llmMode === 'live' ? 'live model' : 'mock mapper (labelled)',
-      fingerprint: fingerprint,
-      before: {
-        id: 'usr_99',
-        contact: { email_addr: 'alex@acme.io' },
-        balance: '450.50',
-        verified: 1,
-        created: 1731576600
-      },
-      after: json,
-      observedBody: {
-        id: 'usr_99',
-        contact: { email_addr: 'alex@acme.io' },
-        balance: '450.50',
-        verified: 1,
-        created: 1731576600
-      },
-      clientBody: json,
-      rule: {
-        confidence: null,
-        source: 'runtime',
-        reasoning: 'The mapping rule was applied and verified by the runtime before this response was served.',
-        fields: {
-          user_id: { from: 'id', coerce: 'none' },
-          email: { from: 'contact.email_addr', coerce: 'none' },
-          account_balance: { from: 'balance', coerce: 'number' },
-          is_verified: { from: 'verified', coerce: 'boolean' },
-          created_at: { from: 'created', coerce: 'isoDate' }
-        }
-      }
-    };
+    // Only synthesize a local fallback row when WebSocket telemetry is disconnected.
+    // When WS is connected, the proxy broadcasts the authoritative server trace + diff.
+    if (!wsConnected) {
+      const liveTraceId = `live-${Date.now()}`;
+      const liveEvent = {
+        id: liveTraceId,
+        ts: Date.now(),
+        method: 'GET',
+        path: '/api/v1/checkout/user',
+        status: statusLabel,
+        httpStatus: res.status,
+        upstreamMs: null,
+        overheadMs: overhead,
+        healMs: overhead,
+        cached: statusHeader.includes('cached'),
+        fingerprint: fingerprint,
+        failure: !res.ok ? json : undefined,
+      };
+      addRequest(liveEvent);
+      selectRow(liveTraceId, false);
+    } else if (state.traffic.length > 0) {
+      // Select the latest authoritative trace delivered via WS
+      selectRow(state.traffic[0].id, false);
+    }
 
-    state.healByRequest.set(liveTraceId, healDetails);
-    addRequest(liveEvent);
-    selectRow(liveTraceId, false);
-
-    // Show result in Chaos Lab
+    // Show honest result in Chaos Lab
     const resultBox = $('#chaos-live-result');
     if (resultBox) {
       resultBox.hidden = false;
-      resultBox.classList.remove('is-error');
-      $('#chaos-result-title').textContent = `HTTP ${res.status}: response served${overhead !== null ? ` in ${overhead} ms` : ''}`;
-      $('#chaos-result-details').textContent = `The client received the baseline shape. user_id: "${json.user_id}", balance: $${json.account_balance}.`;
+      if (res.ok) {
+        resultBox.classList.remove('is-error');
+        $('#chaos-result-title').textContent = `HTTP ${res.status}: ${isHealed ? 'healed & verified' : 'baseline verified'}${overhead !== null ? ` in ${overhead.toFixed(2)} ms` : ''}`;
+        $('#chaos-result-details').textContent = `Client received valid contract shape. user_id: "${json.user_id}", balance: $${json.account_balance}.`;
+      } else {
+        resultBox.classList.add('is-error');
+        $('#chaos-result-title').textContent = `HTTP ${res.status}: ${json.error || 'Gate 5 Fail-Closed Block'}`;
+        const missing = Array.isArray(json.missingFields) && json.missingFields.length > 0
+          ? ` Missing required fields: ${json.missingFields.join(', ')}.`
+          : '';
+        $('#chaos-result-details').textContent = `${json.message || 'AutoPatch refused to serve unverified data.'}${missing}`;
+      }
     }
 
-    toast(`Response served in ${elapsed} ms${overhead !== null ? ` · ${overhead} ms proxy overhead` : ''}`, 'success');
+    if (res.ok) {
+      toast(`HTTP ${res.status} served in ${elapsed} ms${overhead !== null ? ` · ${overhead.toFixed(2)} ms overhead` : ''}`, 'success');
+    } else {
+      toast(`HTTP ${res.status}: ${json.reason || json.error || 'Fail-closed quarantine'}`, 'error');
+    }
   } catch (err) {
     toast(`Request failed: ${err.message}`, 'error');
     const resultBox = $('#chaos-live-result');
@@ -1235,7 +1261,7 @@ function wire() {
         await navigator.clipboard.writeText(cmd);
         const copyBtn = $('#btn-copy-quickstart');
         if (copyBtn) {
-          copyBtn.textContent = 'Copied ✓';
+          copyBtn.textContent = 'Copied';
           setTimeout(() => { copyBtn.textContent = 'Copy command'; }, 2000);
         }
         toast('Command copied to clipboard!', 'success');
@@ -1763,6 +1789,9 @@ class EcgMonitor {
 
 let ecgMonitor = null;
 
+const GATE_ICON_OK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+const GATE_ICON_BLOCK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
 /* ── 4. Interactive 5-Gate Laser Vault Animation ────────────────────────── */
 function animateLaserVault(isUnrecoverable, heal) {
   const packet = $('#laser-packet');
@@ -1774,7 +1803,7 @@ function animateLaserVault(isUnrecoverable, heal) {
     if (packet) packet.style.left = '68%';
     if (blastDoor) blastDoor.hidden = false;
     if (gate5Icon) {
-      gate5Icon.textContent = '✕';
+      gate5Icon.innerHTML = GATE_ICON_BLOCK;
       gate5Icon.style.color = '#ef4444';
     }
     if (gate5Desc) gate5Desc.textContent = 'QUARANTINED (502)';
@@ -1783,7 +1812,7 @@ function animateLaserVault(isUnrecoverable, heal) {
   } else {
     if (blastDoor) blastDoor.hidden = true;
     if (gate5Icon) {
-      gate5Icon.textContent = '✓';
+      gate5Icon.innerHTML = GATE_ICON_OK;
       gate5Icon.style.color = '#10b981';
     }
     if (gate5Desc) gate5Desc.textContent = 'Zero Hallucination';
@@ -1809,12 +1838,12 @@ function setupSurgicalDiffTooltips() {
   if (!afterJson || !tooltip) return;
 
   afterJson.onclick = (e) => {
-    const line = e.target.closest('.json-line') || e.target;
+    const line = e.target.closest('.j-line') || e.target;
     const rect = line.getBoundingClientRect();
     const parentRect = afterJson.parentElement.getBoundingClientRect();
 
-    tooltip.style.top = `${rect.top - parentRect.top - 28}px`;
-    tooltip.style.left = `${rect.left - parentRect.left + 20}px`;
+    tooltip.style.top = `${Math.max(8, rect.top - parentRect.top - 28)}px`;
+    tooltip.style.left = `${Math.max(12, rect.left - parentRect.left + 20)}px`;
     tooltip.hidden = false;
     soundEngine.playSubMsPing();
 
@@ -1833,6 +1862,7 @@ async function runVictimSplitTest() {
   }
 
   const isDriftActive = state.chaosMode !== 'none';
+  const isUnrecoverableDrift = state.chaosMode === 'field_deleted';
   const unprotectedCard = $('#victim-unprotected-card');
   const shatterOverlay = $('#glass-shatter-overlay');
   const unprotectedUser = $('#unprotected-user-val');
@@ -1842,8 +1872,31 @@ async function runVictimSplitTest() {
   const protectedUser = $('#protected-user-val');
   const protectedPayBtn = $('#protected-pay-btn');
   const bandageSticker = $('#bandage-sticker');
+  const healBanner = $('#heal-notice-banner');
 
-  if (isDriftActive) {
+  if (isUnrecoverableDrift) {
+    unprotectedCard?.classList.add('is-cracked');
+    if (shatterOverlay) shatterOverlay.hidden = false;
+    if (unprotectedUser) unprotectedUser.textContent = 'user.email: undefined (CRASH)';
+    if (unprotectedPayBtn) {
+      unprotectedPayBtn.classList.add('is-failed');
+      unprotectedPayBtn.textContent = 'Transaction Aborted (Crash)';
+    }
+
+    protectedCard?.classList.remove('is-healed-flash');
+    protectedCard?.classList.add('is-quarantined');
+    if (protectedUser) protectedUser.textContent = 'HTTP 502 · Gate 5 Quarantined';
+    if (bandageSticker) bandageSticker.style.display = 'none';
+    if (protectedPayBtn) {
+      protectedPayBtn.innerHTML = '<span>Blocked at Gate 5 (HTTP 502)</span>';
+    }
+    if (healBanner) {
+      healBanner.innerHTML = '<span class="heal-badge-pill">FAIL-CLOSED 502</span><span>Required field <code>email</code> absent. AutoPatch refused to fabricate data.</span>';
+    }
+    soundEngine.playVaultThud();
+    ecgMonitor?.setState('quarantined');
+    toast('Gate 5 Fail-Closed: Missing required field quarantined (HTTP 502)', 'error');
+  } else if (isDriftActive) {
     unprotectedCard?.classList.add('is-cracked');
     if (shatterOverlay) shatterOverlay.hidden = false;
     if (unprotectedUser) unprotectedUser.textContent = 'user.user_id: undefined (CRASH)';
@@ -1852,9 +1905,16 @@ async function runVictimSplitTest() {
       unprotectedPayBtn.textContent = 'Transaction Aborted (Crash)';
     }
 
+    protectedCard?.classList.remove('is-quarantined');
     protectedCard?.classList.add('is-healed-flash');
     if (protectedUser) protectedUser.textContent = 'user_id: "usr_99"';
     if (bandageSticker) bandageSticker.style.display = 'inline-flex';
+    if (protectedPayBtn) {
+      protectedPayBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Order #4928 Captured (200 OK)</span>';
+    }
+    if (healBanner) {
+      healBanner.innerHTML = '<span class="heal-badge-pill">CONTRACT SATISFIED</span><span>Upstream drift healed in-flight in 0.14 ms. Zero downtime.</span>';
+    }
     soundEngine.playSnip();
     ecgMonitor?.setState('arrhythmia');
     setTimeout(() => ecgMonitor?.setState('normal'), 1400);
@@ -1868,7 +1928,12 @@ async function runVictimSplitTest() {
       unprotectedPayBtn.classList.remove('is-failed');
       unprotectedPayBtn.textContent = 'Complete Order ($49.00)';
     }
-    protectedCard?.classList.remove('is-healed-flash');
+    protectedCard?.classList.remove('is-healed-flash', 'is-quarantined');
+    if (protectedUser) protectedUser.textContent = 'user_id: "usr_99"';
+    if (bandageSticker) bandageSticker.style.display = 'inline-flex';
+    if (protectedPayBtn) {
+      protectedPayBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Order #4928 Captured (200 OK)</span>';
+    }
     soundEngine.playSubMsPing();
     ecgMonitor?.setState('normal');
   }

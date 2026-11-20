@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Acme Billing: Billing overview</title>
+  <title>Acme Billing &middot; AutoPatch Live Client Demo</title>
   <meta name="description" content="Acme Billing demo client. Switch between the raw upstream and the AutoPatch proxy to see the same page survive a schema change.">
   <meta name="theme-color" content="#f2f2ee">
+  <link rel="icon" type="image/png" href="/bandage.png">
   <link rel="preload" href="/vendor/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/vendor/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
   <script>
     (() => {
       try {
@@ -21,7 +23,8 @@
   <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/demo.css">
 </head>
-<body>
+<body class="demo-editorial">
+  <div class="grid-axis-line" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
@@ -34,39 +37,42 @@
   <header class="app-header">
     <div class="shell app-header-inner">
       <a class="app-brand" href="/" aria-label="AutoPatch home">
-        <img src="/brand/coders-of-bharat-light.png" alt="Coders of Bharat" class="team-logo logo-light" width="88" height="34">
-        <img src="/brand/coders-of-bharat-dark.png" alt="Coders of Bharat" class="team-logo logo-dark" width="88" height="34">
+        <span class="demo-wordmark-dot" aria-hidden="true">&bull;</span>
+        <span class="demo-wordmark">AutoPatch</span>
         <span class="brand-divider" aria-hidden="true"></span>
-        <span class="app-name">Acme <span>Billing</span></span>
+        <span class="app-name">Acme <span>Billing Client</span></span>
       </a>
 
       <nav class="app-nav" aria-label="Acme Billing">
-        <span class="nav-current" aria-current="page">Billing</span>
+        <span class="nav-current" aria-current="page">Demo client</span>
         <a href="/console">Operator console</a>
-        <a href="/">AutoPatch home</a>
+        <a href="/">Home</a>
       </nav>
 
       <div class="app-actions">
-        <span class="workspace-chip"><span class="dot dot--green"></span>Demo workspace</span>
-        <span class="avatar" aria-hidden="true">AV</span>
+        <span class="workspace-chip"><span class="dot dot--green"></span>SYNTHETIC CLIENT</span>
         <button class="theme-toggle" id="demo-theme-toggle" type="button" aria-label="Switch to dark theme">
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
+        <a class="demo-header-cta" href="/console">Console &rarr;</a>
       </div>
     </div>
   </header>
 
   <main class="shell page" id="main">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <span>Billing</span>
-      <span class="sep" aria-hidden="true">/</span>
-      <span class="current" aria-current="page">Overview</span>
-    </nav>
+    <div class="demo-top-meta" data-reveal="fade">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <span>01 // LIVE CLIENT SURFACE</span>
+        <span class="sep" aria-hidden="true">/</span>
+        <span class="current" aria-current="page">ACME BILLING OVERVIEW</span>
+      </nav>
+      <span class="demo-meta-hint mono">Toggle route to witness genuine client crash vs 0.14 ms heal</span>
+    </div>
 
-    <div class="page-head">
+    <div class="page-head" data-reveal>
       <div>
-        <h1>Billing overview</h1>
+        <h1>Billing overview.</h1>
         <p class="page-sub" id="signed-in">Signed in to the demo workspace</p>
       </div>
       <div class="page-controls">
@@ -81,17 +87,17 @@
       </div>
     </div>
 
-    <div class="mode-note" id="mode-note">
+    <div class="mode-note" id="mode-note" data-reveal data-reveal-delay="60">
       <span class="dot" id="mode-dot"></span>
       <span class="mode-text" id="mode-note-text">Requests are routed through AutoPatch, which validates the response against the baseline contract.</span>
       <span class="mode-endpoint mono" id="mode-endpoint">/api/v1/checkout/user</span>
     </div>
 
-    <div class="content-grid" id="content-grid">
+    <div class="content-grid" id="content-grid" data-reveal data-reveal-delay="100">
       <section class="card account-card" id="account-card" aria-busy="true" aria-labelledby="account-title">
         <header class="card-head">
           <div>
-            <p class="card-kicker">Account</p>
+            <p class="card-kicker">01 // ACCOUNT PROFILE</p>
             <h2 id="account-title">Billing profile</h2>
           </div>
           <span class="status-pill" id="verified-pill"><span class="dot"></span><span>Verified</span></span>
@@ -139,7 +145,7 @@
       <aside class="card connection-card" aria-labelledby="connection-title">
         <header class="card-head">
           <div>
-            <p class="card-kicker">Route</p>
+            <p class="card-kicker">02 // ROUTE TELEMETRY</p>
             <h2 id="connection-title">Connection</h2>
           </div>
           <span class="tiny-pill" id="conn-mode-pill">proxy</span>
@@ -163,10 +169,10 @@
       </aside>
     </div>
 
-    <details class="card raw-card" id="raw-card" open>
+    <details class="card raw-card" id="raw-card" open data-reveal data-reveal-delay="140">
       <summary>
         <span class="raw-summary">
-          <strong>Latest response</strong>
+          <strong>03 // Latest wire payload</strong>
           <span class="raw-meta mono" id="raw-meta">No response yet</span>
         </span>
         <span class="raw-toggle">JSON</span>
@@ -256,11 +262,55 @@
       </div>
     </section>
 
-    <footer class="page-foot">
-      <span>Acme Billing is a demo client. Data is synthetic.</span>
-      <span class="foot-right">Routing by <a href="/console">AutoPatch</a> · <span id="footer-llm">LLM: mock</span></span>
-    </footer>
   </main>
+
+  <!-- Shared Nexola Editorial Footer with Ambient Gradient Blur -->
+  <footer class="site-footer site-footer--compact">
+    <div class="footer-ambient-blur" aria-hidden="true"></div>
+    <div class="shell footer-inner">
+      <div class="footer-top-row">
+        <div class="footer-brand-block">
+          <div class="footer-wordmark">
+            <span class="brand-dot">&bull;</span>
+            <span class="brand-text">AutoPatch</span>
+          </div>
+          <p class="footer-bio">
+            Acme Billing is a synthetic client surface demonstrating live upstream drift crashes vs autonomous 0.14 ms contract healing.
+          </p>
+          <div class="footer-pill-status">
+            <span class="status-pulse-dot"></span>
+            <span id="footer-llm">LLM: mock</span>
+          </div>
+        </div>
+
+        <div class="footer-links-grid">
+          <div class="footer-col">
+            <span class="footer-col-title">SURFACES</span>
+            <a href="/">Landing Overview</a>
+            <a href="/console">Operator Console</a>
+            <a href="/demo">Acme Billing Demo</a>
+          </div>
+          <div class="footer-col">
+            <span class="footer-col-title">VERIFICATION</span>
+            <span class="footer-static-item">Real Client TypeError Test</span>
+            <span class="footer-static-item">Sub-ms Proxy Healing</span>
+            <span class="footer-static-item">502 Fail-Closed Guard</span>
+          </div>
+          <div class="footer-col">
+            <span class="footer-col-title">TEAM</span>
+            <span class="footer-static-item">Team Coders of Bharat</span>
+            <span class="footer-static-item">Google Startup Buildathon</span>
+            <span class="footer-static-item">Bangalore, India</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom-row">
+        <span>&copy; 2026 Coders of Bharat &middot; Acme Billing Synthetic Client</span>
+        <span class="footer-tagline">Architected with Gemini &middot; Zero Slop &middot; 100% Deterministic Safety</span>
+      </div>
+    </div>
+  </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
@@ -282,6 +332,7 @@
       });
     })();
   </script>
+  <script src="/motion.js" defer></script>
   <script src="/demo.js" type="module"></script>
 </body>
 </html>
