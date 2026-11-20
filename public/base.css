@@ -125,6 +125,7 @@ html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 16px);
+  cursor: url('/bandage-cursor.png') 4 4, auto;
 }
 
 body {
@@ -136,6 +137,19 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  cursor: url('/bandage-cursor.png') 4 4, auto;
+}
+
+a,
+button,
+[role="button"],
+.btn,
+.tab-btn,
+.specimen-tab,
+.scenario,
+.chaos-tile,
+.chaos-primary-btn {
+  cursor: url('/bandage-cursor.png') 4 4, pointer;
 }
 
 body,
@@ -213,6 +227,26 @@ samp {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+.wordmark-brand-row,
+.brand-name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-bandage {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(255, 106, 61, 0.25));
+  animation: bandage-hover 3s ease-in-out infinite;
+}
+
+@keyframes bandage-hover {
+  0%, 100% { transform: rotate(-15deg) translateY(0); }
+  50% { transform: rotate(-5deg) translateY(-2px); }
 }
 
 :where(a, button, summary, input, select, textarea):focus-visible {

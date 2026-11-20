@@ -744,7 +744,7 @@ body {
   gap: 16px;
   min-height: 44px;
   padding: 10px 16px;
-  cursor: pointer;
+  cursor: url('/bandage-cursor.png') 4 4, pointer;
   list-style: none;
 }
 
@@ -919,7 +919,7 @@ body {
 }
 
 .crash-raw summary {
-  cursor: pointer;
+  cursor: url('/bandage-cursor.png') 4 4, pointer;
   color: var(--muted);
   font-size: 10.5px;
 }

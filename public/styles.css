@@ -484,7 +484,7 @@ body {
 }
 
 .data-row {
-  cursor: pointer;
+  cursor: url('/bandage-cursor.png') 4 4, pointer;
   transition: background-color 120ms ease;
 }
 
@@ -1544,7 +1544,7 @@ body {
   border: 0;
   background: transparent;
   color: var(--muted);
-  cursor: pointer;
+  cursor: url('/bandage-cursor.png') 4 4, pointer;
   transition: all 0.15s ease;
 }
 
@@ -1860,7 +1860,7 @@ body {
   font-size: 24px;
   line-height: 1;
   color: var(--muted);
-  cursor: pointer;
+  cursor: url('/bandage-cursor.png') 4 4, pointer;
   padding: 4px;
 }
 
