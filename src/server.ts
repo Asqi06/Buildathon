@@ -168,6 +168,7 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
       alertsCount: alertManager.getAlerts().length,
       learnMode: registry.isLearnMode(),
       learnedCount: registry.getLearnedContracts().length,
+      recentEvents: events.recent(),
     };
   };
 
@@ -696,13 +697,12 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   return app;
 }
 
-export async function startServer(config: AppConfig = loadConfig()): Promise<FastifyInstance> {
-  // Auto-boot embedded mock upstream in single-container cloud deployments (Google AI Studio / Cloud Run)
+export async function ensureEmbeddedUpstream(config: AppConfig): Promise<void> {
   if (/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/i.test(config.upstreamBaseUrl)) {
     let upstreamAlive = false;
     try {
       const probe = await fetch(`${config.upstreamBaseUrl}/__control/chaos`, {
-        signal: AbortSignal.timeout(600),
+        signal: AbortSignal.timeout(500),
       });
       upstreamAlive = probe.ok;
     } catch {
@@ -720,6 +720,10 @@ export async function startServer(config: AppConfig = loadConfig()): Promise<Fas
       }
     }
   }
+}
+
+export async function startServer(config: AppConfig = loadConfig()): Promise<FastifyInstance> {
+  await ensureEmbeddedUpstream(config);
 
   const app = await buildServer({ config });
   const host = process.env.HOST ?? '0.0.0.0';

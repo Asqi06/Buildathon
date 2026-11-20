@@ -15,20 +15,20 @@
     "prewarm": "tsx scripts/prewarm.ts"
   },
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "dependencies": {
     "@fastify/static": "10.1.11",
     "@fastify/websocket": "11.3.7",
     "@google/genai": "3.3.0",
     "@octokit/rest": "22.0.1",
+    "@types/node": "26.6.6",
+    "@types/ws": "8.18.2",
     "dotenv": "18.0.10",
     "fastify": "5.12.8",
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@types/node": "26.6.6",
-    "@types/ws": "8.18.2",
     "tsx": "4.23.15",
     "typescript": "7.0.2",
     "vitest": "5.1.0"

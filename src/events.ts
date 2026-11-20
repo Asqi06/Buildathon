@@ -70,6 +70,8 @@ export type EventListener = (event: AutopatchEvent) => void;
 
 export class EventHub {
   private readonly listeners = new Set<EventListener>();
+  private readonly history: AutopatchEvent[] = [];
+  private static readonly MAX_HISTORY = 40;
 
   subscribe(listener: EventListener): () => void {
     this.listeners.add(listener);
@@ -79,6 +81,12 @@ export class EventHub {
   }
 
   emit(event: AutopatchEvent): void {
+    if (event.type === 'request' || event.type === 'heal' || event.type === 'pr') {
+      this.history.push(event);
+      if (this.history.length > EventHub.MAX_HISTORY) {
+        this.history.splice(0, this.history.length - EventHub.MAX_HISTORY);
+      }
+    }
     for (const listener of this.listeners) {
       try {
         listener(event);
@@ -87,5 +95,9 @@ export class EventHub {
         console.error(`[events] listener failed: ${message}`);
       }
     }
+  }
+
+  recent(): AutopatchEvent[] {
+    return [...this.history];
   }
 }

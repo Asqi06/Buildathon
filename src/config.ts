@@ -56,10 +56,16 @@ export function loadConfig(overrides: EnvOverrides = {}): AppConfig {
       ? 'gemini-2.0-flash'
       : undefined;
 
+  const defaultDataDir =
+    overrides.DATA_DIR === undefined && !process.env.DATA_DIR && process.env.VERCEL
+      ? '/tmp/autopatch-data'
+      : undefined;
+
   const merged: EnvOverrides = {
     ...process.env,
     ...(fallbackAiStudioKey ? { GEMINI_API_KEY: fallbackAiStudioKey } : {}),
     ...(fallbackAiStudioModel ? { GEMINI_MODEL: fallbackAiStudioModel } : {}),
+    ...(defaultDataDir ? { DATA_DIR: defaultDataDir } : {}),
     ...overrides,
   };
   const parsed = envSchema.safeParse(merged);

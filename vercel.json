@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/__autopatch/(.*)", "destination": "/api/index" },
+    { "source": "/api/v1/(.*)", "destination": "/api/index" },
+    { "source": "/api/v2/(.*)", "destination": "/api/index" },
+    { "source": "/console", "destination": "/console.html" },
+    { "source": "/console/", "destination": "/console.html" },
+    { "source": "/demo", "destination": "/demo.html" },
+    { "source": "/demo/", "destination": "/demo.html" }
+  ]
+}

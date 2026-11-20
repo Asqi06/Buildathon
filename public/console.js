@@ -333,6 +333,19 @@ function applyState(snapshot) {
   }
 
   renderMetrics(snapshot.metrics);
+
+  if (Array.isArray(snapshot.recentEvents)) {
+    const existingIds = new Set(state.traffic.map((t) => t.id));
+    for (const evt of snapshot.recentEvents) {
+      if (evt.type === 'heal' && evt.requestId && !state.healByRequest.has(evt.requestId)) {
+        state.healByRequest.set(evt.requestId, evt);
+        state.currentHeal = evt;
+      } else if (evt.type === 'request' && evt.id && !existingIds.has(evt.id)) {
+        existingIds.add(evt.id);
+        addRequest(evt);
+      }
+    }
+  }
 }
 
 function setChaosMode(mode) {
@@ -1100,23 +1113,31 @@ async function fireLiveRequest() {
     // Only synthesize a local fallback row when WebSocket telemetry is disconnected.
     // When WS is connected, the proxy broadcasts the authoritative server trace + diff.
     if (!wsConnected) {
-      const liveTraceId = `live-${Date.now()}`;
-      const liveEvent = {
-        id: liveTraceId,
-        ts: Date.now(),
-        method: 'GET',
-        path: '/api/v1/checkout/user',
-        status: statusLabel,
-        httpStatus: res.status,
-        upstreamMs: null,
-        overheadMs: overhead,
-        healMs: overhead,
-        cached: statusHeader.includes('cached'),
-        fingerprint: fingerprint,
-        failure: !res.ok ? json : undefined,
-      };
-      addRequest(liveEvent);
-      selectRow(liveTraceId, false);
+      try {
+        const snap = await requestJson('/__autopatch/api/state');
+        applyState(snap);
+      } catch {}
+      if (state.traffic.length > 0) {
+        selectRow(state.traffic[0].id, false);
+      } else {
+        const liveTraceId = `live-${Date.now()}`;
+        const liveEvent = {
+          id: liveTraceId,
+          ts: Date.now(),
+          method: 'GET',
+          path: '/api/v1/checkout/user',
+          status: statusLabel,
+          httpStatus: res.status,
+          upstreamMs: null,
+          overheadMs: overhead,
+          healMs: overhead,
+          cached: statusHeader.includes('cached'),
+          fingerprint: fingerprint,
+          failure: !res.ok ? json : undefined,
+        };
+        addRequest(liveEvent);
+        selectRow(liveTraceId, false);
+      }
     } else if (state.traffic.length > 0) {
       // Select the latest authoritative trace delivered via WS
       selectRow(state.traffic[0].id, false);
