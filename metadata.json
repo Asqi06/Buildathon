@@ -1,0 +1,5 @@
+{
+  "name": "AutoPatch — Autonomous Self-Healing API Reverse Proxy",
+  "description": "Google DeepMind & Google Cloud Startup Buildathon 2026 (Team Coders of Bharat). Autonomous self-healing reverse proxy that intercepts third-party API schema drift in real time, redacts PII before Google Gemini inference, validates mapping rules through a 5-Gate Fail-Closed verification engine, heals subsequent requests in 0.14 ms from memory cache, and opens typed TypeScript adapter Pull Requests.",
+  "requestFramePermissions": []
+}

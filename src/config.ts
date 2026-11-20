@@ -47,7 +47,21 @@ const envSchema = z.object({
 export type EnvOverrides = Record<string, string | undefined>;
 
 export function loadConfig(overrides: EnvOverrides = {}): AppConfig {
-  const merged: EnvOverrides = { ...process.env, ...overrides };
+  const fallbackAiStudioKey =
+    overrides.GEMINI_API_KEY === undefined && !process.env.GEMINI_API_KEY
+      ? process.env.API_KEY || process.env.GOOGLE_API_KEY
+      : undefined;
+  const fallbackAiStudioModel =
+    overrides.GEMINI_MODEL === undefined && !process.env.GEMINI_MODEL && fallbackAiStudioKey
+      ? 'gemini-2.0-flash'
+      : undefined;
+
+  const merged: EnvOverrides = {
+    ...process.env,
+    ...(fallbackAiStudioKey ? { GEMINI_API_KEY: fallbackAiStudioKey } : {}),
+    ...(fallbackAiStudioModel ? { GEMINI_MODEL: fallbackAiStudioModel } : {}),
+    ...overrides,
+  };
   const parsed = envSchema.safeParse(merged);
 
   if (!parsed.success) {

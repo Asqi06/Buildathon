@@ -22,6 +22,7 @@ import { EventHub } from './events.js';
 import { PrQueue } from './github/pr.js';
 import { AlertManager } from './alerts/webhook.js';
 import { createProxyHandler } from './proxy/handler.js';
+import { buildMockServer } from './mock-upstream/server.js';
 import { isMain, isObject } from './util.js';
 
 export interface BuildServerOptions {
@@ -696,6 +697,30 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
 }
 
 export async function startServer(config: AppConfig = loadConfig()): Promise<FastifyInstance> {
+  // Auto-boot embedded mock upstream in single-container cloud deployments (Google AI Studio / Cloud Run)
+  if (/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/i.test(config.upstreamBaseUrl)) {
+    let upstreamAlive = false;
+    try {
+      const probe = await fetch(`${config.upstreamBaseUrl}/__control/chaos`, {
+        signal: AbortSignal.timeout(600),
+      });
+      upstreamAlive = probe.ok;
+    } catch {
+      upstreamAlive = false;
+    }
+    if (!upstreamAlive) {
+      try {
+        const embeddedMock = await buildMockServer('none');
+        await embeddedMock.app.listen({ port: config.mockUpstreamPort, host: '127.0.0.1' });
+        console.log(
+          `[autopatch] auto-started embedded mock upstream on http://127.0.0.1:${config.mockUpstreamPort}`,
+        );
+      } catch {
+        // Already bound by sibling process
+      }
+    }
+  }
+
   const app = await buildServer({ config });
   const host = process.env.HOST ?? '0.0.0.0';
   await app.listen({ port: config.port, host });

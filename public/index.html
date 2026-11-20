@@ -51,8 +51,8 @@
               <a href="#features" class="amp-nav-link is-current">Home</a>
               <a href="#features" class="amp-nav-link">Product</a>
               <a href="#capabilities" class="amp-nav-link">Solution</a>
-              <a href="#pricing" class="amp-nav-link">Pricing</a>
               <a href="#simulator" class="amp-nav-link">Simulator</a>
+              <a href="#judge-rubric" class="amp-nav-link">Jury Rubric</a>
               <a href="/demo" class="amp-nav-link">Demo</a>
             </nav>
 
@@ -86,6 +86,7 @@
 
           <div class="amp-hero-cta-row">
             <a class="amp-btn-dark" href="/console">Get Started</a>
+            <button class="amp-btn-glass" type="button" data-open-judge-tour="0">Interactive Jury Tour (100%)</button>
             <a class="amp-btn-glass" href="#simulator">Try Drift Lab</a>
           </div>
         </div>
@@ -633,42 +634,171 @@
       </div>
     </section>
 
-    <!-- FAQ Section -->
+    <!-- =====================================================================
+         6. GOOGLE DEEPMIND & GOOGLE CLOUD EVALUATION RUBRIC (100% BREAKDOWN)
+         ===================================================================== -->
+    <section class="amp-rubric-section" id="judge-rubric" aria-labelledby="rubric-title" data-reveal>
+      <div class="shell">
+        <div class="amp-section-header">
+          <span class="amp-eyebrow-pill">GOOGLE DEEPMIND &amp; GOOGLE CLOUD STARTUP BUILDATHON</span>
+          <h2 class="amp-section-title" id="rubric-title">
+            100% Evaluation Rubric &amp;<br>Interactive Live Proof Guide
+          </h2>
+          <p class="amp-section-sub">
+            Click any evaluation pillar below to launch the interactive step-by-step walkthrough and execute live backend proofs against the running AutoPatch proxy.
+          </p>
+          <div style="margin-top: 18px;">
+            <button class="amp-btn-dark" type="button" data-open-judge-tour="0">
+              <span>Start Step-by-Step Interactive Jury Walkthrough</span>
+              <span class="arrow-glyph">&rarr;</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="amp-rubric-grid">
+          <article class="amp-rubric-card" data-open-judge-tour="3">
+            <div class="amp-rc-top">
+              <span class="amp-rc-weight">30% Weight</span>
+              <span class="amp-rc-tag">LIVE PROOF STEP 04</span>
+            </div>
+            <h3>Functional Product &amp; Implementation</h3>
+            <p>
+              End-to-end reverse proxy with 3 live workbenches (<code>/console</code>, <code>/demo</code>, AI Healing Studio), autonomous TypeScript adapter &amp; <code>node:test</code> synthesis, GitHub PR dispatch, and 99 passing stress tests.
+            </p>
+            <button class="amp-rc-btn" type="button" data-open-judge-tour="3">Run Live PR &amp; Studio Proof &rarr;</button>
+          </article>
+
+          <article class="amp-rubric-card" data-open-judge-tour="1">
+            <div class="amp-rc-top">
+              <span class="amp-rc-weight">20% Weight</span>
+              <span class="amp-rc-tag">LIVE PROOF STEP 02</span>
+            </div>
+            <h3>Technical Architecture &amp; Engineering Quality</h3>
+            <p>
+              SHA-1 structural fingerprinting, 0.14 ms in-memory rule cache, single-flight thundering herd deduplication (200 parallel requests &rarr; 1 AI inference), and 5 fail-closed deterministic safety gates.
+            </p>
+            <button class="amp-rc-btn" type="button" data-open-judge-tour="1">Run 0.14 ms Cache Proof &rarr;</button>
+          </article>
+
+          <article class="amp-rubric-card" data-open-judge-tour="2">
+            <div class="amp-rc-top">
+              <span class="amp-rc-weight">20% Weight</span>
+              <span class="amp-rc-tag">LIVE PROOF STEP 03</span>
+            </div>
+            <h3>Google AI Integration &amp; Depth</h3>
+            <p>
+              Deep Google Gemini integration (<code>@google/genai</code>) using strict JSON Schema structured outputs over Zero-PII redacted payload skeletons, backed by a 2.8s circuit-breaker failover chain.
+            </p>
+            <button class="amp-rc-btn" type="button" data-open-judge-tour="2">Run Zero-PII Gemini Proof &rarr;</button>
+          </article>
+
+          <article class="amp-rubric-card" data-open-judge-tour="0">
+            <div class="amp-rc-top">
+              <span class="amp-rc-weight">15% Weight</span>
+              <span class="amp-rc-tag">LIVE PROOF STEP 01</span>
+            </div>
+            <h3>Problem&ndash;Solution Alignment</h3>
+            <p>
+              Eliminates the #1 cause of fintech &amp; commerce API outages: unannounced third-party JSON schema drift across Razorpay, Stripe, and ONDC Beckn webhooks without breaking downstream apps.
+            </p>
+            <button class="amp-rc-btn" type="button" data-open-judge-tour="0">Run Drift Interception Proof &rarr;</button>
+          </article>
+
+          <article class="amp-rubric-card" data-open-judge-tour="5">
+            <div class="amp-rc-top">
+              <span class="amp-rc-weight">10% Weight</span>
+              <span class="amp-rc-tag">LIVE PROOF STEP 06</span>
+            </div>
+            <h3>UX, Usability &amp; Accessibility</h3>
+            <p>
+              Zero-config <code>LEARN_MODE</code> passive contract inference from healthy 200 OK traffic, progressive rollout modes (<code>SHADOW</code> &rarr; <code>CANARY 5%</code> &rarr; <code>ACTIVE</code>), and accessible WebSocket X-Ray UI.
+            </p>
+            <button class="amp-rc-btn" type="button" data-open-judge-tour="5">Run Auto-Profiler Proof &rarr;</button>
+          </article>
+
+          <article class="amp-rubric-card" data-open-judge-tour="4">
+            <div class="amp-rc-top">
+              <span class="amp-rc-weight">5% Weight</span>
+              <span class="amp-rc-tag">LIVE PROOF STEP 05</span>
+            </div>
+            <h3>Innovation &amp; Differentiation</h3>
+            <p>
+              Entity-Domain Disambiguation + Gate 5 1-to-1 Source Path Exclusivity prevents <code>data_id</code> and <code>user_id</code> collisions and blocks missing required financial fields with HTTP 502 instead of hallucinating.
+            </p>
+            <button class="amp-rc-btn" type="button" data-open-judge-tour="4">Run Entity Collision Proof &rarr;</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         7. COMPREHENSIVE JUDGE & ENGINEERING Q&A
+         ===================================================================== -->
     <section class="amp-faq-section" id="faq" aria-labelledby="faq-title" data-reveal>
       <div class="shell amp-faq-shell">
         <div class="amp-section-header">
-          <span class="amp-eyebrow-pill">TECHNICAL SPECIFICATIONS</span>
-          <h2 class="amp-section-title" id="faq-title">Frequently asked questions</h2>
+          <span class="amp-eyebrow-pill">JURY &amp; ARCHITECTURE Q&amp;A</span>
+          <h2 class="amp-section-title" id="faq-title">Everything judges need to know</h2>
         </div>
 
         <div class="amp-faq-list">
           <details class="faq-arch-item" open>
             <summary class="faq-summary">
-              <span>Does AutoPatch send customer PII or financial numbers to Gemini/Groq?</span>
+              <span>1. What is AutoPatch doing in plain English, and why does it matter?</span>
               <span class="faq-icon">&plus;</span>
             </summary>
             <div class="faq-answer">
-              <p>Never. Before any external model call, <code>src/healer/sanitizer.ts</code> strips all raw values and replaces them with structural value-class tokens (<code>string:email_like</code>, <code>number:float</code>, <code>number:epoch_like</code>). Only keys and value types leave the proxy.</p>
+              <p>When an upstream API provider (like a payment gateway or logistics webhook) renames a field (e.g., <code>user_id</code> &rarr; <code>customer_uuid</code>), nests an object, or changes a type (e.g., <code>"1499.00"</code> &rarr; <code>149900</code>), your production checkout crashes. AutoPatch sits as an ultra-fast reverse proxy in front of your services, detects the schema break in real time, uses Google Gemini on a Zero-PII skeleton to synthesize a deterministic mapping rule, validates it through 5 fail-closed safety gates, heals the live response in <strong>0.14 ms</strong>, and opens a GitHub Pull Request with a permanent TypeScript adapter.</p>
+            </div>
+          </details>
+
+          <details class="faq-arch-item" open>
+            <summary class="faq-summary">
+              <span>2. What if a payload has both data_id and user_id? How does AutoPatch avoid mixing them up?</span>
+              <span class="faq-icon">&plus;</span>
+            </summary>
+            <div class="faq-answer">
+              <p>This is a critical production edge case solved by two layers in AutoPatch: first, <strong>Entity-Domain Disambiguation</strong> separates user/account/profile entity tokens from transaction/order/data/record entity tokens so a generic <code>data.id</code> is never mapped to <code>user_id</code> when a user identifier exists. Second, <strong>Gate 5 (1-to-1 Source Path Exclusivity)</strong> enforces a mathematical bijection lock (<code>seenSources</code>): two required target fields can <em>never</em> pull from the same upstream source path. If a required ID is genuinely missing, Gate 5 blocks the response with HTTP 502 rather than corrupting database foreign keys.</p>
             </div>
           </details>
 
           <details class="faq-arch-item">
             <summary class="faq-summary">
-              <span>How does AutoPatch prevent mixing up data_id and user_id?</span>
+              <span>3. Does AutoPatch ever send customer PII or financial numbers to Google Gemini?</span>
               <span class="faq-icon">&plus;</span>
             </summary>
             <div class="faq-answer">
-              <p>AutoPatch enforces Entity Domain Disambiguation (separating user/customer paths from order/record/payment paths) plus a strict Gate 5 1-to-1 Source Path Exclusivity lock. Two required target fields can never map to the same source path; if a required ID is missing, AutoPatch fails closed with HTTP 502.</p>
+              <p>Never. Before any external model call, <code>src/healer/sanitizer.ts</code> strips all raw values and replaces them with structural value-class tokens (<code>string:email_like</code>, <code>string:uuid_like</code>, <code>number:float</code>, <code>number:epoch_like</code>). Only JSON key names and structural type tokens leave the proxy; raw customer values remain strictly in local memory.</p>
             </div>
           </details>
 
           <details class="faq-arch-item">
             <summary class="faq-summary">
-              <span>What happens after the first cold AI heal?</span>
+              <span>4. What happens after the first cold AI heal, and what if 200 requests hit at once?</span>
               <span class="faq-icon">&plus;</span>
             </summary>
             <div class="faq-answer">
-              <p>Once verified by all 5 safety gates, the mapping rule is keyed by the SHA-1 structural fingerprint of the payload and cached in memory. Every subsequent request with that shape is healed deterministically in 0.14 ms with zero AI calls.</p>
+              <p>AutoPatch computes a deterministic <strong>SHA-1 structural fingerprint</strong> (<code>src/healer/fingerprint.ts</code>) of the upstream payload shape. During a 200-request traffic spike, <code>inflightHeals</code> (Single-Flight Deduplication) coalesces all 200 concurrent misses into a <strong>single</strong> AI inference call. Once verified by the 5 safety gates, the rule is cached in memory and persisted atomically to disk—healing every subsequent request in <strong>0.14 ms</strong> with zero LLM cost.</p>
+            </div>
+          </details>
+
+          <details class="faq-arch-item">
+            <summary class="faq-summary">
+              <span>5. What if an upstream API completely deletes a required financial or identity field?</span>
+              <span class="faq-icon">&plus;</span>
+            </summary>
+            <div class="faq-answer">
+              <p>AutoPatch is strictly <strong>Fail-Closed</strong>. It never invents or hallucinates dummy emails, fake balances, or default IDs. If a required contract field is completely missing from the upstream payload, <strong>Gate 5 (Zero-Hallucination &amp; Required Coverage)</strong> rejects the rule, returns a clean <code>HTTP 502 Bad Gateway</code> with an exact forensic diagnostic report, and triggers an immediate Slack/webhook alert.</p>
+            </div>
+          </details>
+
+          <details class="faq-arch-item">
+            <summary class="faq-summary">
+              <span>6. How do engineering teams adopt AutoPatch safely without risking live production traffic?</span>
+              <span class="faq-icon">&plus;</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Teams start with <strong>Zero-Config Auto-Profiling (LEARN_MODE)</strong>, which passively observes healthy 200 OK traffic to lock baseline contracts automatically. Next, they run in <strong>Shadow Mode</strong> (where AI rules and GitHub PRs are generated in the background without mutating live responses), promote to <strong>5% Canary Mode</strong>, and finally enable <strong>100% Active Self-Healing</strong>.</p>
             </div>
           </details>
         </div>
@@ -703,7 +833,7 @@
             <a href="#features">Real-Time Insights</a>
             <a href="#capabilities">5-Gate Safety</a>
             <a href="#simulator">Drift Simulator</a>
-            <a href="#pricing">Pricing</a>
+            <a href="#judge-rubric">100% Jury Rubric</a>
           </div>
           <div class="footer-col">
             <span class="footer-col-title">WORKBENCHES</span>
@@ -730,6 +860,7 @@
   </footer>
 
   <script src="/motion.js" defer></script>
+  <script src="/walkthrough.js" defer></script>
   <script src="/home.js" type="module"></script>
 </body>
 </html>

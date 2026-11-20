@@ -1580,3 +1580,120 @@ body.amplitux-theme {
   line-height: 1.6;
   color: var(--amp-slate);
 }
+
+/* ============================================================================
+   6. GOOGLE DEEPMIND & GOOGLE CLOUD EVALUATION RUBRIC (100% SCORE GRID)
+   ============================================================================ */
+
+.amp-rubric-section {
+  padding: clamp(56px, 7vw, 88px) 0 28px;
+}
+
+.amp-section-sub {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--amp-slate);
+  max-width: 560px;
+  margin: 12px auto 0;
+}
+
+.amp-rubric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 960px) {
+  .amp-rubric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .amp-rubric-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.amp-rubric-card {
+  background: var(--amp-card-grey);
+  border: 1px solid var(--amp-line);
+  border-radius: 22px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.amp-rubric-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--amp-teal-500);
+  box-shadow: 0 18px 36px -14px rgba(59, 184, 172, 0.24);
+}
+
+.amp-rc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.amp-rc-weight {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4cc6ba 0%, #2a9b90 100%);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.amp-rc-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--amp-slate);
+}
+
+.amp-rubric-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.amp-rubric-card p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--amp-slate);
+  margin: 0 0 18px;
+  flex: 1;
+}
+
+.amp-rc-btn {
+  align-self: flex-start;
+  background: var(--amp-surface);
+  color: var(--ink);
+  border: 1px solid var(--amp-line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.amp-rubric-card:hover .amp-rc-btn {
+  background: #111317;
+  color: #ffffff;
+  border-color: #111317;
+}
+
