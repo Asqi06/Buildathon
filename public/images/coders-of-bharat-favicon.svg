@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="cbBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e6faf7"/>
+    </linearGradient>
+  </defs>
+  <!-- High-contrast rounded badge with mint-teal ring so it stands out on both dark and light surfaces -->
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#cbBg)" stroke="#3bb8ac" stroke-width="6"/>
+  <!-- 'C' outer arc -->
+  <path d="M 56 32 H 42 C 26 32 16 44 16 64 C 16 84 26 96 42 96 H 56 L 64 84 H 43 C 33 84 28 76 28 64 C 28 52 33 44 43 44 H 64 Z" fill="#0f172a"/>
+  <!-- '</>' code symbol inside C -->
+  <path d="M 41 56 L 33 64 L 41 72" fill="none" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 50 53 L 45 75" fill="none" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M 54 56 L 62 64 L 54 72" fill="none" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 'B' letterform -->
+  <path d="M 62 32 H 88 C 99 32 106 38 106 48 C 106 55 102 60 95 62 C 103 64 108 70 108 79 C 108 90 99 96 86 96 H 60 L 68 84 H 85 C 92 84 96 81 96 76 C 96 71 92 68 85 68 H 72 V 90 H 60 V 57 H 85 C 91 57 94 54 94 49 C 94 44 91 44 85 44 H 70 Z" fill="#0f172a"/>
+  <!-- Indian Tricolor Swoosh (Saffron & India Green) -->
+  <path d="M 76 98 C 90 92 104 82 112 68 C 113 73 111 80 106 85 C 98 92 87 96 76 98 Z" fill="#f97316"/>
+  <path d="M 82 101 C 94 98 105 92 112 82 C 112 88 108 95 101 98 C 95 101 88 102 82 101 Z" fill="#15803d"/>
+</svg>
