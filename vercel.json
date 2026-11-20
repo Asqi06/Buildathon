@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "outputDirectory": "public",
   "rewrites": [
     { "source": "/__autopatch/:path*", "destination": "/api/index?__ap_path=/__autopatch/:path*" },
     { "source": "/api/v1/:path*", "destination": "/api/index?__ap_path=/api/v1/:path*" },
