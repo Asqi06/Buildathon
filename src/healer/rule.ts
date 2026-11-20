@@ -246,6 +246,21 @@ export function verifyRule(input: VerifyRuleInput): RuleVerification {
     );
   }
 
+  // Gate 5 Exclusivity: Two distinct required target fields cannot steal the exact same source path
+  const seenSources = new Map<string, string>();
+  for (const field of expectedFields) {
+    const mapping = rule.fields[field];
+    if (!mapping || mapping.from === null) continue;
+    const prevField = seenSources.get(mapping.from);
+    if (prevField && prevField !== field) {
+      errors.push(
+        `Gate 5: duplicate source path "${mapping.from}" mapped to both "${prevField}" and "${field}"`,
+      );
+    } else {
+      seenSources.set(mapping.from, field);
+    }
+  }
+
   const ok = errors.length === 0 && applied !== null && validation !== null && validation.valid;
 
   return {

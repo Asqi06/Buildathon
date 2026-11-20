@@ -90,17 +90,22 @@ export class RuleCache {
   }
 
   private queuePersist(): void {
-    const payload = JSON.stringify(
-      { version: 1, entries: this.list() } satisfies CacheFile,
-      null,
-      2,
-    );
     this.writeChain = this.writeChain
       .then(async () => {
+        const payload = JSON.stringify(
+          { version: 1, entries: this.list() } satisfies CacheFile,
+          null,
+          2,
+        );
         await mkdir(dirname(this.filePath), { recursive: true });
         const temporary = `${this.filePath}.${process.pid}.tmp`;
         await writeFile(temporary, payload, 'utf8');
-        await rename(temporary, this.filePath);
+        try {
+          await rename(temporary, this.filePath);
+        } catch {
+          await writeFile(this.filePath, payload, 'utf8');
+          await rm(temporary, { force: true }).catch(() => undefined);
+        }
       })
       .catch(async (error: unknown) => {
         const message = error instanceof Error ? error.message : String(error);

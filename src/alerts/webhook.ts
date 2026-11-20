@@ -54,8 +54,8 @@ export class AlertManager {
       ts: new Date().toISOString(),
       severity: params.severity ?? (params.blockedGate ? 'critical' : 'warning'),
       title: params.blockedGate
-        ? `⚠️ Drift Blocked: Gate 5 Enforced on ${params.method} ${params.endpoint}`
-        : `⚡ AutoPatch Healed Drift on ${params.method} ${params.endpoint}`,
+        ? `[CRITICAL] Drift Blocked: Gate 5 Enforced on ${params.method} ${params.endpoint}`
+        : `[HEALED] AutoPatch Healed Drift on ${params.method} ${params.endpoint}`,
       endpoint: params.endpoint,
       method: params.method,
       diffSummary: params.diffSummary,
@@ -100,13 +100,13 @@ export class AlertManager {
   }
 
   formatSlackPayload(alert: WebhookAlert): SlackBlockKitCard {
-    const colorEmoji = alert.severity === 'critical' ? '🔴' : '🟢';
+    const statusTag = alert.severity === 'critical' ? '[CRITICAL]' : '[OK]';
     return {
-      text: `${colorEmoji} ${alert.title}`,
+      text: `${statusTag} ${alert.title}`,
       blocks: [
         {
           type: 'header',
-          text: { type: 'plain_text', text: `${colorEmoji} AutoPatch Incident Alert` },
+          text: { type: 'plain_text', text: `${statusTag} AutoPatch Incident Alert` },
         },
         {
           type: 'section',

@@ -22,7 +22,7 @@ import { EventHub } from './events.js';
 import { PrQueue } from './github/pr.js';
 import { AlertManager } from './alerts/webhook.js';
 import { createProxyHandler } from './proxy/handler.js';
-import { isMain } from './util.js';
+import { isMain, isObject } from './util.js';
 
 export interface BuildServerOptions {
   config?: AppConfig;
@@ -361,11 +361,11 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
     contracts: registry.getLearnedContracts(),
   }));
   app.post('/__autopatch/api/learn/lock', async (request, reply) => {
-    const body = readJsonBody(request.body) as { method?: string; endpoint?: string };
-    if (!body?.method || !body?.endpoint) {
-      return reply.code(400).send({ error: 'MISSING_PARAMS', message: 'method and endpoint required' });
+    const body = readJsonBody(request.body) as { method?: unknown; endpoint?: unknown } | null;
+    if (typeof body?.method !== 'string' || !body.method.trim() || typeof body?.endpoint !== 'string' || !body.endpoint.trim()) {
+      return reply.code(400).send({ error: 'MISSING_PARAMS', message: 'method and endpoint strings are required' });
     }
-    const contract = registry.lockLearned(body.method, body.endpoint);
+    const contract = registry.lockLearned(body.method.trim(), body.endpoint.trim());
     if (!contract) return reply.code(404).send({ error: 'NO_LEARNED_CONTRACT' });
     return { ok: true, contract };
   });
@@ -376,22 +376,33 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   });
   app.post('/__autopatch/api/learn/sample', async (request, reply) => {
     const body = readJsonBody(request.body) as {
-      method?: string;
-      endpoint?: string;
+      method?: unknown;
+      endpoint?: unknown;
       payload?: unknown;
-      threshold?: number;
-    };
-    if (!body?.method || !body?.endpoint || typeof body.payload !== 'object' || body.payload === null) {
+      threshold?: unknown;
+    } | null;
+    if (
+      typeof body?.method !== 'string' ||
+      !body.method.trim() ||
+      typeof body?.endpoint !== 'string' ||
+      !body.endpoint.trim() ||
+      !isObject(body.payload)
+    ) {
       return reply.code(400).send({
         error: 'INVALID_SAMPLE',
-        message: 'method, endpoint, and a JSON object payload are required',
+        message: 'method, endpoint, and a non-array JSON object payload are required',
       });
     }
+    const cleanEndpoint = body.endpoint.trim().startsWith('/')
+      ? body.endpoint.trim()
+      : `/${body.endpoint.trim()}`;
     const learned = registry.recordLearnSample(
-      body.method,
-      body.endpoint,
+      body.method.trim(),
+      cleanEndpoint,
       body.payload,
-      typeof body.threshold === 'number' && body.threshold > 0 ? body.threshold : 5,
+      typeof body.threshold === 'number' && Number.isFinite(body.threshold) && body.threshold > 0
+        ? Math.min(1000, Math.floor(body.threshold))
+        : 5,
     );
     events.emit({ type: 'state', ts: new Date().toISOString(), state: snapshotState() } as never);
     return {
@@ -410,20 +421,23 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   }));
   app.post('/__autopatch/api/contracts', async (request, reply) => {
     const body = readJsonBody(request.body) as {
-      method?: string;
-      endpoint?: string;
-      expected_schema?: Record<string, FieldType>;
+      method?: unknown;
+      endpoint?: unknown;
+      expected_schema?: unknown;
       samplePayload?: unknown;
-    };
-    if (!body?.method || !body?.endpoint) {
+    } | null;
+    if (typeof body?.method !== 'string' || !body.method.trim() || typeof body?.endpoint !== 'string' || !body.endpoint.trim()) {
       return reply.code(400).send({
         error: 'INVALID_CONTRACT',
-        message: 'method and endpoint are required',
+        message: 'method and endpoint strings are required',
       });
     }
+    const rawSchema = isObject(body.expected_schema)
+      ? (body.expected_schema as Record<string, FieldType>)
+      : null;
     const schema: Record<string, FieldType> =
-      body.expected_schema && Object.keys(body.expected_schema).length > 0
-        ? body.expected_schema
+      rawSchema && Object.keys(rawSchema).length > 0
+        ? rawSchema
         : inferSchemaFromPayload(body.samplePayload);
     if (Object.keys(schema).length === 0) {
       return reply.code(400).send({
@@ -431,11 +445,20 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
         message: 'Provide expected_schema or a non-empty samplePayload JSON object',
       });
     }
+    const cleanEndpoint = body.endpoint.trim().startsWith('/')
+      ? body.endpoint.trim()
+      : `/${body.endpoint.trim()}`;
     const contract = registry.upsert({
-      method: body.method.toUpperCase(),
-      endpoint: body.endpoint.startsWith('/') ? body.endpoint : `/${body.endpoint}`,
+      method: body.method.trim().toUpperCase(),
+      endpoint: cleanEndpoint,
       expected_schema: schema,
     });
+    if (Object.keys(contract.expected_schema).length === 0) {
+      return reply.code(400).send({
+        error: 'INVALID_SCHEMA_FIELDS',
+        message: 'Schema contained no valid field types',
+      });
+    }
     events.emit({ type: 'state', ts: new Date().toISOString(), state: snapshotState() } as never);
     return { ok: true, contract, contracts: registry.all() };
   });
@@ -444,30 +467,38 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   app.post('/__autopatch/api/studio/heal', async (request, reply) => {
     const started = performance.now();
     const body = readJsonBody(request.body) as {
-      method?: string;
-      endpoint?: string;
-      expectedSchema?: Record<string, FieldType>;
+      method?: unknown;
+      endpoint?: unknown;
+      expectedSchema?: unknown;
       sampleBaseline?: unknown;
       driftedPayload?: unknown;
-      installContract?: boolean;
-    };
-    const method = (body?.method || 'POST').toUpperCase();
-    const endpoint = body?.endpoint
-      ? body.endpoint.startsWith('/')
-        ? body.endpoint
-        : `/${body.endpoint}`
-      : '/api/v1/custom/resource';
+      installContract?: unknown;
+    } | null;
+    const rawMethod = typeof body?.method === 'string' && body.method.trim() ? body.method.trim() : 'POST';
+    const method = rawMethod.toUpperCase();
+    const rawEndpoint =
+      typeof body?.endpoint === 'string' && body.endpoint.trim()
+        ? body.endpoint.trim()
+        : '/api/v1/custom/resource';
+    const endpoint = rawEndpoint.startsWith('/') ? rawEndpoint : `/${rawEndpoint}`;
 
-    if (body?.driftedPayload === undefined || body?.driftedPayload === null || typeof body.driftedPayload !== 'object') {
+    if (
+      body?.driftedPayload === undefined ||
+      body?.driftedPayload === null ||
+      typeof body.driftedPayload !== 'object'
+    ) {
       return reply.code(400).send({
         error: 'INVALID_DRIFTED_PAYLOAD',
-        message: 'driftedPayload must be a valid JSON object',
+        message: 'driftedPayload must be a valid JSON object or array',
       });
     }
 
+    const rawExpectedSchema = isObject(body.expectedSchema)
+      ? (body.expectedSchema as Record<string, FieldType>)
+      : null;
     const expectedSchema: Record<string, FieldType> =
-      body.expectedSchema && Object.keys(body.expectedSchema).length > 0
-        ? body.expectedSchema
+      rawExpectedSchema && Object.keys(rawExpectedSchema).length > 0
+        ? rawExpectedSchema
         : inferSchemaFromPayload(body.sampleBaseline);
 
     if (Object.keys(expectedSchema).length === 0) {
@@ -666,11 +697,12 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
 
 export async function startServer(config: AppConfig = loadConfig()): Promise<FastifyInstance> {
   const app = await buildServer({ config });
-  await app.listen({ port: config.port, host: '127.0.0.1' });
+  const host = process.env.HOST ?? '0.0.0.0';
+  await app.listen({ port: config.port, host });
   const summary = redactedConfigSummary(config);
 
   console.log(
-    `[autopatch] listening on http://127.0.0.1:${config.port} · LLM: ${summary.llmMode} (${summary.groqConfigured ? 'groq' : summary.geminiConfigured ? 'gemini' : 'not configured'}) · upstream: ${config.upstreamBaseUrl}`,
+    `[autopatch] listening on http://${host === '0.0.0.0' ? '127.0.0.1' : host}:${config.port} (bound ${host}) · LLM: ${summary.llmMode} (${summary.geminiConfigured ? 'gemini' : summary.groqConfigured ? 'groq' : 'not configured'}) · upstream: ${config.upstreamBaseUrl}`,
   );
   if (config.llmMode === 'live' && !summary.groqConfigured && !summary.geminiConfigured) {
     console.warn(

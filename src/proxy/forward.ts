@@ -76,6 +76,7 @@ export async function forwardRequest(
       headers,
       body: requestBody,
       redirect: 'manual',
+      signal: AbortSignal.timeout(15000),
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

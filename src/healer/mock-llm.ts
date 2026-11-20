@@ -16,15 +16,53 @@ export interface LlmMapper {
 }
 
 const CANDIDATES: Record<string, string[]> = {
-  user_id: ['user_id', 'id', 'userId', 'uid', 'customer_id', 'customer.id'],
+  user_id: ['user_id', 'userId', 'uid', 'customer_id', 'customer.uid', 'customer.id', 'user.id', 'id'],
   email: ['email', 'user_email', 'contact.email_addr', 'contact.email', 'customer.email', 'payer.email'],
   account_balance: ['account_balance', 'balance', 'amount', 'total', 'wallet.balance'],
   is_verified: ['is_verified', 'verified', 'isVerified', 'active', 'kyc_verified'],
   created_at: ['created_at', 'created', 'createdAt', 'timestamp', 'issued_at'],
 };
 
+const USER_ENTITY_WORDS = new Set(['user', 'userid', 'uid', 'customer', 'customerid', 'buyer', 'member']);
+const RESOURCE_ENTITY_WORDS = new Set([
+  'data',
+  'dataid',
+  'record',
+  'recordid',
+  'order',
+  'orderid',
+  'payment',
+  'paymentid',
+  'txn',
+  'txnid',
+  'charge',
+  'chargeid',
+  'transaction',
+  'transactionid',
+  'doc',
+  'docid',
+]);
+
 const SYNONYM_GROUPS: Array<{ type?: string; words: string[] }> = [
-  { type: 'string', words: ['id', 'uid', 'userid', 'customerid', 'accountid', 'orderid', 'paymentid', 'txnid', 'chargeid', 'key', 'ref', 'transactionid'] },
+  {
+    type: 'string',
+    words: [
+      'id',
+      'uid',
+      'userid',
+      'customerid',
+      'accountid',
+      'dataid',
+      'recordid',
+      'orderid',
+      'paymentid',
+      'txnid',
+      'chargeid',
+      'key',
+      'ref',
+      'transactionid',
+    ],
+  },
   { type: 'string', words: ['email', 'mail', 'emailaddr', 'emailaddress', 'useremail', 'contactemail', 'customeremail', 'receiptemail'] },
   { type: 'number', words: ['balance', 'accountbalance', 'amount', 'amountinr', 'amountusd', 'total', 'totalprice', 'totalamount', 'price', 'subtotal', 'netamount', 'value', 'paise', 'cents'] },
   { type: 'boolean', words: ['verified', 'isverified', 'active', 'isactive', 'confirmed', 'isconfirmed', 'enabled', 'captured', 'iscaptured', 'paid', 'ispaid', 'valid', 'statuspaid'] },
@@ -61,7 +99,24 @@ function tokensMatchSemantically(
   if (tNorm === cNorm) return 100;
   if (tNorm === pNorm) return 96;
 
-  // Type compatibility bonus / penalty
+  const targetWords = [tNorm, ...splitWords(targetKey)];
+  const candWords = [cNorm, ...splitWords(candidateLeaf), ...splitWords(candidateFullPath)];
+
+  // Entity domain disambiguation: prevent user_id from stealing data_id/order_id and vice versa
+  const targetIsUser = targetWords.some((w) => USER_ENTITY_WORDS.has(w));
+  const targetIsResource = targetWords.some((w) => RESOURCE_ENTITY_WORDS.has(w));
+  const candIsUser = candWords.some((w) => USER_ENTITY_WORDS.has(w));
+  const candIsResource = candWords.some((w) => RESOURCE_ENTITY_WORDS.has(w));
+
+  if (targetIsUser && candIsResource && !candIsUser) return 0;
+  if (targetIsResource && candIsUser && !candIsResource) return 0;
+
+  let domainBonus = 0;
+  if ((targetIsUser && candIsUser) || (targetIsResource && candIsResource)) {
+    domainBonus = 10;
+  }
+
+  // Type compatibility bonus
   let typeBonus = 0;
   if (expectedType === 'iso_datetime') {
     if (candidateClass.includes('epoch') || candidateClass.includes('iso_datetime')) typeBonus += 15;
@@ -69,11 +124,10 @@ function tokensMatchSemantically(
     if (candidateClass.includes('number') || candidateClass.includes('numeric')) typeBonus += 10;
   }
 
-  if (cNorm.endsWith(tNorm) || tNorm.endsWith(cNorm)) return 88 + typeBonus;
-  if (pNorm.endsWith(tNorm)) return 84 + typeBonus;
-
-  const targetWords = [tNorm, ...splitWords(targetKey)];
-  const candWords = [cNorm, ...splitWords(candidateLeaf), ...splitWords(candidateFullPath)];
+  if ((cNorm.endsWith(tNorm) || tNorm.endsWith(cNorm)) && cNorm !== 'id') {
+    return 88 + domainBonus + typeBonus;
+  }
+  if (pNorm.endsWith(tNorm)) return 86 + domainBonus + typeBonus;
 
   for (const group of SYNONYM_GROUPS) {
     if (group.type && group.type !== expectedType && expectedType === 'iso_datetime') continue;
@@ -81,8 +135,8 @@ function tokensMatchSemantically(
     const targetInGroup = targetWords.some((w) => group.words.includes(w));
     const candInGroup = candWords.some((w) => group.words.includes(w));
     if (targetInGroup && candInGroup) {
-      const sameTypeBonus = group.type === expectedType ? 8 : 0;
-      return 80 + sameTypeBonus + typeBonus;
+      const sameTypeBonus = group.type === expectedType ? 4 : 0;
+      return 80 + domainBonus + sameTypeBonus + typeBonus;
     }
   }
   return 0;
@@ -155,9 +209,11 @@ export class MockMapper implements LlmMapper {
       let sourceClass: string | null = null;
 
       for (const candidate of sourceCandidates(field, '')) {
+        const fullPath = `${prefix}${candidate}`;
+        if (usedPaths.has(fullPath)) continue;
         const foundClass = classOf(scoped, candidate);
         if (foundClass !== null) {
-          source = `${prefix}${candidate}`;
+          source = fullPath;
           sourceClass = foundClass;
           usedPaths.add(source);
           break;

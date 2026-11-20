@@ -23,10 +23,14 @@ function inferFieldType(val: unknown): FieldType {
   return 'string';
 }
 
+const FORBIDDEN_SCHEMA_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
 export function inferSchemaFromPayload(payload: unknown): Record<string, FieldType> {
   if (!isObject(payload)) return {};
   const inferred: Record<string, FieldType> = {};
   for (const [k, v] of Object.entries(payload)) {
+    if (!k || FORBIDDEN_SCHEMA_KEYS.has(k)) continue;
+    if (v === null || v === undefined || typeof v === 'object') continue;
     inferred[k] = inferFieldType(v);
   }
   return inferred;
@@ -93,10 +97,17 @@ export class ContractRegistry {
 
   upsert(contract: Contract): Contract {
     const normalizedMethod = contract.method.toUpperCase();
+    const safeSchema: Record<string, FieldType> = {};
+    for (const [k, v] of Object.entries(contract.expected_schema)) {
+      if (!k || FORBIDDEN_SCHEMA_KEYS.has(k)) continue;
+      if (v === 'string' || v === 'number' || v === 'boolean' || v === 'iso_datetime') {
+        safeSchema[k] = v;
+      }
+    }
     const cleaned: Contract = {
       method: normalizedMethod,
       endpoint: contract.endpoint,
-      expected_schema: { ...contract.expected_schema },
+      expected_schema: safeSchema,
     };
     const existingIndex = this.contracts.findIndex(
       (c) => c.method === normalizedMethod && c.endpoint === contract.endpoint,
@@ -136,11 +147,8 @@ export class ContractRegistry {
     const normalizedMethod = method.toUpperCase();
     const key = `${normalizedMethod} ${endpoint}`;
 
-    // Infer schema from payload
-    const inferred: Record<string, FieldType> = {};
-    for (const [k, v] of Object.entries(payload)) {
-      inferred[k] = inferFieldType(v);
-    }
+    // Infer schema from payload (skipping forbidden/object keys)
+    const inferred = inferSchemaFromPayload(payload);
 
     let existing = this.learned.get(key);
     if (!existing) {

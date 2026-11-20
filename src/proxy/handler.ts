@@ -50,9 +50,12 @@ function requestBody(request: FastifyRequest): Buffer | string | undefined {
 function tryHealOutbound(bodyText: string, errorPayload: unknown): Record<string, unknown> | null {
   try {
     const original = JSON.parse(bodyText);
+    if (typeof original !== 'object' || original === null || Array.isArray(original)) {
+      return null;
+    }
     const errStr = JSON.stringify(errorPayload).toLowerCase();
     let healed = false;
-    const copy = { ...original };
+    const copy: Record<string, unknown> = { ...(original as Record<string, unknown>) };
 
     // Common outbound schema drift: phone -> customer.mobile
     if (original.phone && (errStr.includes('customer.mobile') || errStr.includes('mobile'))) {
@@ -243,11 +246,12 @@ export function createProxyHandler(deps: ProxyDeps) {
     }
 
     if (!contract || forwarded.status < 200 || forwarded.status >= 300 || !parseOk) {
+      // Auto-profile healthy 2xx JSON traffic on uncontracted endpoints (Zero-config schema learning)
+      if (!contract && forwarded.status >= 200 && forwarded.status < 300 && parseOk) {
+        deps.registry.recordLearnSample(request.method, requestPath, parsed);
+      }
       return passthrough();
     }
-
-    // Auto-profile healthy traffic (Zero-config schema learning)
-    deps.registry.recordLearnSample(request.method, requestPath, parsed);
 
     const validation = validateContract(parsed, contract);
     if (validation.valid) {

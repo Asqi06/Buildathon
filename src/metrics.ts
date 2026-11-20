@@ -37,6 +37,16 @@ function round(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
+const MAX_LATENCY_SAMPLES = 1000;
+
+function pushSample(buffer: number[], value: number): void {
+  if (!Number.isFinite(value) || value < 0) return;
+  if (buffer.length >= MAX_LATENCY_SAMPLES) {
+    buffer.shift();
+  }
+  buffer.push(value);
+}
+
 export class MetricsStore {
   private verified = 0;
   private healedCold = 0;
@@ -53,21 +63,21 @@ export class MetricsStore {
 
   recordVerified(overheadMs: number): void {
     this.verified += 1;
-    this.overheadSamples.push(overheadMs);
+    pushSample(this.overheadSamples, overheadMs);
   }
 
   recordPassthrough(overheadMs: number): void {
     this.passthrough += 1;
-    this.overheadSamples.push(overheadMs);
+    pushSample(this.overheadSamples, overheadMs);
   }
 
   recordHealed(cached: boolean, healMs: number): void {
     if (cached) {
       this.healedCached += 1;
-      this.cachedHealSamples.push(healMs);
+      pushSample(this.cachedHealSamples, healMs);
     } else {
       this.healedCold += 1;
-      this.coldHealSamples.push(healMs);
+      pushSample(this.coldHealSamples, healMs);
     }
   }
 
