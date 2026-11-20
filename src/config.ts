@@ -2,7 +2,8 @@ import dotenv from 'dotenv';
 import { z } from 'zod';
 import type { AppConfig } from './types.js';
 
-dotenv.config({ quiet: true });
+delete process.env.GOOGLE_GEMINI_BASE_URL;
+dotenv.config({ quiet: true, override: true });
 
 const emptyToUndefined = (value: unknown): unknown => {
   if (typeof value === 'string' && value.trim() === '') return undefined;
@@ -29,7 +30,7 @@ const envSchema = z.object({
   GROQ_MODEL: optionalText,
   LLM_TIMEOUT_MS: z.preprocess(
     emptyToUndefined,
-    z.coerce.number().int().min(500).max(120000).default(8000),
+    z.coerce.number().int().min(500).max(120000).default(30000),
   ),
   MIN_CONFIDENCE: z.preprocess(
     emptyToUndefined,

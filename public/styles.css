@@ -272,7 +272,8 @@ body {
 }
 
 .page-id {
-  min-width: 0;
+  min-width: 160px;
+  flex-shrink: 0;
 }
 
 .page-id h1 {
@@ -1942,3 +1943,1086 @@ body {
   border-top: 1px solid var(--line);
 }
 
+
+/* ==========================================================================
+   ENTERPRISE SAAS SHOWCASE EXTENSIONS (Anti-Slop Modern Web SaaS)
+   1. Live Split-Screen Victim App
+   2. Canvas ECG Heartbeat Monitor
+   3. Industrial Fighter-Jet Safety Switches
+   4. 5-Gate Laser Vault & Hydraulic Blast Doors
+   5. Surgical Stitch SVG Synthesis & Bandage Micro-Tooltips
+   6. Ghost Coder Typing & PR Inspection Stamp
+   7. Web Audio Telemetry Audio Controls
+   ========================================================================== */
+
+/* ── 1. Topbar Telemetry (ECG + Audio Toggle) ───────────────────────────── */
+.ecg-monitor-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #06110a;
+  border: 1px solid #143520;
+  border-radius: 6px;
+  padding: 3px 8px;
+  box-shadow: inset 0 0 8px rgba(16, 185, 129, 0.08);
+}
+
+.ecg-canvas {
+  width: 120px;
+  height: 26px;
+  display: block;
+  border-radius: 3px;
+  background: transparent;
+}
+
+.ecg-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.ecg-bpm {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #10b981;
+  letter-spacing: 0.3px;
+}
+
+.ecg-status-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #10b981;
+  letter-spacing: 0.5px;
+}
+
+.ecg-monitor-pill.is-arrhythmia {
+  background: #191206;
+  border-color: #5c3b0c;
+}
+.ecg-monitor-pill.is-arrhythmia .ecg-bpm,
+.ecg-monitor-pill.is-arrhythmia .ecg-status-badge {
+  color: #f59e0b;
+}
+
+.ecg-monitor-pill.is-quarantined {
+  background: #1a0808;
+  border-color: #5c1414;
+}
+.ecg-monitor-pill.is-quarantined .ecg-bpm,
+.ecg-monitor-pill.is-quarantined .ecg-status-badge {
+  color: #ef4444;
+}
+
+.sound-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sound-toggle-btn:hover {
+  background: var(--surface-3);
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.sound-toggle-btn.is-active {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--ok);
+}
+
+/* ── 2. Split-Screen Victim App ─────────────────────────────────────────── */
+.victim-sim-container {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.victim-sim-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.victim-live-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  background: rgba(234, 88, 12, 0.1);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-dot-anim 1.5s infinite;
+}
+
+@keyframes pulse-dot-anim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.victim-sim-title-group h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.victim-sim-title-group p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.victim-sim-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.victim-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 840px) {
+  .victim-split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.victim-card {
+  position: relative;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 16px;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.victim-card--unprotected {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.victim-card--unprotected.is-cracked {
+  animation: shatter-shake 0.4s ease-in-out;
+  border-color: var(--danger);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.2);
+}
+
+@keyframes shatter-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px) rotate(-0.5deg); }
+  40%, 80% { transform: translateX(4px) rotate(0.5deg); }
+}
+
+.victim-card--protected {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.victim-card--protected.is-healed-flash {
+  animation: heal-flash-anim 0.6s ease-out;
+  border-color: var(--ok);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+}
+
+@keyframes heal-flash-anim {
+  0% { background: rgba(245, 158, 11, 0.15); }
+  50% { background: rgba(16, 185, 129, 0.15); }
+  100% { background: var(--surface-2); }
+}
+
+.victim-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.victim-card-badge--danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+
+.victim-card-badge--success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--ok);
+}
+
+.checkout-ui {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkout-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkout-store {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.store-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.store-avatar--green {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--ok);
+}
+
+.checkout-store strong {
+  display: block;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.mono-sub {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.checkout-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.checkout-fields {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.checkout-field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.checkout-field-label {
+  color: var(--ink-soft);
+}
+
+.checkout-field-val {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink);
+  background: var(--surface-2);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.healed-field-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.checkout-field-val--healed {
+  color: var(--ok);
+  background: rgba(16, 185, 129, 0.12);
+  font-weight: 600;
+}
+
+.bandage-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #10b981;
+  color: #fff;
+  border-radius: 999px;
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+  animation: sticker-slap 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes sticker-slap {
+  0% { transform: scale(2.5) rotate(-20deg); opacity: 0; }
+  70% { transform: scale(0.9) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.checkout-pay-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--r-sm);
+  font-weight: 600;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkout-pay-btn--unprotected {
+  background: var(--surface-3);
+  color: var(--ink-soft);
+}
+
+.checkout-pay-btn--unprotected.is-failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.checkout-pay-btn--protected {
+  background: var(--ok);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.heal-notice-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.heal-badge-pill {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ok);
+  background: rgba(16, 185, 129, 0.15);
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* Glass shatter overlay on crash */
+.glass-shatter-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(3px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  animation: shatter-appear 0.25s ease-out;
+}
+
+@keyframes shatter-appear {
+  0% { opacity: 0; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.fracture-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.crash-terminal {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  background: #09090b;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.crash-terminal-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #ef4444;
+  margin-bottom: 8px;
+}
+
+.crash-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+}
+
+.crash-stack {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  color: #fca5a5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── 3. Fighter-Jet Industrial Safety Switches ──────────────────────────── */
+.master-switch-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: linear-gradient(135deg, #0d121c, #161e2e);
+  border: 1px solid #1f2a3e;
+  border-radius: var(--r-md);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.cockpit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+
+.pulse-red-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+  animation: pulse-dot-anim 1s infinite;
+}
+
+.master-switch-info h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f3f4f6;
+}
+
+.master-switch-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.cockpit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.fighter-switch-unit {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: var(--r-sm);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.fighter-switch-unit:hover {
+  border-color: #334155;
+}
+
+.fighter-switch-unit.is-armed {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: inset 0 0 16px rgba(239, 68, 68, 0.1);
+}
+
+.fighter-switch-unit--danger.is-armed {
+  border-color: #ef4444;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.25);
+}
+
+.switch-unit-head {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.switch-unit-head strong {
+  font-size: 13px;
+  color: #e2e8f0;
+}
+
+.switch-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.cockpit-switch-assembly {
+  position: relative;
+  width: 52px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.switch-guard {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.85), rgba(185, 28, 28, 0.95));
+  border: 1px solid rgba(254, 202, 202, 0.4);
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transform-origin: top center;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.switch-guard.is-open {
+  transform: perspective(400px) rotateX(-125deg);
+  box-shadow: 0 10px 14px rgba(0, 0, 0, 0.4);
+}
+
+.guard-stripes {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0.25) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  pointer-events: none;
+}
+
+.guard-label {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  text-align: center;
+  padding: 0 4px;
+}
+
+.switch-housing {
+  position: relative;
+  width: 44px;
+  height: 56px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px;
+}
+
+.switch-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #065f46;
+  box-shadow: 0 0 3px #059669;
+}
+
+.switch-led.is-active {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444, 0 0 14px #ef4444;
+  animation: led-blink 0.6s infinite alternate;
+}
+
+@keyframes led-blink {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+.switch-lever {
+  width: 14px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transform: translateY(4px);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.switch-lever.is-thrown {
+  transform: translateY(-6px) scaleY(1.08);
+  background: linear-gradient(180deg, #f87171 0%, #ef4444 50%, #b91c1c 100%);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.switch-state-tag,
+.switch-label-armed {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #64748b;
+}
+
+.fighter-switch-unit.is-armed .switch-state-tag,
+.fighter-switch-unit.is-armed .switch-label-armed {
+  color: #ef4444;
+  font-weight: 800;
+}
+
+/* ── 4. Interactive 5-Gate Laser Vault ──────────────────────────────────── */
+.laser-vault-container {
+  background: #070b14;
+  border: 1px solid #1e293b;
+  border-radius: var(--r-md);
+  padding: 24px 20px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.laser-vault-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.laser-packet {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+  transition: left 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.packet-core {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981, 0 0 20px #10b981;
+}
+
+.packet-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.3);
+  animation: packet-pulse 1.2s infinite;
+}
+
+@keyframes packet-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.6); opacity: 0.1; }
+}
+
+.gate-checkpoint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 4;
+}
+
+.gate-laser-emitter {
+  width: 2px;
+  height: 12px;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  margin-bottom: -4px;
+}
+
+.gate-ring {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2px solid #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #10b981;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.gate-info {
+  text-align: center;
+}
+
+.gate-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.gate-desc {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: #94a3b8;
+}
+
+.laser-beam-connector {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  box-shadow: 0 0 8px #10b981;
+  margin: 0 8px;
+  margin-bottom: 28px;
+}
+
+/* Hydraulic Blast Door for Gate 5 Rejection */
+.gate-checkpoint--blast {
+  position: relative;
+}
+
+.blast-door-assembly {
+  position: absolute;
+  inset: -12px -20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.blast-door-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: #18181b;
+  border: 2px solid #ef4444;
+  overflow: hidden;
+}
+
+.blast-door-panel--left {
+  left: 0;
+  animation: blast-door-left-close 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.blast-door-panel--right {
+  right: 0;
+  animation: blast-door-right-close 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes blast-door-left-close {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes blast-door-right-close {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}
+
+.blast-hazard-stripes {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(239, 68, 68, 0.3),
+    rgba(239, 68, 68, 0.3) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.blast-stamp-badge {
+  position: relative;
+  z-index: 25;
+  background: #09090b;
+  border: 2px solid #ef4444;
+  color: #ef4444;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+  animation: stamp-drop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes stamp-drop {
+  0% { transform: scale(2) rotate(-15deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.blast-stamp-badge span {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.blast-stamp-badge small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: #fca5a5;
+}
+
+/* ── 5. Surgical Stitch SVG Synthesis & Cursor Reactions ────────────────── */
+.diff-wrapper-relative {
+  position: relative;
+}
+
+.surgical-stitches-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.85;
+}
+
+.suture-thread {
+  stroke: #10b981;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  animation: suture-crawl 1.2s infinite linear;
+  filter: drop-shadow(0 0 4px #10b981);
+}
+
+@keyframes suture-crawl {
+  to { stroke-dashoffset: -20; }
+}
+
+.suture-knot {
+  fill: #10b981;
+  filter: drop-shadow(0 0 3px #10b981);
+}
+
+.stitch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.stitch-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.heal-micro-tooltip {
+  position: absolute;
+  top: 60px;
+  left: 45%;
+  z-index: 30;
+  background: #09090b;
+  border: 1px solid #10b981;
+  color: #10b981;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  animation: tooltip-bounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes tooltip-bounce {
+  0% { transform: translateY(6px) scale(0.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ── 6. Ghost-Coder Typing & PR Inspection Stamp ────────────────────────── */
+.pr-preview-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ghost-typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.ghost-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse-dot-anim 0.8s infinite;
+}
+
+.code-block-wrapper {
+  position: relative;
+}
+
+.ghost-cursor {
+  display: inline-block;
+  color: #10b981;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  animation: ghost-blink 0.6s infinite;
+  margin-left: 2px;
+}
+
+@keyframes ghost-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.rubber-stamp {
+  position: absolute;
+  bottom: 24px;
+  right: 28px;
+  z-index: 15;
+  border: 3px double #10b981;
+  color: #10b981;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+  transform: rotate(-7deg);
+  animation: stamp-slam 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes stamp-slam {
+  0% { transform: scale(2.2) rotate(-20deg); opacity: 0; }
+  100% { transform: scale(1) rotate(-7deg); opacity: 1; }
+}
+
+.stamp-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.stamp-verified {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.stamp-heading {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  margin: 2px 0;
+}
+
+.stamp-tests {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}

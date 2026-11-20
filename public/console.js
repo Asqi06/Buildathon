@@ -209,7 +209,7 @@ function switchTab(tabName) {
   }
 
   if (tabName === 'prs') {
-    renderPrCodePreview();
+    renderPrCodePreview('adapter', true);
   }
 }
 
@@ -342,6 +342,28 @@ function setChaosMode(mode) {
     const active = button.dataset.mode === mode;
     button.classList.toggle('is-active', active);
     button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  }
+
+  // Update Fighter-Jet Industrial Safety Switches
+  for (const unit of $$('.fighter-switch-unit')) {
+    const unitMode = unit.dataset.mode;
+    const isTarget = unitMode === mode && mode !== 'none';
+    unit.classList.toggle('is-armed', isTarget);
+
+    const guard = unit.querySelector('.switch-guard');
+    if (guard && isTarget) guard.classList.add('is-open');
+
+    const lever = unit.querySelector('.switch-lever');
+    if (lever) {
+      lever.classList.toggle('is-thrown', isTarget);
+      lever.setAttribute('aria-pressed', isTarget ? 'true' : 'false');
+    }
+
+    const led = unit.querySelector('.switch-led');
+    if (led) led.classList.toggle('is-active', isTarget);
+
+    const tag = unit.querySelector('.switch-state-tag, .switch-label-armed');
+    if (tag) tag.textContent = isTarget ? 'ARMED' : 'STANDBY';
   }
 }
 
@@ -626,6 +648,13 @@ export function adaptCheckoutUser(raw: any) {
   };
 }</code>`;
   }
+
+  // 4. Interactive 5-Gate Laser Vault Animation
+  const isUnrecoverable = heal.status === 'UNRECOVERABLE' || heal.status === 'failed' || heal.httpStatus === 502;
+  animateLaserVault(isUnrecoverable, heal);
+
+  // 3. Surgical Stitch & Tooltip Wire-up
+  setupSurgicalDiffTooltips();
 }
 
 /* ── Pull request card ───────────────────────────────────────────────── */
@@ -937,7 +966,9 @@ test('adaptCheckoutUser passes schema validator', () => {
 `
 };
 
-function renderPrCodePreview(tabName = 'adapter') {
+let ghostTypingTimer = null;
+
+function renderPrCodePreview(tabName = 'adapter', shouldStream = false) {
   for (const btn of $$('#pr-code-tabs .code-tab')) {
     btn.classList.toggle('is-active', btn.dataset.codeTab === tabName);
   }
@@ -946,9 +977,48 @@ function renderPrCodePreview(tabName = 'adapter') {
     badge.textContent = tabName === 'diff' ? 'Markdown' : 'TypeScript';
   }
   const display = $('#pr-code-display');
-  if (display) {
-    display.textContent = prSamples[tabName] ?? prSamples.adapter;
+  const fullText = prSamples[tabName] ?? prSamples.adapter;
+  const stamp = $('#rubber-stamp');
+  const indicator = $('#ghost-typing-indicator');
+  const cursor = $('#ghost-cursor');
+
+  if (!display) return;
+
+  if (ghostTypingTimer) {
+    clearInterval(ghostTypingTimer);
+    ghostTypingTimer = null;
   }
+
+  if (!shouldStream) {
+    display.textContent = fullText;
+    if (indicator) indicator.hidden = true;
+    if (cursor) cursor.hidden = true;
+    if (stamp) stamp.hidden = false;
+    return;
+  }
+
+  // Ghost Coder high-speed typing stream
+  if (indicator) indicator.hidden = false;
+  if (cursor) cursor.hidden = false;
+  if (stamp) stamp.hidden = true;
+  display.textContent = '';
+
+  let idx = 0;
+  const chunkSize = 35;
+  ghostTypingTimer = setInterval(() => {
+    idx += chunkSize;
+    if (idx >= fullText.length) {
+      display.textContent = fullText;
+      clearInterval(ghostTypingTimer);
+      ghostTypingTimer = null;
+      if (indicator) indicator.hidden = true;
+      if (cursor) cursor.hidden = true;
+      if (stamp) stamp.hidden = false;
+      soundEngine?.playVaultThud();
+    } else {
+      display.textContent = fullText.slice(0, idx);
+    }
+  }, 16);
 }
 
 /* ── Live Request Runner (Self-Healing Demo) ─────────────────────────── */
@@ -1196,6 +1266,46 @@ function wire() {
     const incidentCard = $('#incident-card');
     if (incidentCard) incidentCard.hidden = true;
   });
+
+  // Sound Toggle Button
+  $('#sound-toggle')?.addEventListener('click', () => {
+    soundEngine.toggle();
+  });
+
+  // Split-Screen Victim App Simulator Triggers
+  $('#victim-test-checkout-btn')?.addEventListener('click', runVictimSplitTest);
+  $('#victim-toggle-drift-btn')?.addEventListener('click', toggleVictimDrift);
+
+  // Fighter-Jet Industrial Safety Switches
+  document.addEventListener('click', (e) => {
+    // 1. Click guard cover to flip it open
+    const guard = e.target.closest('.switch-guard');
+    if (guard) {
+      guard.classList.toggle('is-open');
+      soundEngine.playSwitchClick();
+      return;
+    }
+
+    // 2. Click lever to arm or disarm
+    const lever = e.target.closest('.switch-lever');
+    if (lever && lever.dataset.mode) {
+      const mode = lever.dataset.mode;
+      const isCurrentlyArmed = lever.classList.contains('is-thrown');
+      const targetUnit = lever.closest('.fighter-switch-unit');
+      const targetGuard = targetUnit?.querySelector('.switch-guard');
+
+      if (!isCurrentlyArmed) {
+        if (targetGuard) targetGuard.classList.add('is-open');
+        soundEngine.playSwitchClick();
+        setChaosModeRemote(mode);
+        toast(`Fighter-jet switch ARMED: ${chaosLabels[mode] || mode}`, 'success');
+      } else {
+        soundEngine.playSwitchClick();
+        setChaosModeRemote('none');
+        toast('Switch disarmed: returned to Baseline', 'success');
+      }
+    }
+  });
 }
 
 /* ── Preload Mock Development Traces (Hackathon Showcase) ────────────── */
@@ -1441,9 +1551,353 @@ function loadMockDevelopmentTraces() {
   selectRow('mock-trace-1', false);
 }
 
+/* ── ER Telemetry Sound Pack (Web Audio API) ─────────────────────────── */
+class SoundEngine {
+  constructor() {
+    this.ctx = null;
+    this.enabled = localStorage.getItem('autopatch-sound') === 'true';
+  }
+  init() {
+    if (!this.ctx && typeof window.AudioContext !== 'undefined') {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+  toggle() {
+    this.enabled = !this.enabled;
+    localStorage.setItem('autopatch-sound', this.enabled ? 'true' : 'false');
+    if (this.enabled) {
+      this.init();
+      this.playSwitchClick();
+    }
+    this.updateUI();
+    return this.enabled;
+  }
+  updateUI() {
+    const onIcon = $('#sound-icon-on');
+    const offIcon = $('#sound-icon-off');
+    const label = $('#sound-label');
+    const btn = $('#sound-toggle');
+    if (!btn || !onIcon || !offIcon || !label) return;
+    onIcon.style.display = this.enabled ? 'block' : 'none';
+    offIcon.style.display = this.enabled ? 'none' : 'block';
+    label.textContent = this.enabled ? 'Audio: On' : 'Audio: Off';
+    btn.classList.toggle('is-active', this.enabled);
+  }
+  playSnip() {
+    if (!this.enabled) return;
+    this.init();
+    try {
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1400, t);
+      osc.frequency.exponentialRampToValueAtTime(320, t + 0.12);
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.12);
+    } catch {}
+  }
+  playVaultThud() {
+    if (!this.enabled) return;
+    this.init();
+    try {
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(95, t);
+      osc.frequency.exponentialRampToValueAtTime(32, t + 0.28);
+      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.28);
+    } catch {}
+  }
+  playSwitchClick() {
+    if (!this.enabled) return;
+    this.init();
+    try {
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(900, t);
+      osc.frequency.setValueAtTime(450, t + 0.015);
+      gain.gain.setValueAtTime(0.09, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.04);
+    } catch {}
+  }
+  playSubMsPing() {
+    if (!this.enabled) return;
+    this.init();
+    try {
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1760, t);
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.08);
+    } catch {}
+  }
+}
+
+const soundEngine = new SoundEngine();
+
+/* ── Live Hospital ECG Heartbeat Waveform Monitor ────────────────────── */
+class EcgMonitor {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext('2d');
+    this.state = 'normal';
+    this.phase = 0;
+    this.history = [];
+    this.maxPoints = 80;
+    this.running = true;
+    this.loop = this.loop.bind(this);
+    requestAnimationFrame(this.loop);
+  }
+  setState(newState) {
+    this.state = newState;
+    const pill = $('#ecg-pill');
+    const badge = $('#ecg-badge');
+    const bpm = $('#ecg-bpm-text');
+    if (!pill || !badge || !bpm) return;
+    pill.classList.remove('is-arrhythmia', 'is-quarantined');
+    if (newState === 'arrhythmia') {
+      pill.classList.add('is-arrhythmia');
+      badge.textContent = 'ARRHYTHMIA';
+      bpm.textContent = '148 BPM';
+    } else if (newState === 'quarantined') {
+      pill.classList.add('is-quarantined');
+      badge.textContent = 'QUARANTINE';
+      bpm.textContent = '0 BPM';
+    } else {
+      badge.textContent = 'STEADY';
+      bpm.textContent = '72 BPM';
+    }
+  }
+  loop() {
+    if (!this.running || !this.ctx) return;
+    this.phase += 0.055;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const mid = h / 2;
+
+    let y = 0;
+    const t = (this.phase * 2) % 6.28;
+    if (this.state === 'normal') {
+      if (t > 1.0 && t < 1.4) y = -Math.sin((t - 1.0) / 0.4 * Math.PI) * 3;
+      else if (t > 1.5 && t < 1.6) y = 3;
+      else if (t >= 1.6 && t < 1.8) y = -Math.sin((t - 1.6) / 0.2 * Math.PI) * 11;
+      else if (t >= 1.8 && t < 1.9) y = 4;
+      else if (t > 2.2 && t < 2.8) y = -Math.sin((t - 2.2) / 0.6 * Math.PI) * 4;
+    } else if (this.state === 'arrhythmia') {
+      y = (Math.random() - 0.5) * 16 + Math.sin(t * 5) * 8;
+    } else if (this.state === 'quarantined') {
+      y = (t < 0.25) ? -9 : (t < 0.5 ? 9 : 0);
+    }
+
+    this.history.push(mid + y);
+    if (this.history.length > this.maxPoints) this.history.shift();
+
+    this.ctx.clearRect(0, 0, w, h);
+
+    // Grid lines
+    this.ctx.strokeStyle = this.state === 'quarantined'
+      ? 'rgba(239, 68, 68, 0.15)'
+      : (this.state === 'arrhythmia' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.12)');
+    this.ctx.lineWidth = 0.5;
+    this.ctx.beginPath();
+    for (let x = 0; x < w; x += 15) {
+      this.ctx.moveTo(x, 0);
+      this.ctx.lineTo(x, h);
+    }
+    for (let gy = 0; gy < h; gy += 8) {
+      this.ctx.moveTo(0, gy);
+      this.ctx.lineTo(w, gy);
+    }
+    this.ctx.stroke();
+
+    // Waveform
+    const color = this.state === 'quarantined'
+      ? '#ef4444'
+      : (this.state === 'arrhythmia' ? '#f59e0b' : '#10b981');
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 1.8;
+    this.ctx.shadowBlur = 6;
+    this.ctx.shadowColor = color;
+    this.ctx.beginPath();
+    const step = w / (this.maxPoints - 1);
+    for (let i = 0; i < this.history.length; i++) {
+      const px = i * step;
+      const py = this.history[i];
+      if (i === 0) this.ctx.moveTo(px, py);
+      else this.ctx.lineTo(px, py);
+    }
+    this.ctx.stroke();
+    this.ctx.shadowBlur = 0;
+
+    requestAnimationFrame(this.loop);
+  }
+}
+
+let ecgMonitor = null;
+
+/* ── 4. Interactive 5-Gate Laser Vault Animation ────────────────────────── */
+function animateLaserVault(isUnrecoverable, heal) {
+  const packet = $('#laser-packet');
+  const blastDoor = $('#blast-door-assembly');
+  const gate5Icon = $('#gate-5-icon');
+  const gate5Desc = $('#gate-5-desc');
+
+  if (isUnrecoverable) {
+    if (packet) packet.style.left = '68%';
+    if (blastDoor) blastDoor.hidden = false;
+    if (gate5Icon) {
+      gate5Icon.textContent = '✕';
+      gate5Icon.style.color = '#ef4444';
+    }
+    if (gate5Desc) gate5Desc.textContent = 'QUARANTINED (502)';
+    soundEngine.playVaultThud();
+    ecgMonitor?.setState('quarantined');
+  } else {
+    if (blastDoor) blastDoor.hidden = true;
+    if (gate5Icon) {
+      gate5Icon.textContent = '✓';
+      gate5Icon.style.color = '#10b981';
+    }
+    if (gate5Desc) gate5Desc.textContent = 'Zero Hallucination';
+    if (packet) {
+      packet.style.left = '8%';
+      setTimeout(() => { if (packet) packet.style.left = '90%'; }, 80);
+    }
+    if (heal && heal.cached) {
+      soundEngine.playSubMsPing();
+      ecgMonitor?.setState('normal');
+    } else {
+      soundEngine.playSnip();
+      ecgMonitor?.setState('arrhythmia');
+      setTimeout(() => ecgMonitor?.setState('normal'), 1400);
+    }
+  }
+}
+
+/* ── 3. Surgical Stitch & Micro-Tooltip Interactions ────────────────────── */
+function setupSurgicalDiffTooltips() {
+  const afterJson = $('#after-json');
+  const tooltip = $('#heal-micro-tooltip');
+  if (!afterJson || !tooltip) return;
+
+  afterJson.onclick = (e) => {
+    const line = e.target.closest('.json-line') || e.target;
+    const rect = line.getBoundingClientRect();
+    const parentRect = afterJson.parentElement.getBoundingClientRect();
+
+    tooltip.style.top = `${rect.top - parentRect.top - 28}px`;
+    tooltip.style.left = `${rect.left - parentRect.left + 20}px`;
+    tooltip.hidden = false;
+    soundEngine.playSubMsPing();
+
+    setTimeout(() => {
+      tooltip.hidden = true;
+    }, 2200);
+  };
+}
+
+/* ── 1. Split-Screen Victim App Simulator ──────────────────────────────── */
+async function runVictimSplitTest() {
+  const btn = $('#victim-test-checkout-btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Simulating...</span>';
+  }
+
+  const isDriftActive = state.chaosMode !== 'none';
+  const unprotectedCard = $('#victim-unprotected-card');
+  const shatterOverlay = $('#glass-shatter-overlay');
+  const unprotectedUser = $('#unprotected-user-val');
+  const unprotectedPayBtn = $('#unprotected-pay-btn');
+
+  const protectedCard = $('#victim-protected-card');
+  const protectedUser = $('#protected-user-val');
+  const protectedPayBtn = $('#protected-pay-btn');
+  const bandageSticker = $('#bandage-sticker');
+
+  if (isDriftActive) {
+    unprotectedCard?.classList.add('is-cracked');
+    if (shatterOverlay) shatterOverlay.hidden = false;
+    if (unprotectedUser) unprotectedUser.textContent = 'user.user_id: undefined (CRASH)';
+    if (unprotectedPayBtn) {
+      unprotectedPayBtn.classList.add('is-failed');
+      unprotectedPayBtn.textContent = 'Transaction Aborted (Crash)';
+    }
+
+    protectedCard?.classList.add('is-healed-flash');
+    if (protectedUser) protectedUser.textContent = 'user_id: "usr_99"';
+    if (bandageSticker) bandageSticker.style.display = 'inline-flex';
+    soundEngine.playSnip();
+    ecgMonitor?.setState('arrhythmia');
+    setTimeout(() => ecgMonitor?.setState('normal'), 1400);
+
+    toast('AutoPatch intercepted upstream drift: Client completed checkout in 0.14 ms!', 'success');
+  } else {
+    unprotectedCard?.classList.remove('is-cracked');
+    if (shatterOverlay) shatterOverlay.hidden = true;
+    if (unprotectedUser) unprotectedUser.textContent = 'user.user_id: "usr_99"';
+    if (unprotectedPayBtn) {
+      unprotectedPayBtn.classList.remove('is-failed');
+      unprotectedPayBtn.textContent = 'Complete Order ($49.00)';
+    }
+    protectedCard?.classList.remove('is-healed-flash');
+    soundEngine.playSubMsPing();
+    ecgMonitor?.setState('normal');
+  }
+
+  await fireLiveRequest();
+
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Simulate Split Checkout';
+  }
+}
+
+function toggleVictimDrift() {
+  const currentMode = state.chaosMode;
+  const newMode = currentMode === 'none' ? 'rename' : 'none';
+  setChaosModeRemote(newMode);
+  soundEngine.playSwitchClick();
+  const btnText = $('#victim-drift-btn-text');
+  if (btnText) {
+    btnText.textContent = newMode === 'none' ? 'Arm Upstream Drift' : 'Disarm Drift (Baseline)';
+  }
+  toast(`Chaos scenario set to: ${newMode}`, 'success');
+}
+
 /* ── Initializer ─────────────────────────────────────────────────────── */
 async function init() {
   initTheme();
+  soundEngine.updateUI();
+  ecgMonitor = new EcgMonitor('ecg-canvas');
   wire();
   setPrIdleMessage();
   setChaosMode('none');

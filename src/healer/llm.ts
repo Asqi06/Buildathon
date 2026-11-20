@@ -95,7 +95,10 @@ function isRetryable(error: unknown): boolean {
 }
 
 function errorDetail(error: unknown): string {
-  if (error instanceof Error) return error.message;
+  if (error instanceof Error) {
+    const cause = (error as any).cause;
+    return cause ? `${error.message} (${cause?.message || cause})` : error.message;
+  }
   return String(error);
 }
 
@@ -108,9 +111,13 @@ export class GeminiMapper implements LlmMapper {
   constructor(options: GeminiMapperOptions) {
     this.model = options.model ?? null;
     this.timeoutMs = options.timeoutMs;
+    delete process.env.GOOGLE_GEMINI_BASE_URL;
     this.client =
       options.apiKey && options.model
-        ? new GoogleGenAI({ apiKey: options.apiKey })
+        ? new GoogleGenAI({
+            apiKey: options.apiKey,
+            httpOptions: { baseUrl: 'https://generativelanguage.googleapis.com' },
+          })
         : null;
   }
 

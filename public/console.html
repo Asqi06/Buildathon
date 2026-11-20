@@ -6,6 +6,7 @@
   <title>Operator console · AutoPatch</title>
   <meta name="description" content="Live traffic, drift scenarios, payload diffs, and generated pull requests for the AutoPatch proxy.">
   <meta name="theme-color" content="#f2f2ee">
+  <link rel="icon" type="image/png" href="/bandage.png">
   <link rel="preload" href="/vendor/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <script>
     (() => {
@@ -96,6 +97,22 @@
         </div>
 
         <div class="topbar-actions">
+          <!-- Live Hospital ECG Waveform Monitor -->
+          <div class="ecg-monitor-pill" id="ecg-pill" title="Live Proxy Health Telemetry (Canvas Oscilloscope)">
+            <canvas id="ecg-canvas" width="120" height="26" class="ecg-canvas" aria-label="Live ECG heartbeat monitor"></canvas>
+            <div class="ecg-meta">
+              <span class="ecg-bpm" id="ecg-bpm-text">72 BPM</span>
+              <span class="ecg-status-badge" id="ecg-badge">STEADY</span>
+            </div>
+          </div>
+
+          <!-- ER Telemetry Web Audio Mute Toggle -->
+          <button class="sound-toggle-btn" id="sound-toggle" type="button" aria-label="Toggle telemetry sound effects" title="ER Audio Effects (Bandage snip & Gate 5 lock)">
+            <svg class="sound-icon sound-icon--on" id="sound-icon-on" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <svg class="sound-icon sound-icon--off" id="sound-icon-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <span class="sound-label" id="sound-label">Audio: Off</span>
+          </button>
+
           <div class="op-mode-group" role="group" aria-label="Operation Mode" title="Enterprise Operation Mode">
             <button class="op-btn is-active" id="op-btn-active" type="button" data-mode="active">Active (100%)</button>
             <button class="op-btn" id="op-btn-canary" type="button" data-mode="canary">Canary (5%)</button>
@@ -166,6 +183,132 @@
               <span><span class="dot dot--red"></span>Failed</span>
             </div>
           </header>
+
+          <!-- Live Split-Screen Victim App (Show, Don't Just Tell) -->
+          <section class="victim-sim-container" id="victim-sim-container" aria-label="Split-screen production checkout simulation">
+            <div class="victim-sim-head">
+              <div class="victim-sim-title-group">
+                <span class="victim-live-tag"><span class="pulse-dot"></span> LIVE APP TELEMETRY</span>
+                <h3>Split-Screen Production Simulator: Ecommerce Checkout</h3>
+                <p>Real-time visual comparison: Upstream contract drift breaks raw clients, while AutoPatch heals the payload in 0.14 ms.</p>
+              </div>
+              <div class="victim-sim-actions">
+                <button class="btn btn-secondary btn-xs" id="victim-toggle-drift-btn" type="button">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                  <span id="victim-drift-btn-text">Arm Upstream Drift</span>
+                </button>
+                <button class="btn btn-primary btn-xs" id="victim-test-checkout-btn" type="button">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Simulate Split Checkout
+                </button>
+              </div>
+            </div>
+
+            <div class="victim-split-grid">
+              <!-- Left Side: Without AutoPatch -->
+              <div class="victim-card victim-card--unprotected" id="victim-unprotected-card">
+                <div class="victim-card-badge victim-card-badge--danger">
+                  <span class="status-cross">✕</span> DIRECT UPSTREAM (WITHOUT AUTOPATCH)
+                </div>
+                
+                <div class="checkout-ui" id="unprotected-checkout-ui">
+                  <div class="checkout-head">
+                    <div class="checkout-store">
+                      <div class="store-avatar">🛒</div>
+                      <div>
+                        <strong>Pro SaaS Subscription</strong>
+                        <span class="mono-sub">api.acme.internal/checkout</span>
+                      </div>
+                    </div>
+                    <span class="checkout-price">$49.00</span>
+                  </div>
+
+                  <div class="checkout-fields">
+                    <div class="checkout-field-row">
+                      <span class="checkout-field-label">Customer ID:</span>
+                      <code class="checkout-field-val" id="unprotected-user-val">user.user_id: "usr_99"</code>
+                    </div>
+                    <div class="checkout-field-row">
+                      <span class="checkout-field-label">Receipt Email:</span>
+                      <code class="checkout-field-val" id="unprotected-email-val">alex@acme.io</code>
+                    </div>
+                  </div>
+
+                  <button class="checkout-pay-btn checkout-pay-btn--unprotected" id="unprotected-pay-btn" type="button">
+                    Complete Order ($49.00)
+                  </button>
+                </div>
+
+                <!-- Shattered Glass Overlay & Stack Trace -->
+                <div class="glass-shatter-overlay" id="glass-shatter-overlay" hidden>
+                  <svg class="fracture-svg" viewBox="0 0 400 240" preserveAspectRatio="none">
+                    <line x1="0" y1="50" x2="180" y2="110" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="2 1"/>
+                    <line x1="180" y1="110" x2="400" y2="70" stroke="#ef4444" stroke-width="2"/>
+                    <line x1="180" y1="110" x2="140" y2="240" stroke="#ef4444" stroke-width="2"/>
+                    <line x1="90" y1="0" x2="180" y2="110" stroke="#ef4444" stroke-width="2"/>
+                    <polygon points="160,85 210,105 185,135" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="2"/>
+                  </svg>
+                  <div class="crash-terminal">
+                    <div class="crash-terminal-head">
+                      <span class="crash-dot"></span>
+                      <span>💥 UNCAUGHT RUNTIME EXCEPTION · HTTP 500</span>
+                    </div>
+                    <pre class="crash-stack"><code>TypeError: Cannot read properties of undefined (reading 'user_id')
+    at CheckoutSummary.render (CheckoutModal.tsx:42:15)
+    at ReactFiberWorkLoop.performUnitOfWork
+    [REVENUE LOST]: Cart abandoned. Payment rejected.</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Side: With AutoPatch -->
+              <div class="victim-card victim-card--protected" id="victim-protected-card">
+                <div class="victim-card-badge victim-card-badge--success">
+                  <span class="status-shield">🛡️</span> PROTECTED BY AUTOPATCH (IN-FLIGHT HEAL)
+                </div>
+
+                <div class="checkout-ui" id="protected-checkout-ui">
+                  <div class="checkout-head">
+                    <div class="checkout-store">
+                      <div class="store-avatar store-avatar--green">⚡</div>
+                      <div>
+                        <strong>Pro SaaS Subscription</strong>
+                        <span class="mono-sub">proxied via localhost:8080</span>
+                      </div>
+                    </div>
+                    <span class="checkout-price">$49.00</span>
+                  </div>
+
+                  <div class="checkout-fields">
+                    <div class="checkout-field-row">
+                      <span class="checkout-field-label">Customer ID:</span>
+                      <div class="healed-field-wrapper">
+                        <code class="checkout-field-val checkout-field-val--healed" id="protected-user-val">user_id: "usr_99"</code>
+                        <span class="bandage-sticker" id="bandage-sticker">
+                          <img src="/bandage.png" alt="" width="16" height="16" class="sticker-img">
+                          <span class="sticker-text">0.14 ms heal</span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="checkout-field-row">
+                      <span class="checkout-field-label">Receipt Email:</span>
+                      <code class="checkout-field-val" id="protected-email-val">alex@acme.io</code>
+                    </div>
+                  </div>
+
+                  <button class="checkout-pay-btn checkout-pay-btn--protected" id="protected-pay-btn" type="button">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>✓ Order #4928 Placed · $49.00 Captured</span>
+                  </button>
+
+                  <div class="heal-notice-banner" id="heal-notice-banner">
+                    <span class="heal-badge-pill">CONTRACT 100% SATISFIED</span>
+                    <span>Upstream drifted <code>id</code> &rarr; AutoPatch coerced back to <code>user_id</code> in 0.14 ms. Zero downtime.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
 
           <div class="traffic-toolbar">
             <button class="btn btn-secondary btn-sm" id="btn-traffic-fire-request" type="button">Send live request</button>
@@ -238,39 +381,141 @@
           </header>
 
           <div class="chaos-body">
-            <button class="chaos-primary-btn" type="button" data-mode="combo_v2" aria-pressed="false">
-              <span class="chaos-primary-copy">
-                <strong>Combo v2</strong>
-                <span>Renames, nesting, type changes, and a date shift in one payload.</span>
-              </span>
-              <span class="chaos-primary-action">Run scenario</span>
-            </button>
+            <!-- Master Cockpit Arming Switch: Combo v2 -->
+            <div class="master-switch-card">
+              <div class="master-switch-info">
+                <span class="cockpit-badge"><span class="pulse-red-dot"></span> PRIORITY DRIFT SCENARIO</span>
+                <h3>Combo v2: Catastrophic Multi-Field Upstream Drift</h3>
+                <p>Simulates renames, deep nesting, type coercions, and timestamp format changes in a single payload.</p>
+              </div>
+              <div class="fighter-switch-unit master-switch-unit" data-mode="combo_v2">
+                <div class="switch-guard" id="guard-combo_v2" title="Click to flip open safety cover">
+                  <div class="guard-stripes"></div>
+                  <span class="guard-label">CAUTION · COMBO V2</span>
+                </div>
+                <div class="switch-housing">
+                  <div class="switch-led" id="led-combo_v2"></div>
+                  <button class="switch-lever" id="lever-combo_v2" type="button" aria-pressed="false" data-mode="combo_v2" aria-label="Throw Combo v2 switch"></button>
+                  <span class="switch-label-armed" id="label-combo_v2">SAFE</span>
+                </div>
+              </div>
+            </div>
 
-            <div class="chaos-grid" id="chaos">
-              <button class="chaos-tile" type="button" data-mode="rename" aria-pressed="false">
-                <strong>Rename fields</strong>
-                <span>user_id becomes id, email becomes user_email</span>
-              </button>
-              <button class="chaos-tile" type="button" data-mode="nest" aria-pressed="false">
-                <strong>Nest fields</strong>
-                <span>email moves inside contact.email_addr</span>
-              </button>
-              <button class="chaos-tile" type="button" data-mode="type_mismatch" aria-pressed="false">
-                <strong>Change types</strong>
-                <span>"450.50" replaces a number, 1 replaces a boolean</span>
-              </button>
-              <button class="chaos-tile" type="button" data-mode="array_wrap" aria-pressed="false">
-                <strong>Wrap in array</strong>
-                <span>Everything moves into data[0]</span>
-              </button>
-              <button class="chaos-tile" type="button" data-mode="date_shift" aria-pressed="false">
-                <strong>Shift date format</strong>
-                <span>created_at becomes a Unix timestamp</span>
-              </button>
-              <button class="chaos-tile" type="button" data-mode="field_deleted" aria-pressed="false">
-                <strong>Delete a field</strong>
-                <span>email disappears. The rule must fail.</span>
-              </button>
+            <!-- Cockpit Fighter-Jet Switch Grid -->
+            <div class="cockpit-grid" id="chaos">
+              <!-- Switch 1: Rename fields -->
+              <div class="fighter-switch-unit" data-mode="rename">
+                <div class="switch-unit-head">
+                  <div class="switch-led" id="led-rename"></div>
+                  <strong>Rename fields</strong>
+                  <span class="switch-sub">user_id &rarr; id, email &rarr; user_email</span>
+                </div>
+                <div class="cockpit-switch-assembly">
+                  <div class="switch-guard" id="guard-rename" title="Click to flip open safety cover">
+                    <div class="guard-stripes"></div>
+                    <span class="guard-label">RENAME</span>
+                  </div>
+                  <div class="switch-housing">
+                    <button class="switch-lever" id="lever-rename" type="button" aria-pressed="false" data-mode="rename" aria-label="Throw Rename Fields switch"></button>
+                    <span class="switch-state-tag" id="state-rename">STANDBY</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Switch 2: Nest fields -->
+              <div class="fighter-switch-unit" data-mode="nest">
+                <div class="switch-unit-head">
+                  <div class="switch-led" id="led-nest"></div>
+                  <strong>Nest fields</strong>
+                  <span class="switch-sub">email &rarr; contact.email_addr</span>
+                </div>
+                <div class="cockpit-switch-assembly">
+                  <div class="switch-guard" id="guard-nest" title="Click to flip open safety cover">
+                    <div class="guard-stripes"></div>
+                    <span class="guard-label">NEST</span>
+                  </div>
+                  <div class="switch-housing">
+                    <button class="switch-lever" id="lever-nest" type="button" aria-pressed="false" data-mode="nest" aria-label="Throw Nest Fields switch"></button>
+                    <span class="switch-state-tag" id="state-nest">STANDBY</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Switch 3: Change types -->
+              <div class="fighter-switch-unit" data-mode="type_mismatch">
+                <div class="switch-unit-head">
+                  <div class="switch-led" id="led-type_mismatch"></div>
+                  <strong>Change types</strong>
+                  <span class="switch-sub">"450.50" (str) &rarr; num, 1 &rarr; bool</span>
+                </div>
+                <div class="cockpit-switch-assembly">
+                  <div class="switch-guard" id="guard-type_mismatch" title="Click to flip open safety cover">
+                    <div class="guard-stripes"></div>
+                    <span class="guard-label">TYPES</span>
+                  </div>
+                  <div class="switch-housing">
+                    <button class="switch-lever" id="lever-type_mismatch" type="button" aria-pressed="false" data-mode="type_mismatch" aria-label="Throw Change Types switch"></button>
+                    <span class="switch-state-tag" id="state-type_mismatch">STANDBY</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Switch 4: Wrap in array -->
+              <div class="fighter-switch-unit" data-mode="array_wrap">
+                <div class="switch-unit-head">
+                  <div class="switch-led" id="led-array_wrap"></div>
+                  <strong>Wrap in array</strong>
+                  <span class="switch-sub">Everything packed into data[0]</span>
+                </div>
+                <div class="cockpit-switch-assembly">
+                  <div class="switch-guard" id="guard-array_wrap" title="Click to flip open safety cover">
+                    <div class="guard-stripes"></div>
+                    <span class="guard-label">ARRAY</span>
+                  </div>
+                  <div class="switch-housing">
+                    <button class="switch-lever" id="lever-array_wrap" type="button" aria-pressed="false" data-mode="array_wrap" aria-label="Throw Array Wrap switch"></button>
+                    <span class="switch-state-tag" id="state-array_wrap">STANDBY</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Switch 5: Shift date format -->
+              <div class="fighter-switch-unit" data-mode="date_shift">
+                <div class="switch-unit-head">
+                  <div class="switch-led" id="led-date_shift"></div>
+                  <strong>Shift date format</strong>
+                  <span class="switch-sub">ISO-8601 &rarr; Unix epoch timestamp</span>
+                </div>
+                <div class="cockpit-switch-assembly">
+                  <div class="switch-guard" id="guard-date_shift" title="Click to flip open safety cover">
+                    <div class="guard-stripes"></div>
+                    <span class="guard-label">DATE</span>
+                  </div>
+                  <div class="switch-housing">
+                    <button class="switch-lever" id="lever-date_shift" type="button" aria-pressed="false" data-mode="date_shift" aria-label="Throw Shift Date switch"></button>
+                    <span class="switch-state-tag" id="state-date_shift">STANDBY</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Switch 6: Delete a field (Gate 5 Fail-Closed test) -->
+              <div class="fighter-switch-unit fighter-switch-unit--danger" data-mode="field_deleted">
+                <div class="switch-unit-head">
+                  <div class="switch-led" id="led-field_deleted"></div>
+                  <strong>Delete a field (Gate 5 Block)</strong>
+                  <span class="switch-sub">email missing. Gate 5 locks shield (502)</span>
+                </div>
+                <div class="cockpit-switch-assembly">
+                  <div class="switch-guard" id="guard-field_deleted" title="Click to flip open safety cover">
+                    <div class="guard-stripes"></div>
+                    <span class="guard-label">GATE 5 TEST</span>
+                  </div>
+                  <div class="switch-housing">
+                    <button class="switch-lever" id="lever-field_deleted" type="button" aria-pressed="false" data-mode="field_deleted" aria-label="Throw Delete Field switch"></button>
+                    <span class="switch-state-tag" id="state-field_deleted">STANDBY</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="chaos-actions">
@@ -318,45 +563,85 @@
             </div>
 
             <div id="inspector-live" hidden>
-              <!-- 5-Step Horizontal Pipeline X-Ray -->
-              <div class="pipeline-xray" role="group" aria-label="Request lifecycle pipeline">
-                <div class="xray-step is-complete" id="xray-step-1">
-                  <span class="xray-num">1</span>
-                  <div class="xray-content">
-                    <span class="xray-title">Intercepted</span>
-                    <span class="xray-sub" id="xray-endpoint">/api/v1/checkout/user</span>
+              <!-- Interactive 5-Gate Laser Vault (Fail-Closed Safety Engine) -->
+              <div class="laser-vault-container" id="laser-vault" role="region" aria-label="Interactive 5-Gate Laser Vault Safety Pipeline">
+                <div class="laser-vault-track">
+                  <!-- Animated Glowing Data Packet -->
+                  <div class="laser-packet" id="laser-packet">
+                    <span class="packet-core"></span>
+                    <span class="packet-glow"></span>
                   </div>
-                </div>
-                <div class="xray-connector"></div>
-                <div class="xray-step is-complete" id="xray-step-2">
-                  <span class="xray-num">2</span>
-                  <div class="xray-content">
-                    <span class="xray-title">Drift Detected</span>
-                    <span class="xray-sub" id="xray-drift-type">Schema Mismatch</span>
+
+                  <!-- Gate 1 -->
+                  <div class="gate-checkpoint is-passed" id="gate-1">
+                    <div class="gate-laser-emitter"></div>
+                    <div class="gate-ring"><span class="gate-icon">✓</span></div>
+                    <div class="gate-info">
+                      <strong class="gate-title">Gate 1: Coverage</strong>
+                      <span class="gate-desc">100% Schema Keys</span>
+                    </div>
                   </div>
-                </div>
-                <div class="xray-connector"></div>
-                <div class="xray-step is-complete" id="xray-step-3">
-                  <span class="xray-num">3</span>
-                  <div class="xray-content">
-                    <span class="xray-title">5 Gates Passed</span>
-                    <span class="xray-sub">G1–G5 Verified ✓</span>
+
+                  <div class="laser-beam-connector" id="beam-1"></div>
+
+                  <!-- Gate 2 -->
+                  <div class="gate-checkpoint is-passed" id="gate-2">
+                    <div class="gate-laser-emitter"></div>
+                    <div class="gate-ring"><span class="gate-icon">✓</span></div>
+                    <div class="gate-info">
+                      <strong class="gate-title">Gate 2: Null Safety</strong>
+                      <span class="gate-desc">0 Null Dereferences</span>
+                    </div>
                   </div>
-                </div>
-                <div class="xray-connector"></div>
-                <div class="xray-step is-complete" id="xray-step-4">
-                  <span class="xray-num">4</span>
-                  <div class="xray-content">
-                    <span class="xray-title">In-Memory Cache</span>
-                    <span class="xray-sub" id="xray-latency">0.14 ms overhead</span>
+
+                  <div class="laser-beam-connector" id="beam-2"></div>
+
+                  <!-- Gate 3 -->
+                  <div class="gate-checkpoint is-passed" id="gate-3">
+                    <div class="gate-laser-emitter"></div>
+                    <div class="gate-ring"><span class="gate-icon">✓</span></div>
+                    <div class="gate-info">
+                      <strong class="gate-title">Gate 3: Confidence</strong>
+                      <span class="gate-desc">&ge; 70% (Scored 95%)</span>
+                    </div>
                   </div>
-                </div>
-                <div class="xray-connector"></div>
-                <div class="xray-step" id="xray-step-5">
-                  <span class="xray-num">5</span>
-                  <div class="xray-content">
-                    <span class="xray-title">Auto-PR Ready</span>
-                    <span class="xray-sub" id="xray-pr-badge">TypeScript Adapter</span>
+
+                  <div class="laser-beam-connector" id="beam-3"></div>
+
+                  <!-- Gate 4 -->
+                  <div class="gate-checkpoint is-passed" id="gate-4">
+                    <div class="gate-laser-emitter"></div>
+                    <div class="gate-ring"><span class="gate-icon">✓</span></div>
+                    <div class="gate-info">
+                      <strong class="gate-title">Gate 4: Replay</strong>
+                      <span class="gate-desc">In-process Verified</span>
+                    </div>
+                  </div>
+
+                  <div class="laser-beam-connector" id="beam-4"></div>
+
+                  <!-- Gate 5 (With Hydraulic Blast Door for Rejection) -->
+                  <div class="gate-checkpoint is-passed gate-checkpoint--blast" id="gate-5">
+                    <div class="gate-laser-emitter"></div>
+                    <div class="gate-ring"><span class="gate-icon" id="gate-5-icon">✓</span></div>
+                    <div class="gate-info">
+                      <strong class="gate-title">Gate 5: Quarantine</strong>
+                      <span class="gate-desc" id="gate-5-desc">Zero Hallucination</span>
+                    </div>
+
+                    <!-- Hydraulic Blast Doors (Slams shut when sensitive field missing / 502) -->
+                    <div class="blast-door-assembly" id="blast-door-assembly" hidden>
+                      <div class="blast-door-panel blast-door-panel--left">
+                        <div class="blast-hazard-stripes"></div>
+                      </div>
+                      <div class="blast-door-panel blast-door-panel--right">
+                        <div class="blast-hazard-stripes"></div>
+                      </div>
+                      <div class="blast-stamp-badge" id="blast-stamp-badge">
+                        <span>HTTP 502 BLOCKED</span>
+                        <small>ZERO HALLUCINATED FINANCIAL DATA</small>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -380,9 +665,12 @@
                 <pre class="code-block pii-code" id="sanitized-json"></pre>
               </div>
 
-              <!-- 3-Column Diff & Code Viewer -->
+              <!-- 3-Column Diff & Code Viewer with Surgical Stitch Animation -->
               <div class="diff-3col-head">
-                <h3>Interactive 3-Column Pipeline Diff</h3>
+                <div class="diff-title-row">
+                  <h3>Interactive 3-Column Pipeline Diff</h3>
+                  <span class="stitch-badge"><span class="stitch-dot"></span> Suture Synthesis Active</span>
+                </div>
                 <div class="diff-legend">
                   <span><i class="swatch swatch--removed"></i>Broken Upstream</span>
                   <span><i class="swatch swatch--added"></i>Healed Client</span>
@@ -390,7 +678,25 @@
                 </div>
               </div>
 
-              <div class="json-grid json-grid--3col">
+              <div class="diff-wrapper-relative">
+                <!-- Glowing Surgical Stitches SVG Overlay -->
+                <svg class="surgical-stitches-svg" id="surgical-stitches-svg" aria-hidden="true" preserveAspectRatio="none">
+                  <path class="suture-thread" id="suture-thread-1" d="M 120 70 C 180 60, 240 80, 310 70" fill="none"/>
+                  <path class="suture-thread" id="suture-thread-2" d="M 120 95 C 180 85, 240 105, 310 95" fill="none"/>
+                  <path class="suture-thread" id="suture-thread-3" d="M 120 120 C 180 110, 240 130, 310 120" fill="none"/>
+                  <circle cx="120" cy="70" r="3" class="suture-knot" />
+                  <circle cx="310" cy="70" r="3" class="suture-knot" />
+                  <circle cx="120" cy="95" r="3" class="suture-knot" />
+                  <circle cx="310" cy="95" r="3" class="suture-knot" />
+                </svg>
+
+                <!-- Floating Micro-Tooltip on Field Click -->
+                <div class="heal-micro-tooltip" id="heal-micro-tooltip" hidden>
+                  <img src="/bandage.png" alt="" width="12" height="12">
+                  <span>+0.14 ms In-Memory Cache Heal</span>
+                </div>
+
+                <div class="json-grid json-grid--3col">
                 <div class="json-panel json-panel--bad">
                   <div class="json-panel-head">
                     <span><span class="dot dot--red"></span>1. Broken Upstream JSON</span>
@@ -420,6 +726,7 @@
 }</code></pre>
                 </div>
               </div>
+            </div> <!-- close diff-wrapper-relative -->
 
               <div class="rule-head">
                 <h3>Verified Mapping Rule & Safety Gates</h3>
@@ -490,16 +797,33 @@
               <button class="btn btn-secondary" id="pr-retry" type="button" hidden>Retry pull request</button>
             </div>
 
-            <div class="code-preview">
+            <div class="code-preview" id="pr-code-preview-box">
               <div class="code-preview-head">
                 <div class="code-tabs" id="pr-code-tabs">
                   <button class="code-tab is-active" type="button" data-code-tab="adapter">adapter.ts</button>
                   <button class="code-tab" type="button" data-code-tab="test">adapter.test.ts</button>
                   <button class="code-tab" type="button" data-code-tab="diff">PR body</button>
                 </div>
-                <span class="chip" id="code-lang-badge">TypeScript</span>
+                <div class="pr-preview-right">
+                  <span class="ghost-typing-indicator" id="ghost-typing-indicator" hidden>
+                    <span class="ghost-dot"></span> Ghost Coder Typing
+                  </span>
+                  <span class="chip" id="code-lang-badge">TypeScript</span>
+                </div>
               </div>
-              <pre class="code-preview-block" id="pr-code-display"></pre>
+              <div class="code-block-wrapper">
+                <pre class="code-preview-block" id="pr-code-display"></pre>
+                <span class="ghost-cursor" id="ghost-cursor" hidden>&#x2588;</span>
+                
+                <!-- Physical Rubber Stamp -->
+                <div class="rubber-stamp" id="rubber-stamp" hidden>
+                  <div class="stamp-inner">
+                    <span class="stamp-verified">AUTONOMOUS DISPATCH</span>
+                    <strong class="stamp-heading">PR #42 DISPATCHED</strong>
+                    <span class="stamp-tests">&check; 100% PASSING (NODE:TEST)</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <p class="pr-foot">

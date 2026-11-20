@@ -1,3 +1,4 @@
+delete process.env.GOOGLE_GEMINI_BASE_URL;
 import { mkdir } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import Fastify, { type FastifyError, type FastifyInstance } from 'fastify';
