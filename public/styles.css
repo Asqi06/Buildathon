@@ -4369,3 +4369,149 @@ body.console-editorial {
   flex-wrap: wrap;
   gap: 6px;
 }
+
+/* ==========================================================================
+   AMPLITUX MINT-TEAL & OBSIDIAN PILL SAAS THEME FOR /console
+   Matches Uploaded Amplitux Design (media_1795172958912_ba69eae9.jpg)
+   ========================================================================== */
+
+body.console-editorial {
+  background:
+    radial-gradient(circle at 60% 0%, rgba(188, 239, 232, 0.55) 0%, rgba(231, 250, 247, 0.35) 32%, transparent 62%),
+    var(--bg);
+}
+
+.console-editorial .sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+}
+
+.console-editorial .brand-wordmark-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #56d1c5 0%, #3bb8ac 100%);
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.console-editorial .tab-list {
+  padding: 12px 10px;
+  gap: 4px;
+}
+
+.console-editorial .tab-btn {
+  border-radius: 999px;
+  border: none !important;
+  padding: 10px 14px;
+}
+
+.console-editorial .tab-btn.is-active {
+  background: #111317;
+  color: #ffffff;
+  box-shadow: 0 6px 16px -4px rgba(17, 19, 23, 0.22);
+}
+
+.console-editorial .tab-btn.is-active .tab-idx {
+  color: #56d1c5;
+}
+
+.console-editorial .tab-btn.is-active .tab-count {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.console-editorial .topbar {
+  background: linear-gradient(90deg, rgba(231, 250, 247, 0.88) 0%, rgba(255, 255, 255, 0.92) 50%, rgba(212, 246, 240, 0.85) 100%);
+  border-bottom: 1px solid rgba(59, 184, 172, 0.22);
+}
+
+[data-theme='dark'] .console-editorial .topbar {
+  background: rgba(19, 26, 29, 0.9);
+}
+
+.console-editorial .topbar-actions .btn-sm,
+.console-editorial .sound-toggle-btn,
+.console-editorial .op-mode-group {
+  border-radius: 999px;
+}
+
+.console-editorial .op-btn {
+  border-radius: 999px;
+}
+
+.console-editorial .op-btn.is-active {
+  background: #111317;
+  color: #ffffff;
+}
+
+.console-editorial .topbar-actions .btn-primary {
+  background: #111317;
+  border-color: #111317;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0 16px;
+}
+
+.console-editorial .main-content {
+  gap: 18px;
+}
+
+/* Amplitux Rounded Mint-Teal KPI Row */
+.console-editorial .metrics-row.roi-metrics {
+  border: 1px solid rgba(59, 184, 172, 0.25);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px -18px rgba(40, 158, 146, 0.16);
+}
+
+.console-editorial .metric-value,
+.console-editorial .metric-value--green,
+.console-editorial .metric-value--accent {
+  color: #3bb8ac !important;
+  font-weight: 600;
+}
+
+.console-editorial .badge-roi {
+  border-radius: 999px;
+  background: #dff9f5;
+  color: #1f8a80;
+  border-color: rgba(59, 184, 172, 0.3);
+}
+
+/* Amplitux Soft Rounded Panels (Keeping Internal 50/50 Alignment) */
+.console-editorial .tab-panel {
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 40px -20px rgba(17, 19, 23, 0.07);
+}
+
+.console-editorial .panel-head {
+  background: linear-gradient(180deg, rgba(231, 250, 247, 0.45) 0%, var(--surface) 100%);
+}
+
+.console-editorial .btn-primary {
+  background: #111317;
+  border-color: #111317;
+  color: #ffffff;
+  border-radius: 999px !important;
+}
+
+.console-editorial .btn-secondary {
+  border-radius: 999px !important;
+}
+
+.console-editorial .studio-preset-btn {
+  border-radius: 999px;
+}
+
+.console-editorial .studio-preset-btn.is-active {
+  background: #111317;
+  border-color: #111317;
+  color: #ffffff;
+}

@@ -69,16 +69,15 @@
       observer.observe(el);
     }
 
-    // Safety fallback: ensure above-the-fold or missed elements never stay invisible
+    // Safety fallback: ensure elements never stay invisible on full-page captures or jump-scrolls
     window.setTimeout(() => {
-      const vh = window.innerHeight || 900;
-      for (const el of targets) {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < vh * 1.15) {
+      targets.forEach((el, idx) => {
+        if (!el.classList.contains('is-visible')) {
+          el.style.transitionDelay = `${Math.min(idx * 40, 240)}ms`;
           el.classList.add('is-visible');
         }
-      }
-    }, 350);
+      });
+    }, 300);
   }
 
   // 3. Smooth anchor scrolling with header offset
